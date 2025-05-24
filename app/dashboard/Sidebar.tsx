@@ -1,30 +1,40 @@
 'use client'
-import Link from 'next/link'
 import './Sidebar.css'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
-const Sidebar = () => {
+export default function Sidebar() {
+  const pathname = usePathname()
+
+  const links = [
+    { href: '/dashboard', icon: '/sidebar-icons/home.png', alt: 'Inicio' },
+    { href: '/dashboard/chat', icon: '/sidebar-icons/chat.png', alt: 'Chat' },
+    { href: '/dashboard/automation', icon: '/sidebar-icons/automation.png', alt: 'Automation' },
+    { href: '/dashboard/flows', icon: '/sidebar-icons/flows.png', alt: 'Flows' }
+  ]
+
   return (
     <div className="sidebar">
-      <Link href="/dashboard">
-        <img src="/sidebar-icons/home.png" alt="Inicio" />
-      </Link>
-      <Link href="/dashboard/chat">
-        <img src="/sidebar-icons/chat.png" alt="Chat" />
-      </Link>
-      <Link href="/dashboard/automation">
-        <img src="/sidebar-icons/automation.png" alt="Automation" />
-      </Link>
-      <Link href="/dashboard/flows">
-        <img src="/sidebar-icons/flows.png" alt="Flows" />
-      </Link>
-
-      <div className="sidebar-bottom">
+      <div className="top-icons">
+        {links.map(({ href, icon, alt }) => (
+          <Link key={href} href={href}>
+            <img
+              src={icon}
+              alt={alt}
+              className={`icon ${pathname === href ? 'active' : ''}`}
+            />
+          </Link>
+        ))}
+      </div>
+      <div className="bottom-icon">
         <Link href="/dashboard/billing">
-          <img src="/sidebar-icons/billing.png" alt="Billing" />
+          <img
+            src="/sidebar-icons/billing.png"
+            alt="Billing"
+            className={`icon ${pathname === '/dashboard/billing' ? 'active' : ''}`}
+          />
         </Link>
       </div>
     </div>
   )
 }
-
-export default Sidebar
