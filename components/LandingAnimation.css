@@ -1,90 +1,77 @@
 .transition-screen {
   display: flex;
   height: 100vh;
-  width: 100vw;
   overflow: hidden;
-  transition: all 1s ease-in-out;
   font-family: 'Inter', sans-serif;
+  transition: all 1s ease-in-out;
 }
 
 .left-panel,
 .right-panel {
+  flex: 1;
   height: 100%;
-  transition: width 1s ease-in-out;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  transition: all 1s ease-in-out;
 }
 
 .left-panel {
   background-color: white;
-  width: 0;
   flex-direction: column;
 }
 
 .right-panel {
   background-color: black;
-  width: 100%;
-  flex-direction: column;
   color: white;
+  flex-direction: column;
 }
 
-.transition-screen.split .left-panel {
-  width: 50%;
+.glow-logo {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 0 20px white);
+  margin-bottom: 20px;
 }
 
-.transition-screen.split .right-panel {
-  width: 50%;
+.igor-welcome p {
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-}
-
-.login-container input {
-  padding: 0.5rem;
-  width: 200px;
-  border: none;
-  background-color: #d1d1d1;
-}
-
-.login-container button {
-  padding: 0.5rem 1rem;
-  background-color: #444;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.glow-logo {
-  width: 80px;
-  filter: drop-shadow(0 0 15px white);
-  animation: pulse 2s infinite;
 }
 
 .small-logo {
   width: 60px;
+  height: 60px;
+  margin-bottom: 16px;
 }
 
-.igor-welcome p {
-  font-size: 1.5rem;
-  font-weight: bold;
+input {
+  margin: 5px;
+  padding: 8px;
+  width: 200px;
+  font-size: 16px;
 }
 
-@keyframes pulse {
-  0% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-  100% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: black;
+  color: white;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.split .left-panel {
+  flex: 1;
+}
+
+.split .right-panel {
+  flex: 1;
 }
