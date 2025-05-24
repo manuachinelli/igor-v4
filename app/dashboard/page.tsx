@@ -1,37 +1,31 @@
-export default function DashboardPage() {
-  return (
-    <div style={{ padding: '2rem', color: 'white' }}>
-      <div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem' }}>
-        <StatCircle number={35} label="Procesos" />
-        <StatCircle number={156} label="Ejecuciones 24hs" />
-        <StatCircle number={156} label="Ejecuciones mes" />
-        <StatCircle number={3} label="Errores" />
-      </div>
-      <div style={{ marginTop: 'auto' }}>
-        <p>Tareas usadas: 22 / 50</p>
-        <div style={{ backgroundColor: '#333', height: '20px', borderRadius: '10px', overflow: 'hidden' }}>
-          <div style={{ backgroundColor: 'limegreen', width: '44%', height: '100%' }} />
-        </div>
-      </div>
-    </div>
-  )
-}
+'use client';
 
-function StatCircle({ number, label }: { number: number; label: string }) {
+import React from 'react';
+import Link from 'next/link';
+import './Sidebar.css';
+
+export default function Sidebar() {
   return (
-    <div style={{
-      backgroundColor: '#222',
-      borderRadius: '50%',
-      width: '100px',
-      height: '100px',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      color: 'white'
-    }}>
-      <strong style={{ fontSize: '1.2rem' }}>{number}</strong>
-      <span style={{ fontSize: '0.8rem', textAlign: 'center' }}>{label}</span>
+    <div className="sidebar">
+      <div className="sidebar-top">
+        <Link href="/dashboard">
+          <img src="/sidebar-icons/home.png" alt="Inicio" className="sidebar-icon" />
+        </Link>
+        <Link href="/dashboard/chat">
+          <img src="/sidebar-icons/chat.png" alt="Chat" className="sidebar-icon" />
+        </Link>
+        <Link href="/dashboard/automation">
+          <img src="/sidebar-icons/automation.png" alt="Automation" className="sidebar-icon" />
+        </Link>
+        <Link href="/dashboard/flows">
+          <img src="/sidebar-icons/flows.png" alt="Flows" className="sidebar-icon" />
+        </Link>
+      </div>
+      <div className="sidebar-bottom">
+        <Link href="/dashboard/billing">
+          <img src="/sidebar-icons/billing.png" alt="Billing" className="sidebar-icon" />
+        </Link>
+      </div>
     </div>
-  )
+  );
 }
