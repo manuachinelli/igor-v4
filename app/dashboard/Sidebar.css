@@ -1,47 +1,47 @@
-.sidebar {
-  width: 60px;
+.sidebar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 64px;
+  height: 100vh;
   background-color: #111;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 1rem 0;
   justify-content: space-between;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
+  padding: 1rem 0;
+  z-index: 1000;
 }
 
-.nav-buttons {
+.top-items,
+.bottom-item {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1rem;
 }
 
-.billing-button {
-  margin-bottom: 1rem;
-}
-
-.sidebar-button {
+.icon-box {
   width: 40px;
   height: 40px;
-  background-color: transparent;
-  border: none;
-  padding: 5px;
+  background-color: #222;
   border-radius: 8px;
-  transition: transform 0.2s ease, background-color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.2s, background-color 0.2s;
 }
 
-.sidebar-button img {
-  width: 100%;
-  height: auto;
+.icon-box img {
+  width: 22px;
+  height: 22px;
 }
 
-.sidebar-button:hover {
+.icon-box:hover {
   transform: scale(1.1);
-  background-color: #222;
-  cursor: pointer;
+  background-color: #333;
+}
+
+.icon-box.active {
+  background-color: #444;
+  box-shadow: 0 0 6px #aaa;
 }
