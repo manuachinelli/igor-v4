@@ -1,14 +1,14 @@
-import Sidebar from '@/components/Sidebar'
-import DashboardStats from '@/components/DashboardStats'
-import ProgressBar from '@/components/ProgressBar'
+'use client'
+
+import Sidebar from './Sidebar'
 
 export default function DashboardPage() {
   return (
-    <div style={{ display: 'flex', height: '100vh', backgroundColor: 'black', color: 'white', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ display: 'flex' }}>
       <Sidebar />
-      <div style={{ flex: 1, padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <DashboardStats />
-        <ProgressBar />
+      <div style={{ marginLeft: '60px', padding: '2rem', width: '100%' }}>
+        <h1 style={{ color: 'white' }}>Dashboard de ejemplo</h1>
+        {/* Aquí va el resto del contenido */}
       </div>
     </div>
   )
