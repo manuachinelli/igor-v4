@@ -1,25 +1,47 @@
-// components/Sidebar.tsx
 'use client'
+
 import Link from 'next/link'
-import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import './Sidebar.css'
 
 const menuItems = [
-  { name: 'Inicio', icon: '/sidebar-icons/igor.png', href: '/dashboard' },
-  { name: 'Catchup', icon: '/sidebar-icons/chat.png', href: '/dashboard/catchup' },
-  { name: 'Automation', icon: '/sidebar-icons/automation.png', href: '/dashboard/automation' },
-  { name: 'Flows', icon: '/sidebar-icons/flows.png', href: '/dashboard/flows' },
-  { name: 'Billing', icon: '/sidebar-icons/billing.png', href: '/dashboard/billing' }
+  { href: '/dashboard', icon: '/sidebar-icons/inicio.png', alt: 'Inicio' },
+  { href: '/dashboard/chats', icon: '/sidebar-icons/chat.png', alt: 'Chat' },
+  { href: '/dashboard/automation', icon: '/sidebar-icons/auto.png', alt: 'Automation' },
+  { href: '/dashboard/flows', icon: '/sidebar-icons/flows.png', alt: 'Flows' },
 ]
 
+const billingItem = {
+  href: '/dashboard/billing',
+  icon: '/sidebar-icons/billing.png',
+  alt: 'Billing',
+}
+
 export default function Sidebar() {
+  const pathname = usePathname()
+
   return (
     <div className="sidebar">
-      {menuItems.map(item => (
-        <Link key={item.name} href={item.href} className="icon-button" title={item.name}>
-          <Image src={item.icon} alt={item.name} width={28} height={28} />
+      <div className="sidebar-top">
+        {menuItems.map((item) => (
+          <Link href={item.href} key={item.href}>
+            <img
+              src={item.icon}
+              alt={item.alt}
+              className={`icon ${pathname === item.href ? 'active' : ''}`}
+            />
+          </Link>
+        ))}
+      </div>
+      <div className="sidebar-bottom">
+        <Link href={billingItem.href}>
+          <img
+            src={billingItem.icon}
+            alt={billingItem.alt}
+            className={`icon ${pathname === billingItem.href ? 'active' : ''}`}
+          />
         </Link>
-      ))}
+      </div>
     </div>
   )
 }
