@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import sendToIgor from "@/lib/sendToIgor";
-import { ArrowUp } from "lucide-react";
 
 type Message = {
   role: "user" | "assistant";
@@ -84,9 +83,9 @@ export default function IgorChat() {
         <button
           onClick={handleSend}
           disabled={isWaiting}
-          className="bg-white text-black p-2 rounded-xl"
+          className="bg-white text-black px-4 py-2 rounded-xl text-lg"
         >
-          <ArrowUp className="w-4 h-4" />
+          ⬆️
         </button>
       </div>
     </div>
