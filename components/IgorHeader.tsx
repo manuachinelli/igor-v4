@@ -1,4 +1,3 @@
-// components/IgorHeader.tsx
 export default function IgorHeader() {
   return (
     <div className="w-full flex justify-end p-4">
