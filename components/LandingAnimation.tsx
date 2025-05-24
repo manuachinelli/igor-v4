@@ -10,12 +10,12 @@ export default function LandingAnimation() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLogin(true)
-    }, 4000) // mostrar login luego de 4 segundos
+    }, 4000)
     return () => clearTimeout(timer)
   }, [])
 
   const handleLogin = () => {
-    router.push('/dashboard') // sin validación
+    router.push('/dashboard')
   }
 
   return (
