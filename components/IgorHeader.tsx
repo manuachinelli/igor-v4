@@ -5,7 +5,7 @@ export default function IgorHeader() {
       <img
         src="/sidebar-icons/chat.png"
         alt="Igor Chat"
-        className="w-10 h-10"
+        className="w-8 h-8 opacity-80"
       />
     </div>
   );
