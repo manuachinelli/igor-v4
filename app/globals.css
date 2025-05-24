@@ -1,0 +1,11 @@
+/* app/globals.css */
+html, body {
+  padding: 0;
+  margin: 0;
+  font-family: Inter, sans-serif;
+  background-color: #000;
+  color: #fff;
+}
+* {
+  box-sizing: border-box;
+}
