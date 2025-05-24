@@ -1,59 +1,35 @@
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  padding: 2rem;
-}
+'use client';
 
-.dashboard-stats {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
+import React from 'react';
+import './Dashboard.css';
 
-.circle {
-  background: #222;
-  border-radius: 50%;
-  width: 100px;
-  height: 100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.value {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.value.error {
-  color: red;
-}
-
-.label {
-  text-align: center;
-  font-size: 0.9rem;
-  margin-top: 0.2rem;
-}
-
-.dashboard-progress {
-  width: 80%;
-  max-width: 600px;
-}
-
-.progress-bar {
-  background: #444;
-  border-radius: 10px;
-  height: 20px;
-  margin-top: 0.5rem;
-  overflow: hidden;
-}
-
-.progress-fill {
-  background: limegreen;
-  height: 100%;
-  transition: width 0.3s ease-in-out;
+export default function DashboardPage() {
+  return (
+    <div className="dashboard-container">
+      <div className="dashboard-stats">
+        <div className="circle">
+          <div className="value">35</div>
+          <div className="label">Procesos</div>
+        </div>
+        <div className="circle">
+          <div className="value">156</div>
+          <div className="label">Ejecuciones<br />24hs</div>
+        </div>
+        <div className="circle">
+          <div className="value">156</div>
+          <div className="label">Ejecuciones<br />mes</div>
+        </div>
+        <div className="circle">
+          <div className="value error">3</div>
+          <div className="label">Errores</div>
+        </div>
+      </div>
+      <div className="dashboard-progress">
+        <p>Tareas usadas: 22 / 50</p>
+        <div className="progress-bar">
+          <div className="progress-fill" style={{ width: '44%' }}></div>
+        </div>
+      </div>
+    </div>
+  );
 }
