@@ -1,42 +1,35 @@
 .sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 80px;
+  width: 64px;
   height: 100vh;
   background-color: #111;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px 0;
-  z-index: 100;
+  align-items: center;
+  padding: 1rem 0;
+  position: fixed;
+  left: 0;
+  top: 0;
 }
 
-.top-icons {
+.icon-group {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
 }
 
 .bottom-icon {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
 }
 
-.icon {
-  width: 36px;
-  height: 36px;
-  opacity: 0.8;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+.sidebar-icon {
+  width: 48px; /* tamaño duplicado */
+  height: 48px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.icon:hover {
+.sidebar-icon:hover {
   transform: scale(1.1);
-  opacity: 1;
-}
-
-.icon.active {
-  opacity: 1;
 }
