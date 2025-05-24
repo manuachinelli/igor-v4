@@ -28,3 +28,7 @@
 .sidebar-icon:hover {
   transform: scale(1.2);
 }
+
+.sidebar-bottom {
+  margin-bottom: 40px;
+}
