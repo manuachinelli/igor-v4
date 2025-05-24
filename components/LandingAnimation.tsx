@@ -51,4 +51,23 @@ export default function LandingAnimation() {
           0% { transform: translate(0px, 0px); opacity: 1; }
           20% { transform: translate(-2px, 1px); opacity: 0.8; }
           40% { transform: translate(2px, -1px); opacity: 1; }
-          60% { transform: translate(-
+          60% { transform: translate(-1px, 2px); opacity: 0.9; }
+          80% { transform: translate(1px, -2px); opacity: 1; }
+          100% { transform: translate(0px, 0px); opacity: 1; }
+        }
+        .animate-glitch {
+          animation: glitch 0.3s infinite;
+        }
+
+        @keyframes fade-in {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-fade-in {
+          animation: fade-in 1s ease-in-out forwards;
+        }
+      `}</style>
+    </div>
+  )
+}
