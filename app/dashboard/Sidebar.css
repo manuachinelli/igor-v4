@@ -15,8 +15,8 @@
 .icon-group {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  margin-top: 1rem;
+  gap: 1.2rem;
+  align-items: center;
 }
 
 .bottom-icon {
@@ -24,8 +24,9 @@
 }
 
 .sidebar-icon {
-  width: 48px; /* tamaño duplicado */
+  width: 48px;    /* tamaño fijo, x2 del original */
   height: 48px;
+  object-fit: contain;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
