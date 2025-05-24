@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import './Dashboard.css';
 
 export default function DashboardPage() {
   return (
