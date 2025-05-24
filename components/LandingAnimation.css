@@ -1,77 +1,124 @@
-.transition-screen {
-  display: flex;
+.transition-container {
+  width: 100vw;
   height: 100vh;
   overflow: hidden;
-  font-family: 'Inter', sans-serif;
+  display: flex;
   transition: all 1s ease-in-out;
+  background: black;
+  color: white;
+  font-family: "Inter", sans-serif;
+  position: relative;
 }
 
-.left-panel,
+.transition-container.full {
+  justify-content: center;
+  align-items: center;
+}
+
+.transition-container.split {
+  flex-direction: row;
+}
+
 .right-panel {
   flex: 1;
-  height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: all 1s ease-in-out;
+  background: black;
+  color: white;
+  transition: all 1s ease;
 }
 
 .left-panel {
-  background-color: white;
-  flex-direction: column;
-}
-
-.right-panel {
-  background-color: black;
-  color: white;
-  flex-direction: column;
-}
-
-.glow-logo {
-  width: 80px;
-  height: 80px;
-  filter: drop-shadow(0 0 20px white);
-  margin-bottom: 20px;
-}
-
-.igor-welcome p {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.login-container {
+  flex: 1;
+  background: white;
+  color: black;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: softSlideIn 2s ease forwards;
+  opacity: 0;
 }
 
-.small-logo {
+@keyframes softSlideIn {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.logo.final {
+  filter: drop-shadow(0 0 20px white);
+  width: 120px;
+  height: auto;
+  animation: logoPop 1s ease forwards;
+}
+
+.logo.small {
+  margin-bottom: 1rem;
   width: 60px;
-  height: 60px;
-  margin-bottom: 16px;
+  height: auto;
 }
 
-input {
-  margin: 5px;
-  padding: 8px;
-  width: 200px;
-  font-size: 16px;
+@keyframes logoPop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
 }
 
-button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: black;
+.title {
+  font-size: 2rem;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.form-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 60%;
+  max-width: 300px;
+}
+
+.login-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+
+.login-form input {
+  padding: 0.5rem;
+  border: 1px solid #999;
+  border-radius: 4px;
+}
+
+.login-form button {
+  padding: 0.6rem;
+  background: #333;
   color: white;
   border: none;
-  font-size: 16px;
   cursor: pointer;
-}
-
-.split .left-panel {
-  flex: 1;
-}
-
-.split .right-panel {
-  flex: 1;
+  font-size: 1rem;
+  border-radius: 4px;
 }
