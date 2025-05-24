@@ -1,34 +1,35 @@
-'use client';
+'use client'
 
-import React from 'react';
+import './page.css'
 
 export default function DashboardPage() {
   return (
     <div className="dashboard-container">
-      <div className="dashboard-stats">
-        <div className="circle">
-          <div className="value">35</div>
-          <div className="label">Procesos</div>
+      <div className="metrics">
+        <div className="metric">
+          <div className="circle">35</div>
+          <span>Procesos</span>
         </div>
-        <div className="circle">
-          <div className="value">156</div>
-          <div className="label">Ejecuciones<br />24hs</div>
+        <div className="metric">
+          <div className="circle">156</div>
+          <span>Ejecuciones 24hs</span>
         </div>
-        <div className="circle">
-          <div className="value">156</div>
-          <div className="label">Ejecuciones<br />mes</div>
+        <div className="metric">
+          <div className="circle">156</div>
+          <span>Ejecuciones mes</span>
         </div>
-        <div className="circle">
-          <div className="value error">3</div>
-          <div className="label">Errores</div>
+        <div className="metric">
+          <div className="circle error">3</div>
+          <span>Errores</span>
         </div>
       </div>
-      <div className="dashboard-progress">
+
+      <div className="task-bar">
         <p>Tareas usadas: 22 / 50</p>
         <div className="progress-bar">
-          <div className="progress-fill" style={{ width: '44%' }}></div>
+          <div className="progress" style={{ width: '44%' }}></div>
         </div>
       </div>
     </div>
-  );
+  )
 }
