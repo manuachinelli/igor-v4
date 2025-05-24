@@ -1,7 +1,7 @@
-// components/IgorChat.tsx
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import sendToIgor from "@/lib/sendToIgor";
+import { ArrowUp } from "lucide-react";
 
 type Message = {
   role: "user" | "assistant";
@@ -14,6 +14,7 @@ export default function IgorChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isWaiting, setIsWaiting] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMessages([
@@ -23,6 +24,10 @@ export default function IgorChat() {
       },
     ]);
   }, []);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim() || isWaiting) return;
@@ -63,6 +68,7 @@ export default function IgorChat() {
         {isWaiting && (
           <div className="text-sm italic text-gray-400">Igor AI está escribiendo...</div>
         )}
+        <div ref={bottomRef} />
       </div>
 
       <div className="border-t border-gray-700 p-4 flex items-center gap-2 bg-black">
@@ -78,9 +84,9 @@ export default function IgorChat() {
         <button
           onClick={handleSend}
           disabled={isWaiting}
-          className="bg-white text-black px-4 py-2 rounded-xl font-semibold"
+          className="bg-white text-black p-2 rounded-xl"
         >
-          Enviar
+          <ArrowUp className="w-4 h-4" />
         </button>
       </div>
     </div>
