@@ -1,34 +1,59 @@
-'use client';
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 2rem;
+}
 
-import '@/app/dashboard/Dashboard.css';
+.dashboard-stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
 
-export default function DashboardPage() {
-  return (
-    <div className="dashboard-container">
-      <div className="dashboard-stats">
-        <div className="stat">
-          <div className="circle">35</div>
-          <div className="label">Procesos</div>
-        </div>
-        <div className="stat">
-          <div className="circle">156</div>
-          <div className="label">Ejecuciones 24hs</div>
-        </div>
-        <div className="stat">
-          <div className="circle">156</div>
-          <div className="label">Ejecuciones mes</div>
-        </div>
-        <div className="stat">
-          <div className="circle">3</div>
-          <div className="label">Errores</div>
-        </div>
-      </div>
-      <div className="progress-bar-container">
-        <div className="progress-label">Tareas usadas: 22 / 50</div>
-        <div className="progress-bar-bg">
-          <div className="progress-bar-fill" style={{ width: '44%' }}></div>
-        </div>
-      </div>
-    </div>
-  );
+.circle {
+  background: #222;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.value.error {
+  color: red;
+}
+
+.label {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.dashboard-progress {
+  width: 80%;
+  max-width: 600px;
+}
+
+.progress-bar {
+  background: #444;
+  border-radius: 10px;
+  height: 20px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: limegreen;
+  height: 100%;
+  transition: width 0.3s ease-in-out;
 }
