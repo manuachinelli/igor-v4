@@ -41,15 +41,15 @@ export default function LandingAnimation() {
         <Image
           src="/logo.png"
           alt="IGOR Logo"
-          width={100}
-          height={100}
+          width={200}
+          height={200}
           className="animate-fade-in drop-shadow-xl"
         />
       )}
 
       {step === 'text' && (
         <div className="mt-8 text-center animate-fade-in">
-          <p className="text-2xl font-semibold tracking-wide">Say welcome to IGOR</p>
+          <p className="text-4xl font-semibold tracking-wide">Say welcome to IGOR</p>
         </div>
       )}
 
@@ -72,7 +72,4 @@ export default function LandingAnimation() {
         .animate-fade-in {
           animation: fade-in 1s ease-in-out forwards;
         }
-      `}</style>
-    </div>
-  )
-}
+      `}</styl
