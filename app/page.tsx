@@ -1,5 +1,5 @@
-import LandingLoader from '../components/LandingLoader'
+import LandingAnimation from '../components/LandingAnimation'
 
 export default function HomePage() {
-  return <LandingLoader />
+  return <LandingAnimation />
 }
