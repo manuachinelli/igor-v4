@@ -20,12 +20,12 @@ export default function LandingAnimation() {
   }, [])
 
   return (
-    <div className={`${inter.className} relative flex flex-col items-center justify-center h-screen bg-black text-white transition-all duration-1000 ease-in-out`}>
+    <div className={`${inter.className} relative flex flex-col items-center justify-center h-screen bg-black text-white`}>
       {step === 'start' && (
         <img
           src="/human-outline.svg"
           alt="Human"
-          className="w-24 h-24 opacity-100 transition-opacity duration-1000"
+          className="w-24 h-24"
         />
       )}
 
@@ -65,11 +65,16 @@ export default function LandingAnimation() {
         .animate-glitch {
           animation: glitch 0.3s infinite;
         }
+
         @keyframes fade-in {
           from { opacity: 0; transform: scale(0.95); }
           to { opacity: 1; transform: scale(1); }
         }
+
         .animate-fade-in {
           animation: fade-in 1s ease-in-out forwards;
         }
-      `}</styl
+      `}</style>
+    </div>
+  )
+}
