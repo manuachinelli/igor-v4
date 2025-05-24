@@ -1,4 +1,3 @@
-// components/IgorChat.tsx
 "use client";
 import { useEffect, useState } from "react";
 import sendToIgor from "@/lib/sendToIgor";
@@ -8,7 +7,7 @@ type Message = {
   content: string;
 };
 
-const USER_ID = "igor_user_001"; // podés hacer dinámico más adelante
+const USER_ID = "igor_user_001"; // cambiar por ID real si querés
 
 export default function IgorChat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -16,6 +15,7 @@ export default function IgorChat() {
   const [isWaiting, setIsWaiting] = useState(false);
 
   useEffect(() => {
+    // Mensaje inicial
     setMessages([
       {
         role: "assistant",
@@ -27,7 +27,7 @@ export default function IgorChat() {
   const handleSend = async () => {
     if (!input.trim() || isWaiting) return;
 
-    const newMessages = [...messages, { role: "user", content: input }];
+    const newMessages: Message[] = [...messages, { role: "user", content: input }];
     setMessages(newMessages);
     setInput("");
     setIsWaiting(true);
