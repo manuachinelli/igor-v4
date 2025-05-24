@@ -1,44 +1,48 @@
-'use client'
-import './LandingAnimation.css'
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import './LandingAnimation.css';
 
 export default function LandingAnimation() {
-  const router = useRouter()
-  const [showLogin, setShowLogin] = useState(false)
+  const [showLogin, setShowLogin] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShowLogin(true)
-    }, 4000)
-    return () => clearTimeout(timer)
-  }, [])
+      setShowLogin(true);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
-  const handleLogin = () => {
-    router.push('/dashboard')
-  }
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push('/dashboard'); // redirige directamente
+  };
 
   return (
-    <div className={`transition-screen ${showLogin ? 'split' : ''}`}>
-      <div className="left-panel">
-        {showLogin && (
-          <div className="login-container">
-            <img src="/logo.png" alt="IGOR Logo" className="small-logo" />
-            <h2>Iniciar sesión</h2>
-            <input type="text" placeholder="User" />
-            <input type="password" placeholder="Password" />
-            <button onClick={handleLogin}>Login</button>
-          </div>
-        )}
-      </div>
+    <div className={`transition-container ${showLogin ? 'split' : 'full'}`}>
+      {showLogin && (
+        <div className="left-panel">
+          <img src="/logo.png" alt="IGOR Logo" className="logo small" />
+          <h2 className="form-title">Iniciar sesión</h2>
+          <form className="login-form" onSubmit={handleLogin}>
+            <label>
+              User
+              <input type="text" name="user" />
+            </label>
+            <label>
+              Password
+              <input type="password" name="password" />
+            </label>
+            <button type="submit">Login</button>
+          </form>
+        </div>
+      )}
       <div className="right-panel">
-        {!showLogin && (
-          <div className="igor-welcome">
-            <img src="/logo.png" alt="IGOR Logo" className="glow-logo" />
-            <p>Say HI to IGOR</p>
-          </div>
-        )}
+        <img src="/logo.png" alt="IGOR Logo" className="logo final" />
+        <h1 className="title">Say HI to IGOR</h1>
       </div>
     </div>
-  )
+  );
 }
