@@ -1,3 +1,4 @@
+// components/IgorChat.tsx
 "use client";
 import { useEffect, useState } from "react";
 import sendToIgor from "@/lib/sendToIgor";
@@ -7,7 +8,7 @@ type Message = {
   content: string;
 };
 
-const USER_ID = "igor_user_001"; // cambiar por ID real si querés
+const USER_ID = "igor_user_001";
 
 export default function IgorChat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -15,7 +16,6 @@ export default function IgorChat() {
   const [isWaiting, setIsWaiting] = useState(false);
 
   useEffect(() => {
-    // Mensaje inicial
     setMessages([
       {
         role: "assistant",
@@ -35,7 +35,7 @@ export default function IgorChat() {
     try {
       const reply = await sendToIgor(USER_ID, input);
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-    } catch (err) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: "Ocurrió un error. Intentá de nuevo." },
@@ -47,13 +47,13 @@ export default function IgorChat() {
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4">
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`max-w-[80%] px-4 py-2 rounded-xl whitespace-pre-wrap ${
+            className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
               msg.role === "user"
-                ? "bg-blue-800 text-white self-end ml-auto"
+                ? "bg-blue-700 text-white self-end ml-auto"
                 : "bg-gray-800 text-white self-start"
             }`}
           >
@@ -65,10 +65,10 @@ export default function IgorChat() {
         )}
       </div>
 
-      <div className="border-t border-gray-700 p-4 flex items-center gap-2">
+      <div className="border-t border-gray-700 p-4 flex items-center gap-2 bg-black">
         <input
           type="text"
-          className="flex-1 bg-black border border-gray-700 rounded-lg px-4 py-2 text-white"
+          className="flex-1 bg-black border border-gray-700 rounded-xl px-4 py-2 text-white placeholder-gray-500"
           placeholder="Escribí tu mensaje..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -78,7 +78,7 @@ export default function IgorChat() {
         <button
           onClick={handleSend}
           disabled={isWaiting}
-          className="bg-white text-black px-4 py-2 rounded-lg"
+          className="bg-white text-black px-4 py-2 rounded-xl font-semibold"
         >
           Enviar
         </button>
