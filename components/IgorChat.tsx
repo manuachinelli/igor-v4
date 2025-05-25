@@ -19,7 +19,7 @@ export default function IgorChat() {
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || isWaiting) return;
 
     const newMessages: Message[] = [...messages, { role: "user", content: input }];
     setMessages(newMessages);
@@ -53,12 +53,12 @@ export default function IgorChat() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-black text-white p-4">
-      <div className="flex-grow overflow-y-auto space-y-4 pb-32">
+    <div className="flex flex-col h-screen bg-black text-white">
+      <div className="flex-grow overflow-y-auto space-y-4 px-4 pt-4 pb-32">
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`max-w-lg px-4 py-2 rounded-2xl w-fit break-words ${
+            className={`max-w-lg px-4 py-2 rounded-2xl w-fit break-words text-sm ${
               msg.role === "user"
                 ? "bg-blue-600 self-end text-right"
                 : "bg-neutral-800 self-start text-left"
@@ -73,20 +73,24 @@ export default function IgorChat() {
         <div ref={chatEndRef} />
       </div>
 
-      <div className="fixed bottom-4 left-4 right-4 flex items-center gap-2 bg-neutral-900 rounded-full px-4 py-2">
-        <input
-          className="flex-grow bg-transparent outline-none text-white placeholder-neutral-500"
-          placeholder="Escribí tu mensaje..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-        <button onClick={sendMessage} className="text-white hover:text-blue-400">
-          <SendHorizonal size={20} />
-        </button>
-        <button className="text-white opacity-50 cursor-not-allowed">
-          <Mic size={20} />
-        </button>
+      <div className="fixed bottom-0 left-0 right-0 flex flex-col items-center gap-2 bg-black px-4 pb-4">
+        <div className="flex items-center w-full max-w-2xl bg-neutral-800 rounded-full px-4 py-2">
+          <input
+            className="flex-grow bg-transparent outline-none text-white placeholder-neutral-500"
+            placeholder="Escribí tu mensaje..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            disabled={isWaiting}
+          />
+          <button onClick={sendMessage} disabled={isWaiting} className="text-white hover:text-blue-400">
+            <SendHorizonal size={20} />
+          </button>
+          <button disabled className="text-white opacity-50 cursor-not-allowed">
+            <Mic size={20} />
+          </button>
+        </div>
+        <p className="text-xs text-neutral-500 pt-1">Estás hablando con Igor v1.0.0</p>
       </div>
     </div>
   );
