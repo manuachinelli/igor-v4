@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SendHorizonal, Mic } from "lucide-react";
+import styles from "./IgorChat.module.css";
 
 interface Message {
   role: "user" | "assistant";
@@ -19,7 +20,7 @@ export default function IgorChat() {
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim() || isWaiting) return;
+    if (!input.trim()) return;
 
     const newMessages: Message[] = [...messages, { role: "user", content: input }];
     setMessages(newMessages);
@@ -53,44 +54,38 @@ export default function IgorChat() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-black text-white">
-      <div className="flex-grow overflow-y-auto space-y-4 px-4 pt-4 pb-32">
+    <div className={styles.chatContainer}>
+      <div className={styles.messagesContainer}>
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`max-w-lg px-4 py-2 rounded-2xl w-fit break-words text-sm ${
-              msg.role === "user"
-                ? "bg-blue-600 self-end text-right"
-                : "bg-neutral-800 self-start text-left"
-            }`}
+            className={`${styles.messageBubble} ${msg.role === "user" ? styles.userBubble : styles.assistantBubble}`}
           >
             {msg.content}
           </div>
         ))}
-        {isWaiting && (
-          <div className="text-sm text-neutral-400">Igor está escribiendo...</div>
-        )}
+        {isWaiting && <div className={styles.waiting}>Igor está escribiendo...</div>}
         <div ref={chatEndRef} />
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 flex flex-col items-center gap-2 bg-black px-4 pb-4">
-        <div className="flex items-center w-full max-w-2xl bg-neutral-800 rounded-full px-4 py-2">
+      <div className={styles.inputSection}>
+        <div className={styles.inputBox}>
           <input
-            className="flex-grow bg-transparent outline-none text-white placeholder-neutral-500"
+            className={styles.input}
             placeholder="Escribí tu mensaje..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isWaiting}
           />
-          <button onClick={sendMessage} disabled={isWaiting} className="text-white hover:text-blue-400">
-            <SendHorizonal size={20} />
+          <button onClick={sendMessage} className={styles.iconButton} disabled={isWaiting}>
+            <SendHorizonal size={18} />
           </button>
-          <button disabled className="text-white opacity-50 cursor-not-allowed">
-            <Mic size={20} />
+          <button className={`${styles.iconButton} ${styles.disabled}`}>
+            <Mic size={18} />
           </button>
         </div>
-        <p className="text-xs text-neutral-500 pt-1">Estás hablando con Igor v1.0.0</p>
+        <div className={styles.status}>Estás hablando con Igor v1.0.0</div>
       </div>
     </div>
   );
