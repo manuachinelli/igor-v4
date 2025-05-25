@@ -20,7 +20,7 @@
   border-radius: 20px;
   font-size: 14px;
   line-height: 1.4;
-  max-width: 220px;
+  max-width: 880px;
   word-wrap: break-word;
 }
 
@@ -59,6 +59,9 @@
   background-color: #1a1a1a;
   padding: 8px 12px;
   border-radius: 20px;
+  max-width: 880px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .input {
