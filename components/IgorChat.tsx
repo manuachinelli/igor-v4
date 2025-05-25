@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Mic, SendHorizontal } from 'lucide-react';
-import './IgorChat.css';
+import styles from './IgorChat.module.css';
 
 interface Message {
   role: 'user' | 'assistant';
