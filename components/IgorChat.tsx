@@ -1,91 +1,89 @@
-"use client";
-import { useEffect, useState, useRef } from "react";
-import sendToIgor from "@/lib/sendToIgor";
+import { useEffect, useRef, useState } from "react";
+import { SendHorizonal, Mic } from "lucide-react";
 
-type Message = {
+interface Message {
   role: "user" | "assistant";
   content: string;
-};
-
-const USER_ID = "igor_user_001";
+}
 
 export default function IgorChat() {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isWaiting, setIsWaiting] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setMessages([
-      {
-        role: "assistant",
-        content: "Hola! Aquí estoy para charlar sobre tu negocio. ¿Qué te gustaría saber hoy?",
-      },
-    ]);
-  }, []);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isWaiting) return;
+  const sendMessage = async () => {
+    if (!input.trim()) return;
 
-    const newMessages: Message[] = [...messages, { role: "user", content: input }];
+    const newMessages = [...messages, { role: "user", content: input }];
     setMessages(newMessages);
     setInput("");
     setIsWaiting(true);
 
     try {
-      const reply = await sendToIgor(USER_ID, input);
-      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "Ocurrió un error. Intentá de nuevo." },
-      ]);
+      const res = await fetch("https://manuachinelli.app.n8n.cloud/webhook/d6a72405-e6de-4e91-80da-9219b57633dd", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: "igor_user_001",
+          message: input,
+        }),
+      });
+
+      const data = await res.json();
+      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+    } catch (err) {
+      setMessages((prev) => [...prev, { role: "assistant", content: "Ocurrió un error. Intentá de nuevo." }]);
     } finally {
       setIsWaiting(false);
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
-        {messages.map((msg, idx) => (
+    <div className="flex flex-col h-screen bg-black text-white p-4">
+      <div className="flex-grow overflow-y-auto space-y-4 pb-32">
+        {messages.map((msg, index) => (
           <div
-            key={idx}
-            className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+            key={index}
+            className={`max-w-lg px-4 py-2 rounded-2xl w-fit break-words ${
               msg.role === "user"
-                ? "bg-blue-700 text-white self-end ml-auto"
-                : "bg-gray-800 text-white self-start"
+                ? "bg-blue-600 self-end text-right"
+                : "bg-neutral-800 self-start text-left"
             }`}
           >
             {msg.content}
           </div>
         ))}
         {isWaiting && (
-          <div className="text-sm italic text-gray-400">Igor AI está escribiendo...</div>
+          <div className="text-sm text-neutral-400">Igor está escribiendo...</div>
         )}
-        <div ref={bottomRef} />
+        <div ref={chatEndRef} />
       </div>
 
-      <div className="border-t border-gray-700 p-4 flex items-center gap-2 bg-black">
+      <div className="fixed bottom-4 left-4 right-4 flex items-center gap-2 bg-neutral-900 rounded-full px-4 py-2">
         <input
-          type="text"
-          className="flex-1 bg-black border border-gray-700 rounded-xl px-4 py-2 text-white placeholder-gray-500"
+          className="flex-grow bg-transparent outline-none text-white placeholder-neutral-500"
           placeholder="Escribí tu mensaje..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          disabled={isWaiting}
+          onKeyDown={handleKeyDown}
         />
-        <button
-          onClick={handleSend}
-          disabled={isWaiting}
-          className="bg-white text-black px-4 py-2 rounded-xl text-lg"
-        >
-          ⬆️
+        <button onClick={sendMessage} className="text-white hover:text-blue-400">
+          <SendHorizonal size={20} />
+        </button>
+        <button className="text-white opacity-50 cursor-not-allowed">
+          <Mic size={20} />
         </button>
       </div>
     </div>
