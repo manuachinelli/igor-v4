@@ -1,91 +1,86 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import { SendHorizonal, Mic } from "lucide-react";
-import styles from "./IgorChat.module.css";
+import { useState, useEffect, useRef } from 'react';
+import { Mic, SendHorizontal } from 'lucide-react';
+import './IgorChat.css';
 
 interface Message {
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
 }
 
 export default function IgorChat() {
-  const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || isWaiting) return;
 
-    const newMessages: Message[] = [...messages, { role: "user", content: input }];
+    const newMessages = [...messages, { role: 'user', content: input }];
     setMessages(newMessages);
-    setInput("");
+    setInput('');
     setIsWaiting(true);
 
     try {
-      const res = await fetch("https://manuachinelli.app.n8n.cloud/webhook/d6a72405-e6de-4e91-80da-9219b57633dd", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: "igor_user_001",
-          message: input,
-        }),
+      const res = await fetch('https://manuachinelli.app.n8n.cloud/webhook/d6a72405-e6de-4e91-80da-921b957633dd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input, userId: 'igor_user_001' }),
       });
 
       const data = await res.json();
-      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-    } catch (err) {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Ocurrió un error. Intentá de nuevo." }]);
+      const reply = data.reply || 'Ocurrió un error. Intentá de nuevo.';
+
+      setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
+    } catch (error) {
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Error al contactar con Igor.' }]);
     } finally {
       setIsWaiting(false);
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   return (
-    <div className={styles.chatContainer}>
-      <div className={styles.messagesContainer}>
+    <div className="chatContainer">
+      <div className="messagesContainer">
         {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`${styles.messageBubble} ${msg.role === "user" ? styles.userBubble : styles.assistantBubble}`}
-          >
-            {msg.content}
+          <div key={index} className={`messageWrapper ${msg.role === 'user' ? 'userWrapper' : 'assistantWrapper'}`}>
+            <div className={`messageBubble ${msg.role === 'user' ? 'userBubble' : 'assistantBubble'}`}>
+              {msg.content}
+            </div>
           </div>
         ))}
-        {isWaiting && <div className={styles.waiting}>Igor está escribiendo...</div>}
-        <div ref={chatEndRef} />
+        <div ref={messagesEndRef} />
       </div>
 
-      <div className={styles.inputSection}>
-        <div className={styles.inputBox}>
+      <div className="inputSection">
+        <div className="inputBox">
           <input
-            className={styles.input}
+            className="input"
+            type="text"
             placeholder="Escribí tu mensaje..."
             value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && sendMessage()}
             disabled={isWaiting}
           />
-          <button onClick={sendMessage} className={styles.iconButton} disabled={isWaiting}>
-            <SendHorizonal size={18} />
+          <button
+            className={`iconButton ${isWaiting ? 'disabled' : ''}`}
+            onClick={sendMessage}
+            disabled={isWaiting}
+          >
+            <SendHorizontal size={18} />
           </button>
-          <button className={`${styles.iconButton} ${styles.disabled}`}>
+          <button className="iconButton disabled">
             <Mic size={18} />
           </button>
         </div>
-        <div className={styles.status}>Estás hablando con Igor v1.0.0</div>
+        <div className="status">Estás hablando con Igor v1.0.0</div>
       </div>
     </div>
   );
