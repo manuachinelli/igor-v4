@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import styles from './IgorChat.module.css';
 import { Mic, SendHorizonal } from 'lucide-react';
 
@@ -9,7 +9,11 @@ interface Message {
   content: string;
 }
 
-export default function IgorChat() {
+export interface IgorChatHandle {
+  resetChat: () => void;
+}
+
+const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isWaiting, setIsWaiting] = useState(false);
@@ -53,6 +57,14 @@ export default function IgorChat() {
       setIsWaiting(false);
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    resetChat() {
+      setMessages([]);
+      setInput('');
+      setIsWaiting(false);
+    }
+  }));
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -105,5 +117,6 @@ export default function IgorChat() {
       </div>
     </div>
   );
-}
+});
 
+export default IgorChat;
