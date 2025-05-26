@@ -5,7 +5,7 @@ import styles from './styles.module.css'
 import Image from 'next/image'
 import FlowModal from '@/components/FlowModal'
 
-const flows = [
+const flowsData = [
   {
     id: 1,
     name: 'Ordenes de pago a excel',
@@ -21,12 +21,12 @@ const flows = [
     platforms: ['crm', 'email'],
     stats24h: 12,
     stats30d: 90
-  },
-  // Agregá más si querés
+  }
 ]
 
 export default function FlowsPage() {
-  const [selectedFlow, setSelectedFlow] = useState(null)
+  const [flows, setFlows] = useState(flowsData)
+  const [selectedFlow, setSelectedFlow] = useState<any>(null)
 
   const handleOpenFlow = (flow: any) => {
     setSelectedFlow(flow)
@@ -37,7 +37,9 @@ export default function FlowsPage() {
   }
 
   const handleSaveFlow = (updatedFlow: any) => {
-    console.log('Flow guardado:', updatedFlow)
+    setFlows((prev) =>
+      prev.map((f) => (f.id === updatedFlow.id ? updatedFlow : f))
+    )
     setSelectedFlow(updatedFlow)
   }
 
@@ -58,21 +60,30 @@ export default function FlowsPage() {
       </div>
 
       <p className={styles.solicitarTexto}>Solicitar un nuevo flow</p>
-      <button className={styles.addButton} onClick={() => handleOpenFlow({
-        id: null,
-        name: 'Nuevo Flow',
-        description: '',
-        platforms: [],
-        stats24h: 0,
-        stats30d: 0
-      })}>+</button>
+      <button
+        className={styles.addButton}
+        onClick={() =>
+          handleOpenFlow({
+            id: null,
+            name: 'Nuevo Flow',
+            description: '',
+            platforms: [],
+            stats24h: 0,
+            stats30d: 0
+          })
+        }
+      >
+        +
+      </button>
 
-      <FlowModal
-        isOpen={!!selectedFlow}
-        onClose={handleCloseModal}
-        flow={selectedFlow || {}}
-        onSave={handleSaveFlow}
-      />
+      {selectedFlow && (
+        <FlowModal
+          isOpen={true}
+          onClose={handleCloseModal}
+          flow={selectedFlow}
+          onSave={handleSaveFlow}
+        />
+      )}
     </div>
   )
 }
