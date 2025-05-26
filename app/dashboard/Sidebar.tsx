@@ -9,7 +9,7 @@ export default function Sidebar() {
   const links = [
     { href: '/dashboard', icon: '/sidebar-icons/home.png', alt: 'Inicio' },
     { href: '/dashboard/chat', icon: '/sidebar-icons/chat.png', alt: 'Chat' },
-    { href: '/dashboard/automation', icon: '/sidebar-icons/automation.png', alt: 'Automation' },
+    { href: '/dashboard/key', icon: '/sidebar-icons/automation.png', alt: 'Key' },
     { href: '/dashboard/flows', icon: '/sidebar-icons/flows.png', alt: 'Flows' }
   ]
 
