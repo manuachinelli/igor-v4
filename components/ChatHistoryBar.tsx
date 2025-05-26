@@ -1,52 +1,32 @@
 'use client';
 
 import { useState } from 'react';
-import styles from './ChatHistoryBar.module.css';
 import Image from 'next/image';
+import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import styles from './ChatHistoryBar.module.css';
 
-export default function ChatHistoryBar() {
-  const [isOpen, setIsOpen] = useState(true);
-  const [chats, setChats] = useState<string[]>([]);
-  const [selected, setSelected] = useState<number | null>(null);
-
-  const handleNewChat = () => {
-    if (selected !== null) {
-      const currentTitle = `Chat ${chats.length + 1}`;
-      setChats([...chats, currentTitle]);
-    }
-    setSelected(null);
-  };
+export default function ChatHistoryBar({ onNewChat }: { onNewChat: () => void }) {
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className={`${styles.historyBar} ${isOpen ? styles.open : styles.closed}`}>
-      <div className={styles.header}>
-        <Image src="/sidebar-icons/chat.png" alt="Igor Chat" width={48} height={48} />
-        <button className={styles.toggleButton} onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? '←' : '→'}
-        </button>
-      </div>
-
-      {isOpen && (
-        <div className={styles.chatList}>
-          {chats.map((title, index) => (
-            <div
-              key={index}
-              className={`${styles.chatItem} ${selected === index ? styles.selected : ''}`}
-              onClick={() => setSelected(index)}
-            >
-              {title}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {isOpen && (
-        <div className={styles.newChatSection}>
-          <button className={styles.newChatButton} onClick={handleNewChat}>
-            ＋
+    <div className={`${styles.chatHistoryBar} ${collapsed ? styles.collapsed : ''}`}>
+      <div className={styles.topSection}>
+        <Image
+          src="/sidebar-icons/chat.png"
+          alt="Chat"
+          width={48}
+          height={48}
+          className={styles.logo}
+        />
+        {!collapsed && (
+          <button className={styles.iconButton} onClick={onNewChat}>
+            <Plus size={20} />
           </button>
-        </div>
-      )}
+        )}
+      </div>
+      <button className={styles.toggleButton} onClick={() => setCollapsed(!collapsed)}>
+        {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+      </button>
     </div>
   );
 }
