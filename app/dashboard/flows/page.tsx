@@ -21,6 +21,38 @@ const flowsData = [
     platforms: ['crm', 'email'],
     stats24h: 12,
     stats30d: 90
+  },
+  {
+    id: 3,
+    name: 'Stock x Whatsapp',
+    description: 'Envía stock actualizado a clientes por WhatsApp.',
+    platforms: ['whatsapp'],
+    stats24h: 20,
+    stats30d: 105
+  },
+  {
+    id: 4,
+    name: 'Nuevas oportunidades',
+    description: 'Crea oportunidades automáticamente desde formularios.',
+    platforms: ['crm'],
+    stats24h: 18,
+    stats30d: 83
+  },
+  {
+    id: 5,
+    name: 'Recordatorio de pagos',
+    description: 'Envía alertas de vencimientos por mail.',
+    platforms: ['email'],
+    stats24h: 7,
+    stats30d: 49
+  },
+  {
+    id: 6,
+    name: 'Feedback post compra',
+    description: 'Pide feedback después de cada venta.',
+    platforms: ['email'],
+    stats24h: 4,
+    stats30d: 21
   }
 ]
 
