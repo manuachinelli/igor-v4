@@ -17,12 +17,12 @@
 }
 
 .flowButton {
-  background-color: #2E2E2E; /* gris unificado */
+  background-color: #2E2E2E;
   color: white;
   font-weight: bold;
   border: none;
   border-radius: 20px;
-  padding: 40px 60px; /* más grande */
+  padding: 40px 60px;
   cursor: pointer;
   font-size: 22px;
   transition: background-color 0.2s;
@@ -66,9 +66,11 @@
 
 .modalContent {
   background-color: white;
-  border-radius: 12px;
-  padding: 24px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  border-radius: 16px;
+  padding: 32px;
+  width: 800px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
 }
