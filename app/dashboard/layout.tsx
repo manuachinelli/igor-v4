@@ -6,12 +6,16 @@ import { usePathname } from 'next/navigation';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const isChat = pathname === '/dashboard/chat';
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
       <Sidebar />
-      {pathname === '/dashboard/chat' && <ChatHistoryBar onNewChat={() => {}} />}
-      <div style={{ flexGrow: 1 }}>
+      {isChat && <ChatHistoryBar onNewChat={() => {}} />}
+      <div style={{
+        flexGrow: 1,
+        paddingLeft: isChat ? 0 : '80px'
+      }}>
         {children}
       </div>
     </div>
