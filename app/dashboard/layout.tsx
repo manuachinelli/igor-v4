@@ -1,12 +1,14 @@
-import Sidebar from './Sidebar'
+import Sidebar from './Sidebar';
+import ChatHistoryBar from '@/components/ChatHistoryBar';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar />
-      <div style={{ flexGrow: 1, paddingLeft: '80px' }}>
+      <ChatHistoryBar />
+      <div style={{ flexGrow: 1 }}>
         {children}
       </div>
     </div>
-  )
+  );
 }
