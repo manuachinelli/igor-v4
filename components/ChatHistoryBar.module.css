@@ -6,8 +6,12 @@
   flex-direction: column;
   align-items: center;
   padding-top: 16px;
-  position: relative;
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
   transition: width 0.3s;
+  z-index: 10;
 }
 
 .collapsed {
@@ -38,7 +42,7 @@
 .toggleButton {
   position: absolute;
   top: 16px;
-  right: -12px;
+  left: -12px; /* Cambiado de right a left porque ahora está a la derecha */
   background: none;
   border: none;
   color: white;
