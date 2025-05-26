@@ -4,6 +4,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center; /* centra verticalmente */
+  height: 100vh;           /* ocupa toda la pantalla */
 }
 
 .metrics {
