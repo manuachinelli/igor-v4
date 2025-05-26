@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
       <Sidebar />
-      {pathname === '/dashboard/chat' && <ChatHistoryBar />}
+      {pathname === '/dashboard/chat' && <ChatHistoryBar onNewChat={() => {}} />}
       <div style={{ flexGrow: 1 }}>
         {children}
       </div>
