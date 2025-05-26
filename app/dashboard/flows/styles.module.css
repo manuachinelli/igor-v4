@@ -13,29 +13,30 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px 40px;
+  gap: 32px 64px;
 }
 
 .flowButton {
-  background-color: #666;
+  background-color: #2E2E2E; /* gris unificado */
   color: white;
   font-weight: bold;
   border: none;
-  border-radius: 16px;
-  padding: 20px 30px;
+  border-radius: 20px;
+  padding: 40px 60px; /* más grande */
   cursor: pointer;
-  font-size: 16px;
+  font-size: 22px;
   transition: background-color 0.2s;
+  min-width: 300px;
 }
 
 .flowButton:hover {
-  background-color: #555;
+  background-color: #3a3a3a;
 }
 
 .solicitarTexto {
-  margin-top: 40px;
-  font-size: 14px;
-  color: #333;
+  margin-top: 48px;
+  font-size: 18px;
+  color: #fff;
 }
 
 .addButton {
@@ -43,8 +44,8 @@
   background-color: #888;
   color: white;
   font-size: 32px;
-  width: 60px;
-  height: 60px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
