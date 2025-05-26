@@ -1,15 +1,18 @@
-'use client';
+'use client'
 
-import Sidebar from './Sidebar';
-import ChatHistoryBar from '@/components/ChatHistoryBar';
-import { usePathname } from 'next/navigation';
+import Sidebar from './Sidebar'
+import ChatHistoryBar from '@/components/ChatHistoryBar'
+import { usePathname } from 'next/navigation'
+import { Inter } from 'next/font/google'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const isChat = pathname === '/dashboard/chat';
+  const pathname = usePathname()
+  const isChat = pathname === '/dashboard/chat'
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
+    <div className={inter.className} style={{ display: 'flex', height: '100vh' }}>
       <Sidebar />
       {isChat && <ChatHistoryBar onNewChat={() => {}} />}
       <div style={{
@@ -19,5 +22,5 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {children}
       </div>
     </div>
-  );
+  )
 }
