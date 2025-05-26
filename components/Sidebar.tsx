@@ -1,50 +1,47 @@
-.chatHistoryBar {
-  width: 180px;
-  background-color: #111;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 16px;
-  position: fixed;
-  right: 0;
-  top: 0;
-  height: 100vh;
-  transition: width 0.3s;
-  z-index: 10;
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import './Sidebar.css'
+
+const menuItems = [
+  { href: '/dashboard', icon: '/sidebar-icons/inicio.png', alt: 'Inicio' },
+  { href: '/dashboard/chats', icon: '/sidebar-icons/chat.png', alt: 'Chat' },
+  { href: '/dashboard/automation', icon: '/sidebar-icons/auto.png', alt: 'Automation' },
+  { href: '/dashboard/flows', icon: '/sidebar-icons/flows.png', alt: 'Flows' },
+]
+
+const billingItem = {
+  href: '/dashboard/billing',
+  icon: '/sidebar-icons/billing.png',
+  alt: 'Billing',
 }
 
-.collapsed {
-  width: 32px;
-}
+export default function Sidebar() {
+  const pathname = usePathname()
 
-.topSection {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo {
-  width: 64px;
-  height: 64px;
-  object-fit: contain;
-  margin-bottom: 8px;
-}
-
-.iconButton {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-
-.toggleButton {
-  position: absolute;
-  top: 16px;
-  left: -12px; /* Cambiado de right a left porque ahora está a la derecha */
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
+  return (
+    <div className="sidebar">
+      <div className="sidebar-top">
+        {menuItems.map((item) => (
+          <Link href={item.href} key={item.href}>
+            <img
+              src={item.icon}
+              alt={item.alt}
+              className={`icon ${pathname === item.href ? 'active' : ''}`}
+            />
+          </Link>
+        ))}
+      </div>
+      <div className="sidebar-bottom">
+        <Link href={billingItem.href}>
+          <img
+            src={billingItem.icon}
+            alt={billingItem.alt}
+            className={`icon ${pathname === billingItem.href ? 'active' : ''}`}
+          />
+        </Link>
+      </div>
+    </div>
+  )
 }
