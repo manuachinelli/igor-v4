@@ -2,16 +2,15 @@
 
 import Sidebar from './Sidebar';
 import ChatHistoryBar from '@/components/ChatHistoryBar';
+import { usePathname } from 'next/navigation';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const handleNewChat = () => {
-    window.location.reload();
-  };
+  const pathname = usePathname();
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
       <Sidebar />
-      <ChatHistoryBar onNewChat={handleNewChat} />
+      {pathname === '/dashboard/chat' && <ChatHistoryBar />}
       <div style={{ flexGrow: 1 }}>
         {children}
       </div>
