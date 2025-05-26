@@ -7,7 +7,7 @@ import './Sidebar.css'
 const menuItems = [
   { href: '/dashboard', icon: '/sidebar-icons/inicio.png', alt: 'Inicio' },
   { href: '/dashboard/chats', icon: '/sidebar-icons/chat.png', alt: 'Chat' },
-  { href: '/dashboard/automation', icon: '/sidebar-icons/auto.png', alt: 'Automation' },
+  { href: '/dashboard/keys', icon: '/sidebar-icons/auto.png', alt: 'Keys' },
   { href: '/dashboard/flows', icon: '/sidebar-icons/flows.png', alt: 'Flows' },
 ]
 
