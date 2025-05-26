@@ -1,12 +1,11 @@
 .dashboard-container {
   margin-left: 80px;
   padding: 2rem;
-  padding-top: 3rem;          /* mueve el contenido un poco hacia arriba */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* alinea hacia arriba */
-  height: 100vh;
+  justify-content: center; /* centra verticalmente */
+  height: 100vh;           /* ocupa toda la pantalla */
 }
 
 .metrics {
