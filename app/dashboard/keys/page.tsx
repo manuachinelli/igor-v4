@@ -24,10 +24,10 @@ export default function KeysPage() {
 
   return (
     <div className={styles.container}>
-      <button className={styles.addButton} onClick={() => handleOpenModal(null)}>
-        +
+      <div className={styles.addContainer}>
+        <button className={styles.addButton} onClick={() => handleOpenModal(null)}>+</button>
         <span className={styles.addText}>Add credentials</span>
-      </button>
+      </div>
 
       <div className={styles.grid}>
         {mockCredentials.map((name, index) => (
@@ -42,7 +42,7 @@ export default function KeysPage() {
       </div>
 
       <div className={styles.lockContainer}>
-        <img src="/sidebar-icons/lock-yellow.png" alt="lock" className={styles.lockIcon} />
+        <img src="/sidebar-icons/automation.png" alt="lock" className={styles.lockIcon} />
         <p className={styles.lockText}>Todas las keys están encriptadas by Igor</p>
       </div>
 
@@ -50,7 +50,6 @@ export default function KeysPage() {
         <div className={styles.modalOverlay} onClick={handleCloseModal}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h2>{selectedCredential ? `Edit ${selectedCredential}` : 'Add Credential'}</h2>
-            {/* Acá va el contenido dinámico del popup más adelante */}
             <p style={{ color: '#999', fontSize: 14 }}>Contenido en blanco por ahora</p>
             <button onClick={handleCloseModal} className={styles.closeButton}>Cerrar</button>
           </div>
