@@ -10,7 +10,7 @@ export default function Sidebar() {
     { href: '/dashboard', icon: '/sidebar-icons/home.png', alt: 'Inicio' },
     { href: '/dashboard/chat', icon: '/sidebar-icons/chat.png', alt: 'Chat' },
     { href: '/dashboard/flows', icon: '/sidebar-icons/flows.png', alt: 'Flows' },
-    { href: '/dashboard/Keys', icon: '/sidebar-icons/automation.png', alt: 'Keys' }
+    { href: '/dashboard/keys', icon: '/sidebar-icons/automation.png', alt: 'Keys' }
     
   ]
 
