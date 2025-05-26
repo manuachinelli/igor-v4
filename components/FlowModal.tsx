@@ -2,12 +2,11 @@
 
 import { useState } from 'react'
 import styles from './FlowModal.module.css'
-import { FiEdit3 } from 'react-icons/fi'
 
 type Flow = {
   name: string
   description: string
-  platforms: string[] // por ahora ignoramos esto visualmente
+  platforms: string[]
   stats24h: number
   stats30d: number
 }
@@ -44,10 +43,12 @@ export default function FlowModal({ isOpen, onClose, flow, onSave }: Props) {
           ) : (
             <h2 className={styles.title}>
               {name}
-              <FiEdit3
-                className={styles.editIcon}
+              <span
                 onClick={() => setIsEditing(true)}
-              />
+                style={{ cursor: 'pointer', fontSize: 18, marginLeft: 8 }}
+              >
+                ✏️
+              </span>
             </h2>
           )}
           <hr className={styles.separator} />
