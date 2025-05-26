@@ -46,7 +46,7 @@
   grid-template-columns: repeat(7, 1fr);
   gap: 32px;
   justify-items: center;
-  margin-top: 100px;
+  margin-top: 160px; /* antes 100px */
 }
 
 .credentialBubble {
@@ -69,13 +69,13 @@
 
 .lockContainer {
   text-align: center;
-  margin-top: 120px;
+  margin-top: 140px; /* antes 120px */
 }
 
 .lockIcon {
   width: 120px;
   height: 120px;
-  margin-bottom: 8px;
+  margin-bottom: 4px; /* antes 12px */
 }
 
 .lockText {
