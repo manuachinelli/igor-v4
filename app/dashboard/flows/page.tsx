@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import styles from './styles.module.css'
 import Image from 'next/image'
+import { Inter } from 'next/font/google'
+
+const inter = Inter({ subsets: ['latin'] })
 
 const flows = [
   { id: 1, name: 'Ordenes de pago a excel' },
@@ -23,7 +26,7 @@ export default function FlowsPage() {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${inter.className}`}>
       <Image src="/sidebar-icons/flows.png" alt="Flows Logo" width={80} height={80} className={styles.logo} />
       
       <div className={styles.grid}>
