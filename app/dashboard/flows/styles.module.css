@@ -16,7 +16,8 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 32px 64px;
+  gap: 32px 40px;
+  margin-bottom: 32px;
 }
 
 .flowButton {
@@ -29,7 +30,7 @@
   cursor: pointer;
   font-size: 22px;
   transition: background-color 0.2s;
-  min-width: 300px;
+  min-width: 280px;
 }
 
 .flowButton:hover {
@@ -37,7 +38,7 @@
 }
 
 .solicitarTexto {
-  margin-top: 48px;
+  margin-top: 24px;
   font-size: 18px;
   font-weight: 400;
   color: #fff;
