@@ -27,10 +27,13 @@ export default function IgorChat() {
     setIsWaiting(true);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch('https://manuachinelli.app.n8n.cloud/webhook/d6a72405-e6de-4e91-80da-9219b57633dd', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({
+          message: input,
+          userId: 'igor_user_001',
+        }),
       });
 
       const data = await res.json();
@@ -42,6 +45,10 @@ export default function IgorChat() {
       }
     } catch (error) {
       console.error('Error al enviar mensaje:', error);
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: 'Error al contactar con Igor.' },
+      ]);
     } finally {
       setIsWaiting(false);
     }
@@ -68,7 +75,7 @@ export default function IgorChat() {
             {msg.content}
           </div>
         ))}
-        {isWaiting && <div className={styles.waiting}>...</div>}
+        {isWaiting && <div className={styles.waiting}>Igor está escribiendo...</div>}
         <div ref={messagesEndRef} />
       </div>
 
@@ -99,3 +106,4 @@ export default function IgorChat() {
     </div>
   );
 }
+
