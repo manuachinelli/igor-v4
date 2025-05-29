@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import './page.css'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -10,11 +11,17 @@ export default function SignupPage() {
   const [company, setCompany] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [repeatPassword, setRepeatPassword] = useState('')
   const [error, setError] = useState('')
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    if (password !== repeatPassword) {
+      setError('Las contraseñas no coinciden.')
+      return
+    }
 
     const { data: signupData, error: signupError } = await supabase.auth.signUp({
       email,
@@ -45,26 +52,20 @@ export default function SignupPage() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: 'black',
-      color: 'white',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '2rem'
-    }}>
-      <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', fontWeight: 'bold' }}>Crear cuenta</h2>
-      <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '90%', maxWidth: '300px' }}>
-        <input type="text" placeholder="Nombre completo" value={fullName} onChange={e => setFullName(e.target.value)} required />
-        <input type="text" placeholder="Empresa" value={company} onChange={e => setCompany(e.target.value)} required />
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Contraseña" value={password} onChange={e => setPassword(e.target.value)} required />
-        <button type="submit" style={{ backgroundColor: 'white', color: 'black', padding: '0.6rem', fontWeight: 'bold' }}>Registrarme</button>
-        {error && <p style={{ color: 'red', fontSize: '0.9rem' }}>{error}</p>}
-      </form>
+    <div className="signup-container">
+      <div className="signup-box">
+        <img src="/sidebar-icons/home.png" alt="Logo" className="signup-logo" />
+        <h2 className="signup-title">Crear cuenta</h2>
+        <form onSubmit={handleSignup} className="signup-form">
+          <input type="text" placeholder="Nombre completo" value={fullName} onChange={e => setFullName(e.target.value)} required />
+          <input type="text" placeholder="Empresa" value={company} onChange={e => setCompany(e.target.value)} required />
+          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+          <input type="password" placeholder="Contraseña" value={password} onChange={e => setPassword(e.target.value)} required />
+          <input type="password" placeholder="Repetir contraseña" value={repeatPassword} onChange={e => setRepeatPassword(e.target.value)} required />
+          <button type="submit">Registrarme</button>
+          {error && <p className="signup-error">{error}</p>}
+        </form>
+      </div>
     </div>
   )
 }
-
