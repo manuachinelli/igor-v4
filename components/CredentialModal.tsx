@@ -9,7 +9,6 @@ export type Credential = {
   user_id: string
   app_name: string
   cred_username: string
-  cred_password?: string
 }
 
 type Props = {
@@ -20,7 +19,6 @@ type Props = {
 export default function CredentialModal({ credential, onClose }: Props) {
   const [appName, setAppName] = useState(credential?.app_name ?? '')
   const [username, setUsername] = useState(credential?.cred_username ?? '')
-  const [password, setPassword] = useState(credential?.cred_password ?? '')
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
@@ -28,20 +26,23 @@ export default function CredentialModal({ credential, onClose }: Props) {
     e.preventDefault()
     setSubmitting(true)
     setErrorMsg(null)
+
     try {
+      // 1) sesión
       const {
         data: { session },
         error: sessionError,
       } = await supabase.auth.getSession()
       if (sessionError || !session) throw new Error('No autenticado')
 
+      // 2) payload SIN cred_password
       const payload = {
         user_id: session.user.id,
         app_name: appName,
         cred_username: username,
-        cred_password: password,
       }
 
+      // 3) insert o update
       const query = credential
         ? supabase.from('credentials').update(payload).eq('id', credential.id)
         : supabase.from('credentials').insert([payload])
@@ -71,7 +72,7 @@ export default function CredentialModal({ credential, onClose }: Props) {
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
         <form className={styles.form} onSubmit={handleSubmit}>
-          {/* ← AQUÍ REINGRESAMOS LOS CAMPOS */}
+          {/* --- SOLO DOS CAMPOS: aplicación y usuario --- */}
           <div className={styles.field}>
             <label htmlFor="app" className={styles.label}>Aplicación</label>
             <input
@@ -94,19 +95,6 @@ export default function CredentialModal({ credential, onClose }: Props) {
             />
           </div>
 
-          <div className={styles.field}>
-            <label htmlFor="pass" className={styles.label}>Clave</label>
-            <input
-              id="pass"
-              type="password"
-              className={styles.input}
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required={!credential}
-            />
-          </div>
-
-          {/* botones */}
           <div className={styles.actions}>
             <button
               type="button"
