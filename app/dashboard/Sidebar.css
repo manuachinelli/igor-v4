@@ -1,7 +1,10 @@
 /* Sidebar.css */
 
+/* 1) Fijar el sidebar a la izquierda */
 .sidebar {
-  position: relative; /* para el menú desplegable */
+  position: fixed;
+  top: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -9,18 +12,20 @@
   padding: 1rem 0.5rem;
   width: 60px;
   height: 100vh;
-  flex-shrink: 0; /* para que no se colapse */
+  z-index: 100; /* sobre otros elementos */
 }
 
+/* Contenedores superior e inferior */
 .sidebar-top,
 .sidebar-bottom {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
+  position: relative; /* para el menú absolute dentro */
 }
 
-/* Íconos de navegación, billing y logout */
+/* Iconos genéricos */
 .icon {
   width: 28px;
   height: 28px;
@@ -37,19 +42,7 @@
   opacity: 1;
 }
 
-/* Botón de logout (hereda .icon) */
-.logout-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  margin-top: 0.5rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Botón “My Account” */
+/* Botón “My Account” (usa iconos) */
 .account-btn {
   background: none;
   border: none;
@@ -57,23 +50,23 @@
   cursor: pointer;
 }
 
-/* Contenedor del menú desplegable */
+/* → Menú desplegable situado justo a la derecha */
 .account-menu {
   position: absolute;
-  bottom: 70px;            /* ajusta según altura de sidebar-bottom */
-  left: 50%;
-  transform: translateX(-50%);
+  left: 100%;      /* justo al lado derecho */
+  bottom: 0;       /* alineado con el icono */
+  margin-left: 8px;
   background-color: #222;
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   padding: 0.5rem 0;
   display: flex;
   flex-direction: column;
   min-width: 140px;
-  z-index: 10;
+  z-index: 200;
 }
 
-/* Cada opción del menú */
+/* Opciones del menú */
 .account-menu .menu-item {
   padding: 0.5rem 1rem;
   color: #eee;
@@ -86,8 +79,7 @@
   background: #333;
 }
 
-/* Estilo específico para la opción de logout */
+/* Estilo distintivo para “Log out” */
 .account-menu .logout-item {
   color: #f55;
 }
-
