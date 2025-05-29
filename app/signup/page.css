@@ -1,6 +1,6 @@
 .signup-container {
-  background-color: black;
-  color: white;
+  background-color: white;
+  color: black;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -38,8 +38,8 @@
 
 .signup-form input {
   padding: 0.6rem;
-  border-radius: 6px;
-  border: 1px solid #999;
+  border-radius: 4px;
+  border: 1px solid #000;
   background-color: white;
   color: black;
   font-size: 0.95rem;
@@ -47,12 +47,12 @@
 
 .signup-form button {
   padding: 0.6rem;
-  background-color: white;
-  color: black;
+  background-color: black;
+  color: white;
   border: none;
   font-weight: bold;
   font-size: 1rem;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
@@ -61,4 +61,15 @@
   font-size: 0.85rem;
   text-align: center;
   margin-top: 0.5rem;
+}
+
+.signup-footer {
+  margin-top: 0.8rem;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.signup-footer a {
+  color: #0070f3;
+  text-decoration: underline;
 }
