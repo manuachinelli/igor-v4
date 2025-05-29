@@ -48,7 +48,7 @@ export default function KeysPage() {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Tus credenciales</h2>
+      <h2 className={styles.heading}></h2>
 
       <div className={styles.grid}>
         {creds.map((c) => (
