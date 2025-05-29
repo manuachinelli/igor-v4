@@ -7,9 +7,9 @@ import { supabase } from '@/lib/supabaseClient'
 import './Sidebar.css'
 
 const menuItems = [
-  { href: '/dashboard', icon: '/sidebar-icons/inicio.png', alt: 'Inicio' },
-  { href: '/dashboard/chat', icon: '/sidebar-icons/chat.png', alt: 'Chat' },
-  { href: '/dashboard/keys', icon: '/sidebar-icons/auto.png', alt: 'Keys' },
+  { href: '/dashboard', icon: '/sidebar-icons/home.png',       alt: 'Inicio' },
+  { href: '/dashboard/chat', icon: '/sidebar-icons/chat.png',   alt: 'Chat' },
+  { href: '/dashboard/keys', icon: '/sidebar-icons/automation.png', alt: 'Keys' },
   { href: '/dashboard/flows', icon: '/sidebar-icons/flows.png', alt: 'Flows' },
 ]
 
@@ -26,7 +26,7 @@ export default function Sidebar() {
   return (
     <div className="sidebar">
       <div className="sidebar-top">
-        {menuItems.map(item => (
+        {menuItems.map((item) => (
           <Link href={item.href} key={item.href}>
             <img
               src={item.icon}
@@ -38,11 +38,11 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-bottom">
-        {/* Botón “My Account” */}
+        {/* My Account toggle */}
         <button
           type="button"
-          onClick={() => setShowAccountMenu(v => !v)}
           className="account-btn"
+          onClick={() => setShowAccountMenu((v) => !v)}
           aria-label="My Account"
         >
           <img
@@ -67,5 +67,5 @@ export default function Sidebar() {
         )}
       </div>
     </div>
-  )
+)
 }
