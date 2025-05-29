@@ -1,47 +1,66 @@
-.signup-container {
-  background-color: white;
-  color: black;
-  min-height: 100vh;
+.signup-wrapper {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 100vh;
   font-family: 'Inter', sans-serif;
 }
 
-.signup-box {
+/* Panel izquierdo negro */
+.signup-left {
+  flex: 1;
+  background-color: black;
+  color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.2rem;
-  width: 100%;
-  max-width: 320px;
-  padding: 2rem;
+  justify-content: center;
 }
 
-.signup-logo {
-  width: 64px;
-  height: auto;
+.signup-logo-final {
+  width: 100px;
+  filter: drop-shadow(0 0 20px white);
+  margin-bottom: 1rem;
 }
 
 .signup-title {
-  font-size: 1.7rem;
+  font-size: 2rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+}
+
+/* Panel derecho blanco */
+.signup-right {
+  flex: 1;
+  background-color: white;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.signup-logo-small {
+  width: 60px;
+  margin-bottom: 1rem;
+}
+
+.signup-form-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
 }
 
 .signup-form {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  width: 100%;
+  width: 90%;
+  max-width: 300px;
 }
 
 .signup-form input {
   padding: 0.6rem;
-  border-radius: 4px;
   border: 1px solid #000;
-  background-color: white;
-  color: black;
+  border-radius: 4px;
   font-size: 0.95rem;
 }
 
@@ -60,11 +79,10 @@
   color: red;
   font-size: 0.85rem;
   text-align: center;
-  margin-top: 0.5rem;
 }
 
 .signup-footer {
-  margin-top: 0.8rem;
+  margin-top: 1rem;
   font-size: 0.85rem;
   text-align: center;
 }
