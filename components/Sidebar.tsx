@@ -1,12 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabaseClient'
 import './Sidebar.css'
 
 const menuItems = [
   { href: '/dashboard', icon: '/sidebar-icons/inicio.png', alt: 'Inicio' },
-  { href: '/dashboard/chats', icon: '/sidebar-icons/chat.png', alt: 'Chat' },
+  { href: '/dashboard/chat', icon: '/sidebar-icons/chat.png', alt: 'Chat' },
   { href: '/dashboard/keys', icon: '/sidebar-icons/auto.png', alt: 'Keys' },
   { href: '/dashboard/flows', icon: '/sidebar-icons/flows.png', alt: 'Flows' },
 ]
@@ -19,11 +20,17 @@ const billingItem = {
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.replace('/')  // vuelve al login
+  }
 
   return (
     <div className="sidebar">
       <div className="sidebar-top">
-        {menuItems.map((item) => (
+        {menuItems.map(item => (
           <Link href={item.href} key={item.href}>
             <img
               src={item.icon}
@@ -33,6 +40,7 @@ export default function Sidebar() {
           </Link>
         ))}
       </div>
+
       <div className="sidebar-bottom">
         <Link href={billingItem.href}>
           <img
@@ -41,6 +49,20 @@ export default function Sidebar() {
             className={`icon ${pathname === billingItem.href ? 'active' : ''}`}
           />
         </Link>
+
+        {/* Botón de logout */}
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="icon logout-btn"
+          aria-label="Cerrar sesión"
+        >
+          <img
+            src="/sidebar-icons/logout.png"
+            alt="Logout"
+            className="icon"
+          />
+        </button>
       </div>
     </div>
   )
