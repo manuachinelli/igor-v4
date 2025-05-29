@@ -1,6 +1,5 @@
 /* Sidebar.css */
 
-/* 1) Fijar el sidebar a la izquierda */
 .sidebar {
   position: fixed;
   top: 0;
@@ -12,20 +11,18 @@
   padding: 1rem 0.5rem;
   width: 60px;
   height: 100vh;
-  z-index: 100; /* sobre otros elementos */
+  z-index: 100;
 }
 
-/* Contenedores superior e inferior */
 .sidebar-top,
 .sidebar-bottom {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
-  position: relative; /* para el menú absolute dentro */
+  position: relative; /* para que account-menu se posicione */
 }
 
-/* Iconos genéricos */
 .icon {
   width: 28px;
   height: 28px;
@@ -42,7 +39,7 @@
   opacity: 1;
 }
 
-/* Botón “My Account” (usa iconos) */
+/* Botón “My Account” */
 .account-btn {
   background: none;
   border: none;
@@ -50,15 +47,15 @@
   cursor: pointer;
 }
 
-/* → Menú desplegable situado justo a la derecha */
+/* Menú desplegable junto al botón */
 .account-menu {
   position: absolute;
-  left: 100%;      /* justo al lado derecho */
-  bottom: 0;       /* alineado con el icono */
+  left: 100%;        /* junto al sidebar */
+  bottom: 80px;      /* ajusta para no cortarse */
   margin-left: 8px;
   background-color: #222;
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   padding: 0.5rem 0;
   display: flex;
   flex-direction: column;
@@ -66,7 +63,6 @@
   z-index: 200;
 }
 
-/* Opciones del menú */
 .account-menu .menu-item {
   padding: 0.5rem 1rem;
   color: #eee;
@@ -79,7 +75,7 @@
   background: #333;
 }
 
-/* Estilo distintivo para “Log out” */
+/* Estilo destacado para “Log out” */
 .account-menu .logout-item {
   color: #f55;
 }
