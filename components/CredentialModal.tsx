@@ -1,79 +1,104 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import './CredentialModal.css';
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabaseClient'
+import { useRouter } from 'next/navigation'
+import './CredentialModal.module.css'
 
 type Props = {
-  open: boolean;
-  onClose: () => void;
-  onSave: (app: string, user: string, secret: string) => Promise<void>;
-};
+  credential: {
+    id: string
+    app_name: string
+    cred_username: string
+    cred_secret?: string
+  } | null
+  onClose: () => void
+}
 
-export default function CredentialModal({ open, onClose, onSave }: Props) {
-  const [appName, setAppName] = useState('');
-  const [username, setUsername] = useState('');
-  const [secret, setSecret] = useState('');
-  const [showSecret, setShowSecret] = useState(false);
-  const [saving, setSaving] = useState(false);
+export default function CredentialModal({ credential, onClose }: Props) {
+  const router = useRouter()
+  const isEdit = Boolean(credential)
+  const [app, setApp] = useState(credential?.app_name || '')
+  const [username, setUsername] = useState(credential?.cred_username || '')
+  const [secret, setSecret] = useState(credential?.cred_secret || '')
+  const [showSecret, setShowSecret] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    await onSave(appName.trim(), username.trim(), secret);
-    setSaving(false);
-    // reset form
-    setAppName('');
-    setUsername('');
-    setSecret('');
-    onClose();
-  };
+  // Si cambian las props, recarga el formulario
+  useEffect(() => {
+    setApp(credential?.app_name || '')
+    setUsername(credential?.cred_username || '')
+    setSecret(credential?.cred_secret || '')
+  }, [credential])
 
-  if (!open) return null;
+  const handleSave = async () => {
+    setError('')
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    if (!session) return router.push('/')
+
+    const payload = {
+      user_id: session.user.id,
+      app_name: app,
+      cred_username: username,
+      cred_secret: secret,
+    }
+
+    let res
+    if (isEdit && credential) {
+      res = await supabase
+        .from('credentials')
+        .update(payload)
+        .eq('id', credential.id)
+    } else {
+      res = await supabase.from('credentials').insert([payload])
+    }
+
+    if (res.error) setError(res.error.message)
+    else onClose()
+  }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()}>
-        <h2 className="modal-title">Nueva credencial</h2>
-        <form onSubmit={handleSubmit} className="modal-form">
-          <input
-            type="text"
-            placeholder="Aplicación (ej. Slack)"
-            value={appName}
-            onChange={e => setAppName(e.target.value)}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Usuario de la credencial"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            required
-          />
-          <div className="secret-wrapper">
+    <div className="cm-backdrop" onClick={onClose}>
+      <div className="cm-modal" onClick={(e) => e.stopPropagation()}>
+        <h3>{isEdit ? 'Editar' : 'Nueva'} credencial</h3>
+
+        <label>
+          Aplicación
+          <input value={app} onChange={(e) => setApp(e.target.value)} />
+        </label>
+
+        <label>
+          Usuario
+          <input value={username} onChange={(e) => setUsername(e.target.value)} />
+        </label>
+
+        <label>
+          Clave
+          <div className="cm-secret">
             <input
               type={showSecret ? 'text' : 'password'}
-              placeholder="Secreto / Contraseña"
               value={secret}
-              onChange={e => setSecret(e.target.value)}
-              required
+              onChange={(e) => setSecret(e.target.value)}
             />
             <button
               type="button"
-              className="eye-btn"
-              onClick={() => setShowSecret(v => !v)}
-              aria-label={showSecret ? 'Ocultar' : 'Mostrar'}
+              className="cm-eye"
+              onClick={() => setShowSecret((v) => !v)}
             >
-              {showSecret ? '🙈' : '👁️'}
+              {showSecret ? '🙈' : '👁'}
             </button>
           </div>
-          <button type="submit" className="save-btn" disabled={saving}>
-            {saving ? 'Guardando…' : 'Save'}
-          </button>
-          <button type="button" className="cancel-btn" onClick={onClose}>
-            Cerrar
-          </button>
-        </form>
+        </label>
+
+        {error && <p className="cm-error">{error}</p>}
+
+        <div className="cm-actions">
+          <button onClick={onClose}>Cancelar</button>
+          <button onClick={handleSave}>{isEdit ? 'Guardar' : 'Crear'}</button>
+        </div>
       </div>
     </div>
-  );
+  )
 }
