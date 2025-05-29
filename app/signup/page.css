@@ -35,7 +35,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 0 4rem;
 }
 
 .signup-logo-small {
@@ -53,8 +53,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  width: 90%;
-  max-width: 300px;
+  width: 100%;
+  max-width: 320px;
 }
 
 .signup-form input {
