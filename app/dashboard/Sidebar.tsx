@@ -13,8 +13,6 @@ const menuItems = [
   { href: '/dashboard/flows', icon: '/sidebar-icons/flows.png', alt: 'Flows' },
 ]
 
-// Ya no usamos billingItem directo aquí
-
 export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
@@ -24,8 +22,6 @@ export default function Sidebar() {
     await supabase.auth.signOut()
     router.replace('/')
   }
-
-  const toggleAccountMenu = () => setShowAccountMenu(v => !v)
 
   return (
     <div className="sidebar">
@@ -42,12 +38,12 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-bottom">
-        {/* My Account */}
+        {/* Botón “My Account” */}
         <button
           type="button"
-          className="icon account-btn"
-          onClick={toggleAccountMenu}
-          aria-label="My account"
+          onClick={() => setShowAccountMenu(v => !v)}
+          className="account-btn"
+          aria-label="My Account"
         >
           <img
             src="/sidebar-icons/billing.png"
@@ -56,7 +52,6 @@ export default function Sidebar() {
           />
         </button>
 
-        {/* Menú desplegable */}
         {showAccountMenu && (
           <div className="account-menu">
             <Link href="/dashboard/billing">
