@@ -52,10 +52,15 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="signup-container">
-      <div className="signup-box">
-        <img src="/sidebar-icons/home.png" alt="Logo" className="signup-logo" />
-        <h2 className="signup-title">Crear cuenta</h2>
+    <div className="signup-wrapper">
+      <div className="signup-left">
+        <img src="/logo.png" alt="Logo" className="signup-logo-final" />
+        <h1 className="signup-title">Say HI to IGOR</h1>
+      </div>
+
+      <div className="signup-right">
+        <img src="/logo.png" alt="Logo" className="signup-logo-small" />
+        <h2 className="signup-form-title">Crear cuenta</h2>
         <form onSubmit={handleSignup} className="signup-form">
           <input type="text" placeholder="Nombre completo" value={fullName} onChange={e => setFullName(e.target.value)} required />
           <input type="text" placeholder="Empresa" value={company} onChange={e => setCompany(e.target.value)} required />
