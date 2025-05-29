@@ -24,7 +24,7 @@ export default function Sidebar() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.replace('/')  // vuelve al login
+    router.replace('/')  // redirige al login
   }
 
   return (
@@ -50,11 +50,11 @@ export default function Sidebar() {
           />
         </Link>
 
-        {/* Botón de logout */}
+        {/* Logout */}
         <button
           type="button"
           onClick={handleLogout}
-          className="icon logout-btn"
+          className="logout-btn"
           aria-label="Cerrar sesión"
         >
           <img
@@ -65,5 +65,5 @@ export default function Sidebar() {
         </button>
       </div>
     </div>
-  )
+)
 }
