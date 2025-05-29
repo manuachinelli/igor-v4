@@ -17,3 +17,7 @@ export async function middleware(req: NextRequest) {
 
   return res
 }
+
+export const config = {
+  matcher: ['/dashboard/:path*'], // Solo aplica el middleware a rutas bajo /dashboard
+}
