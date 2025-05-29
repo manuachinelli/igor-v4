@@ -28,7 +28,6 @@ export default function CredentialModal({ credential, onClose }: Props) {
     e.preventDefault()
     setSubmitting(true)
     setErrorMsg(null)
-
     try {
       const {
         data: { session },
@@ -43,15 +42,14 @@ export default function CredentialModal({ credential, onClose }: Props) {
         cred_password: password,
       }
 
-      const query =
-        credential
-          ? supabase.from('credentials').update(payload).eq('id', credential.id)
-          : supabase.from('credentials').insert([payload])
+      const query = credential
+        ? supabase.from('credentials').update(payload).eq('id', credential.id)
+        : supabase.from('credentials').insert([payload])
 
       const { error: resError } = await query
       if (resError) throw resError
 
-      onClose()  // cierra modal y recarga lista en tu page.tsx
+      onClose()
     } catch (err: any) {
       console.error(err)
       setErrorMsg(err.message)
@@ -63,7 +61,9 @@ export default function CredentialModal({ credential, onClose }: Props) {
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <button className={styles.closeBtn} onClick={onClose}>×</button>
+        <button className={styles.closeBtn} onClick={onClose} aria-label="Cerrar">
+          ×
+        </button>
         <h2 className={styles.header}>
           {credential ? 'Editar credencial' : 'Nueva credencial'}
         </h2>
@@ -71,13 +71,59 @@ export default function CredentialModal({ credential, onClose }: Props) {
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
         <form className={styles.form} onSubmit={handleSubmit}>
-          {/* campos... igual que antes */}
+          {/* ← AQUÍ REINGRESAMOS LOS CAMPOS */}
+          <div className={styles.field}>
+            <label htmlFor="app" className={styles.label}>Aplicación</label>
+            <input
+              id="app"
+              className={styles.input}
+              value={appName}
+              onChange={e => setAppName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="user" className={styles.label}>Usuario</label>
+            <input
+              id="user"
+              className={styles.input}
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="pass" className={styles.label}>Clave</label>
+            <input
+              id="pass"
+              type="password"
+              className={styles.input}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required={!credential}
+            />
+          </div>
+
+          {/* botones */}
           <div className={styles.actions}>
-            <button type="button" className={`${styles.button} ${styles.cancel}`} onClick={onClose} disabled={submitting}>
+            <button
+              type="button"
+              className={`${styles.button} ${styles.cancel}`}
+              onClick={onClose}
+              disabled={submitting}
+            >
               Cancelar
             </button>
-            <button type="submit" className={`${styles.button} ${styles.submit}`} disabled={submitting}>
-              {submitting ? (credential ? 'Guardando…' : 'Creando…') : (credential ? 'Guardar' : 'Crear')}
+            <button
+              type="submit"
+              className={`${styles.button} ${styles.submit}`}
+              disabled={submitting}
+            >
+              {submitting
+                ? credential ? 'Guardando…' : 'Creando…'
+                : credential ? 'Guardar' : 'Crear'}
             </button>
           </div>
         </form>
