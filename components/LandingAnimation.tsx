@@ -31,7 +31,10 @@ export default function LandingAnimation() {
     if (error) {
       setError('Usuario o contraseña incorrectos.');
     } else {
-      router.push('/dashboard');
+      // Espera 150ms antes de redirigir para que la cookie se sincronice
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 150);
     }
   };
 
