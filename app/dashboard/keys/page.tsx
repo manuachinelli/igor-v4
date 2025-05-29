@@ -11,6 +11,7 @@ type Credential = {
   user_id: string
   app_name: string
   cred_username: string
+  cred_secret?: string
 }
 
 export default function KeysPage() {
@@ -20,7 +21,7 @@ export default function KeysPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [selected, setSelected] = useState<Credential | null>(null)
 
-  // calcula tamaño dinámico de las pelotitas:
+  // Ajusta tamaño de círculos según cantidad
   const circleSize = creds.length > 0
     ? Math.min(120, Math.max(60, 240 / creds.length))
     : 100
@@ -30,15 +31,20 @@ export default function KeysPage() {
       const {
         data: { session },
       } = await supabase.auth.getSession()
-      if (!session) return router.push('/')
+      if (!session) {
+        router.push('/')
+        return
+      }
+
       const { data, error } = await supabase
         .from('credentials')
-        .select('id, user_id, app_name, cred_username')
+        .select('id, user_id, app_name, cred_username, cred_secret')
         .eq('user_id', session.user.id)
         .order('inserted_at', { ascending: false })
 
       if (error) console.error(error.message)
       else setCreds(data ?? [])
+
       setLoading(false)
     }
     load()
@@ -48,7 +54,7 @@ export default function KeysPage() {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}></h2>
+      <h2 className={styles.heading}>Tus credenciales</h2>
 
       <div className={styles.grid}>
         {creds.map((c) => (
@@ -56,7 +62,7 @@ export default function KeysPage() {
             key={c.id}
             className={styles.circle}
             style={{
-              width: `${circleSize}px`,
+              width:  `${circleSize}px`,
               height: `${circleSize}px`,
               fontSize: `${circleSize * 0.3}px`,
             }}
@@ -89,3 +95,4 @@ export default function KeysPage() {
     </div>
   )
 }
+
