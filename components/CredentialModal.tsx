@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
+import { supabase } from '@/lib/supabaseClient'
 import styles from './CredentialModal.module.css'
 
 export type Credential = {
@@ -20,10 +21,58 @@ export default function CredentialModal({ credential, onClose }: Props) {
   const [appName, setAppName] = useState(credential?.app_name ?? '')
   const [username, setUsername] = useState(credential?.cred_username ?? '')
   const [password, setPassword] = useState(credential?.cred_password ?? '')
+  const [submitting, setSubmitting] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    // aquí va tu lógica de crear/editar
+    setSubmitting(true)
+    setErrorMsg(null)
+
+    // 1) Obtener user_id
+    const {
+      data: { session },
+      error: sessionError
+    } = await supabase.auth.getSession()
+    if (sessionError || !session) {
+      setErrorMsg('No autenticado')
+      setSubmitting(false)
+      return
+    }
+    const user_id = session.user.id
+
+    // 2) Preparar payload
+    const payload = {
+      app_name: appName,
+      cred_username: username,
+      cred_password: password,
+      user_id
+    }
+
+    // 3) Llamada Supabase: insert o update
+    let resError = null
+    if (credential) {
+      // editar
+      const { error } = await supabase
+        .from('credentials')
+        .update(payload)
+        .eq('id', credential.id)
+      resError = error
+    } else {
+      // crear
+      const { error } = await supabase
+        .from('credentials')
+        .insert([payload])
+      resError = error
+    }
+
+    if (resError) {
+      setErrorMsg(resError.message)
+      setSubmitting(false)
+    } else {
+      // cerrar modal para que el parent recargue la lista
+      onClose()
+    }
   }
 
   return (
@@ -35,6 +84,9 @@ export default function CredentialModal({ credential, onClose }: Props) {
         <h2 className={styles.header}>
           {credential ? 'Editar credencial' : 'Nueva credencial'}
         </h2>
+
+        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
             <label htmlFor="app" className={styles.label}>Aplicación</label>
@@ -43,8 +95,10 @@ export default function CredentialModal({ credential, onClose }: Props) {
               className={styles.input}
               value={appName}
               onChange={e => setAppName(e.target.value)}
+              required
             />
           </div>
+
           <div className={styles.field}>
             <label htmlFor="user" className={styles.label}>Usuario</label>
             <input
@@ -52,8 +106,10 @@ export default function CredentialModal({ credential, onClose }: Props) {
               className={styles.input}
               value={username}
               onChange={e => setUsername(e.target.value)}
+              required
             />
           </div>
+
           <div className={styles.field}>
             <label htmlFor="pass" className={styles.label}>Clave</label>
             <input
@@ -62,18 +118,28 @@ export default function CredentialModal({ credential, onClose }: Props) {
               className={styles.input}
               value={password}
               onChange={e => setPassword(e.target.value)}
+              required={!credential} 
+              /* en editar podés permitirlo vacío si no querés cambiarla */
             />
           </div>
+
           <div className={styles.actions}>
             <button
               type="button"
               className={`${styles.button} ${styles.cancel}`}
               onClick={onClose}
+              disabled={submitting}
             >
               Cancelar
             </button>
-            <button type="submit" className={`${styles.button} ${styles.submit}`}>
-              {credential ? 'Guardar' : 'Crear'}
+            <button
+              type="submit"
+              className={`${styles.button} ${styles.submit}`}
+              disabled={submitting}
+            >
+              {submitting
+                ? credential ? 'Guardando…' : 'Creando…'
+                : credential ? 'Guardar' : 'Crear'}
             </button>
           </div>
         </form>
