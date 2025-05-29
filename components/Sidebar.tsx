@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
@@ -12,20 +13,19 @@ const menuItems = [
   { href: '/dashboard/flows', icon: '/sidebar-icons/flows.png', alt: 'Flows' },
 ]
 
-const billingItem = {
-  href: '/dashboard/billing',
-  icon: '/sidebar-icons/billing.png',
-  alt: 'Billing',
-}
+// Ya no usamos billingItem directo aquí
 
 export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const [showAccountMenu, setShowAccountMenu] = useState(false)
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.replace('/')  // redirige al login
+    router.replace('/')
   }
+
+  const toggleAccountMenu = () => setShowAccountMenu(v => !v)
 
   return (
     <div className="sidebar">
@@ -42,28 +42,35 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-bottom">
-        <Link href={billingItem.href}>
-          <img
-            src={billingItem.icon}
-            alt={billingItem.alt}
-            className={`icon ${pathname === billingItem.href ? 'active' : ''}`}
-          />
-        </Link>
-
-        {/* Logout */}
+        {/* My Account */}
         <button
           type="button"
-          onClick={handleLogout}
-          className="logout-btn"
-          aria-label="Cerrar sesión"
+          className="icon account-btn"
+          onClick={toggleAccountMenu}
+          aria-label="My account"
         >
           <img
-            src="/sidebar-icons/logout.png"
-            alt="Logout"
+            src="/sidebar-icons/billing.png"
+            alt="My Account"
             className="icon"
           />
         </button>
+
+        {/* Menú desplegable */}
+        {showAccountMenu && (
+          <div className="account-menu">
+            <Link href="/dashboard/billing">
+              <div className="menu-item">Billing</div>
+            </Link>
+            <Link href="/dashboard/team">
+              <div className="menu-item">My Team</div>
+            </Link>
+            <div className="menu-item logout-item" onClick={handleLogout}>
+              Log out
+            </div>
+          </div>
+        )}
       </div>
     </div>
-)
+  )
 }
