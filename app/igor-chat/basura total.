@@ -1,4 +1,0 @@
-// Archivo vacío intencionalmente para evitar compilación en Vercel
-export default function Page() {
-  return null;
-}
