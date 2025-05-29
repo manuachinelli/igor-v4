@@ -2,10 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabaseClient';
 import './LandingAnimation.css';
 
 export default function LandingAnimation() {
   const [showLogin, setShowLogin] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -15,9 +19,20 @@ export default function LandingAnimation() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push('/dashboard'); // redirige directamente
+    setError('');
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError('Usuario o contraseña incorrectos.');
+    } else {
+      router.push('/dashboard');
+    }
   };
 
   return (
@@ -29,13 +44,26 @@ export default function LandingAnimation() {
           <form className="login-form" onSubmit={handleLogin}>
             <label>
               User
-              <input type="text" name="user" />
+              <input
+                type="email"
+                name="user"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </label>
             <label>
               Password
-              <input type="password" name="password" />
+              <input
+                type="password"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </label>
             <button type="submit">Login</button>
+            {error && <p style={{ color: 'red', fontSize: '0.9rem' }}>{error}</p>}
           </form>
         </div>
       )}
