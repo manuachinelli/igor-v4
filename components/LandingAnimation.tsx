@@ -64,6 +64,12 @@ export default function LandingAnimation() {
             </label>
             <button type="submit">Login</button>
             {error && <p style={{ color: 'red', fontSize: '0.9rem' }}>{error}</p>}
+            <p style={{ fontSize: '0.9rem', textAlign: 'center' }}>
+              ¿No tenés cuenta?{' '}
+              <a href="/signup" style={{ color: '#0070f3', textDecoration: 'underline' }}>
+                Crear una cuenta
+              </a>
+            </p>
           </form>
         </div>
       )}
