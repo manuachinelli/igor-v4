@@ -20,23 +20,25 @@ export default function KeysPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [selected, setSelected] = useState<Credential | null>(null)
 
-  // 1) Carga inicial y vuelve a cargar cuando cierres el modal (modalOpen cambia)
+  // calcula tamaño dinámico de las pelotitas:
+  const circleSize = creds.length > 0
+    ? Math.min(120, Math.max(60, 240 / creds.length))
+    : 100
+
   useEffect(() => {
     const load = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession()
       if (!session) return router.push('/')
-
       const { data, error } = await supabase
-        .from('credentials')               // ← aquí quitamos el genérico
+        .from('credentials')
         .select('id, user_id, app_name, cred_username')
         .eq('user_id', session.user.id)
         .order('inserted_at', { ascending: false })
 
       if (error) console.error(error.message)
       else setCreds(data ?? [])
-
       setLoading(false)
     }
     load()
@@ -46,37 +48,37 @@ export default function KeysPage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h2 className={styles.heading}>Tus credenciales</h2>
-        <button
-          className={styles.addBtn}
-          onClick={() => {
-            setSelected(null)
-            setModalOpen(true)
-          }}
-        >
-          ＋
-        </button>
+      <h2 className={styles.heading}>Tus credenciales</h2>
+
+      <div className={styles.grid}>
+        {creds.map((c) => (
+          <div
+            key={c.id}
+            className={styles.circle}
+            style={{
+              width: `${circleSize}px`,
+              height: `${circleSize}px`,
+              fontSize: `${circleSize * 0.3}px`,
+            }}
+            onClick={() => {
+              setSelected(c)
+              setModalOpen(true)
+            }}
+          >
+            {c.app_name}
+          </div>
+        ))}
       </div>
 
-      {creds.length === 0 ? (
-        <p className={styles.empty}>No tienes credenciales todavía.</p>
-      ) : (
-        <div className={styles.grid}>
-          {creds.map((c) => (
-            <div
-              key={c.id}
-              className={styles.circle}
-              onClick={() => {
-                setSelected(c)
-                setModalOpen(true)
-              }}
-            >
-              {c.app_name}
-            </div>
-          ))}
-        </div>
-      )}
+      <button
+        className={styles.addBtn}
+        onClick={() => {
+          setSelected(null)
+          setModalOpen(true)
+        }}
+      >
+        ＋
+      </button>
 
       {modalOpen && (
         <CredentialModal
