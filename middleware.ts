@@ -11,9 +11,10 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
-  // Redirigir a login si NO hay sesión y entra a /dashboard
-  if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/', req.url))
+  // 🧠 MUY IMPORTANTE: Actualiza el response para guardar la cookie
+  if (!session) {
+    const redirectUrl = new URL('/', req.url)
+    return NextResponse.redirect(redirectUrl)
   }
 
   return res
