@@ -65,6 +65,10 @@ export default function SignupPage() {
           <button type="submit">Registrarme</button>
           {error && <p className="signup-error">{error}</p>}
         </form>
+        <p className="signup-footer">
+          ¿Ya tenés cuenta?{' '}
+          <a href="/">Iniciar sesión</a>
+        </p>
       </div>
     </div>
   )
