@@ -27,13 +27,16 @@ export default function KeysPage() {
         data: { session },
       } = await supabase.auth.getSession()
       if (!session) return router.push('/')
+
       const { data, error } = await supabase
-        .from<Credential>('credentials')
+        .from('credentials')               // ← aquí quitamos el genérico
         .select('id, user_id, app_name, cred_username')
         .eq('user_id', session.user.id)
         .order('inserted_at', { ascending: false })
+
       if (error) console.error(error.message)
-      else setCreds(data)
+      else setCreds(data ?? [])
+
       setLoading(false)
     }
     load()
