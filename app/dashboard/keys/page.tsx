@@ -1,60 +1,70 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import styles from './styles.module.css'
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import CredentialModal from '@/components/CredentialModal';
+import './page.css';
 
-const mockCredentials = [
-  'Zendesk', 'Slack', 'Notion', 'Airtable', 'Google', 'Hubspot', 'Discord',
-  'Monday', 'Trello', 'Stripe', 'Intercom', 'Meta', 'WhatsApp', 'Asana',
-]
+type Cred = {
+  id: string;
+  app_name: string;
+  cred_username: string;
+};
 
 export default function KeysPage() {
-  const [showModal, setShowModal] = useState(false)
-  const [selectedCredential, setSelectedCredential] = useState<string | null>(null)
+  const [creds, setCreds] = useState<Cred[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const handleOpenModal = (credential: string | null) => {
-    setSelectedCredential(credential)
-    setShowModal(true)
-  }
+  const fetchCreds = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('credentials')
+      .select('id, app_name, cred_username')
+      .order('inserted_at', { ascending: false });
+    if (error) console.error(error);
+    else setCreds(data || []);
+    setLoading(false);
+  };
 
-  const handleCloseModal = () => {
-    setShowModal(false)
-    setSelectedCredential(null)
-  }
+  useEffect(() => {
+    fetchCreds();
+  }, []);
+
+  const handleSave = async (app: string, user: string, secret: string) => {
+    const { error } = await supabase.from('credentials').insert({
+      app_name: app,
+      cred_username: user,
+      cred_secret: secret,
+    });
+    if (error) console.error(error);
+    else fetchCreds();
+  };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.addContainer}>
-        <button className={styles.addButton} onClick={() => handleOpenModal(null)}>+</button>
-        <span className={styles.addText}>Add credentials</span>
-      </div>
+    <div className="keys-page">
+      <button className="add-btn" onClick={() => setModalOpen(true)}>
+        + Add credentials
+      </button>
 
-      <div className={styles.grid}>
-        {mockCredentials.map((name, index) => (
-          <div
-            key={index}
-            className={styles.credentialBubble}
-            onClick={() => handleOpenModal(name)}
-          >
-            {name[0]}
+      {loading && <p className="status">Loading…</p>}
+      {!loading && creds.length === 0 && (
+        <p className="status">No tienes credenciales. Crea una!</p>
+      )}
+
+      <div className="pills">
+        {creds.map(c => (
+          <div key={c.id} className="pill">
+            {c.app_name}
           </div>
         ))}
       </div>
 
-      <div className={styles.lockContainer}>
-        <img src="/sidebar-icons/automation.png" alt="lock" className={styles.lockIcon} />
-        <p className={styles.lockText}>Todas las keys están encriptadas by Igor</p>
-      </div>
-
-      {showModal && (
-        <div className={styles.modalOverlay} onClick={handleCloseModal}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h2>{selectedCredential ? `Edit ${selectedCredential}` : 'Add Credential'}</h2>
-            <p style={{ color: '#999', fontSize: 14 }}>Contenido en blanco por ahora</p>
-            <button onClick={handleCloseModal} className={styles.closeButton}>Cerrar</button>
-          </div>
-        </div>
-      )}
+      <CredentialModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSave}
+      />
     </div>
-  )
+  );
 }
