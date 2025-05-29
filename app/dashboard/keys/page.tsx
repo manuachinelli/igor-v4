@@ -1,70 +1,86 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import CredentialModal from '@/components/CredentialModal';
-import './page.css';
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabaseClient'
+import CredentialModal from '@/components/CredentialModal'
+import styles from './styles.module.css'
 
-type Cred = {
-  id: string;
-  app_name: string;
-  cred_username: string;
-};
+type Credential = {
+  id: string
+  user_id: string
+  app_name: string
+  cred_username: string
+}
 
 export default function KeysPage() {
-  const [creds, setCreds] = useState<Cred[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
+  const router = useRouter()
+  const [creds, setCreds] = useState<Credential[]>([])
+  const [loading, setLoading] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selected, setSelected] = useState<Credential | null>(null)
 
-  const fetchCreds = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('credentials')
-      .select('id, app_name, cred_username')
-      .order('inserted_at', { ascending: false });
-    if (error) console.error(error);
-    else setCreds(data || []);
-    setLoading(false);
-  };
-
+  // 1) Carga inicial y vuelve a cargar cuando cierres el modal (modalOpen cambia)
   useEffect(() => {
-    fetchCreds();
-  }, []);
+    const load = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      if (!session) return router.push('/')
+      const { data, error } = await supabase
+        .from<Credential>('credentials')
+        .select('id, user_id, app_name, cred_username')
+        .eq('user_id', session.user.id)
+        .order('inserted_at', { ascending: false })
+      if (error) console.error(error.message)
+      else setCreds(data)
+      setLoading(false)
+    }
+    load()
+  }, [router, modalOpen])
 
-  const handleSave = async (app: string, user: string, secret: string) => {
-    const { error } = await supabase.from('credentials').insert({
-      app_name: app,
-      cred_username: user,
-      cred_secret: secret,
-    });
-    if (error) console.error(error);
-    else fetchCreds();
-  };
+  if (loading) return <p className={styles.loading}>Cargando…</p>
 
   return (
-    <div className="keys-page">
-      <button className="add-btn" onClick={() => setModalOpen(true)}>
-        + Add credentials
-      </button>
-
-      {loading && <p className="status">Loading…</p>}
-      {!loading && creds.length === 0 && (
-        <p className="status">No tienes credenciales. Crea una!</p>
-      )}
-
-      <div className="pills">
-        {creds.map(c => (
-          <div key={c.id} className="pill">
-            {c.app_name}
-          </div>
-        ))}
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h2 className={styles.heading}>Tus credenciales</h2>
+        <button
+          className={styles.addBtn}
+          onClick={() => {
+            setSelected(null)
+            setModalOpen(true)
+          }}
+        >
+          ＋
+        </button>
       </div>
 
-      <CredentialModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={handleSave}
-      />
+      {creds.length === 0 ? (
+        <p className={styles.empty}>No tienes credenciales todavía.</p>
+      ) : (
+        <div className={styles.grid}>
+          {creds.map((c) => (
+            <div
+              key={c.id}
+              className={styles.circle}
+              onClick={() => {
+                setSelected(c)
+                setModalOpen(true)
+              }}
+            >
+              {c.app_name}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {modalOpen && (
+        <CredentialModal
+          credential={selected}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </div>
-  );
+  )
 }
