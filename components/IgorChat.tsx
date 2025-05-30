@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import styles from './IgorChat.module.css';
 import { Mic, SendHorizonal } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';  // ← añadí esta línea
 
 interface Message {
   role: 'user' | 'assistant';
@@ -19,26 +20,43 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
   const [isWaiting, setIsWaiting] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // ——— NUEVAS LÍNEAS PARA CARGAR UUID ———
+  const [uuid, setUuid] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.id) {
+        setUuid(session.user.id);
+      } else {
+        console.warn('No hay sesión activa.'); 
+      }
+    });
+  }, []);
+  // —————————————————————————————————————
+
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !uuid) return;  // ← evita enviar sin UUID
 
     const newMessages: Message[] = [
       ...messages,
-      { role: 'user' as 'user', content: input },
+      { role: 'user', content: input },
     ];
     setMessages(newMessages);
     setInput('');
     setIsWaiting(true);
 
     try {
-      const res = await fetch('https://manuachinelli.app.n8n.cloud/webhook/d6a72405-e6de-4e91-80da-9219b57633dd', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: input,
-          userId: 'igor_user_001',
-        }),
-      });
+      const res = await fetch(
+        'https://manuachinelli.app.n8n.cloud/webhook/d6a72405-e6de-4e91-80da-9219b57633dd',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: input,
+            userId: uuid,               // ← aquí va el UUID real
+          }),
+        }
+      );
 
       const data = await res.json();
       if (data.reply) {
@@ -63,7 +81,7 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
       setMessages([]);
       setInput('');
       setIsWaiting(false);
-    }
+    },
   }));
 
   useEffect(() => {
@@ -100,12 +118,12 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            disabled={isWaiting}
+            disabled={isWaiting || !uuid}  // ← opcional: bloquea si UUID no cargó
           />
           <button
             className={styles.iconButton}
             onClick={handleSend}
-            disabled={isWaiting}
+            disabled={isWaiting || !uuid}  // ← idem
           >
             <SendHorizonal size={18} />
           </button>
