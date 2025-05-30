@@ -10,7 +10,6 @@ export type Credential = {
   app_name: string
   cred_username: string
   cred_secret?: string
-  cred_color?: string
 }
 
 type Props = {
@@ -18,18 +17,10 @@ type Props = {
   onClose: () => void
 }
 
-const COLORS = [
-  '#5DADE2', /* celeste */ 
-  '#F7DC6F', /* amarillo */ 
-  '#9B59B6', /* púrpura */ 
-  '#2ECC71'  /* verde */
-]
-
 export default function CredentialModal({ credential, onClose }: Props) {
   const [appName, setAppName] = useState(credential?.app_name ?? '')
   const [username, setUsername] = useState(credential?.cred_username ?? '')
-  const [secret, setSecret] = useState(credential?.cred_secret ?? '')
-  const [color, setColor] = useState<string>(credential?.cred_color ?? COLORS[0])
+  const [secret, setSecret] = useState<string>(credential?.cred_secret ?? '')
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
@@ -50,7 +41,6 @@ export default function CredentialModal({ credential, onClose }: Props) {
         app_name:      appName,
         cred_username: username,
         cred_secret:   secret,
-        cred_color:    color,
       }
 
       const query = credential
@@ -84,22 +74,6 @@ export default function CredentialModal({ credential, onClose }: Props) {
         </h2>
 
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-
-        {/* ↓ Picker de color (solo UI, no rompe nada) ↓ */}
-        <div className={styles.colorPicker}>
-          {COLORS.map((c) => (
-            <div
-              key={c}
-              className={`${styles.colorOption} ${
-                color === c ? styles.selected : ''
-              }`}
-              style={{ background: c }}
-              onClick={() => setColor(c)}
-            >
-              {color === c && <span className={styles.check}>✓</span>}
-            </div>
-          ))}
-        </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
