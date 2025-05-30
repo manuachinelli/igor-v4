@@ -1,13 +1,11 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import CredentialModal, { Credential } from '@/components/CredentialModal'
 import styles from './styles.module.css'
-
-// Color palette fija de 4 tonos
-const COLORS = ['#5DADE2', '#F7DC6F', '#9B59B6', '#2ECC71']
 
 export default function KeysPage() {
   const router = useRouter()
@@ -15,6 +13,14 @@ export default function KeysPage() {
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
   const [selected, setSelected] = useState<Credential | null>(null)
+
+  // calcula tamaño dinámico de cada círculo
+  const circleSize = creds.length > 0
+    ? Math.min(120, Math.max(60, 240 / creds.length))
+    : 100
+
+  // logo 4× el tamaño del círculo
+  const logoSize = circleSize * 4
 
   useEffect(() => {
     const load = async () => {
@@ -41,33 +47,33 @@ export default function KeysPage() {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Tus credenciales</h2>
+      {/* logo en lugar del texto */}
+      <div className={styles.logoWrap}>
+        <Image
+          src="/sidebar-icons/automation.png"
+          width={logoSize}
+          height={logoSize}
+          alt="Tus credenciales"
+        />
+      </div>
 
       <div className={styles.grid}>
-        {creds.map((c, idx) => {
-          // asigna color cíclico por índice
-          const bg = COLORS[idx % COLORS.length]
-          // tamaño dinámico
-          const size = Math.min(120, Math.max(60, 240 / creds.length))
-          return (
-            <div
-              key={c.id}
-              className={styles.circle}
-              style={{
-                background: bg,
-                width:  `${size}px`,
-                height: `${size}px`,
-                fontSize: `${size * 0.3}px`,
-              }}
-              onClick={() => {
-                setSelected(c)
-                setModalOpen(true)
-              }}
-            >
-              <span className={styles.circleText}>{c.app_name}</span>
-            </div>
-          )
-        })}
+        {creds.map((c) => (
+          <div
+            key={c.id}
+            className={styles.circle}
+            style={{
+              width:  `${circleSize}px`,
+              height: `${circleSize}px`,
+            }}
+            onClick={() => {
+              setSelected(c)
+              setModalOpen(true)
+            }}
+          >
+            <span className={styles.circleText}>{c.app_name}</span>
+          </div>
+        ))}
       </div>
 
       <div className={styles.addWrap}>
