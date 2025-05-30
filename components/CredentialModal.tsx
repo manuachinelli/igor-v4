@@ -10,6 +10,7 @@ export type Credential = {
   app_name: string
   cred_username: string
   cred_secret?: string
+  cred_color?: string
 }
 
 type Props = {
@@ -17,10 +18,18 @@ type Props = {
   onClose: () => void
 }
 
+const COLORS = [
+  '#5DADE2', /* celeste */ 
+  '#F7DC6F', /* amarillo */ 
+  '#9B59B6', /* púrpura */ 
+  '#2ECC71'  /* verde */
+]
+
 export default function CredentialModal({ credential, onClose }: Props) {
   const [appName, setAppName] = useState(credential?.app_name ?? '')
   const [username, setUsername] = useState(credential?.cred_username ?? '')
   const [secret, setSecret] = useState(credential?.cred_secret ?? '')
+  const [color, setColor] = useState<string>(credential?.cred_color ?? COLORS[0])
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
@@ -41,16 +50,12 @@ export default function CredentialModal({ credential, onClose }: Props) {
         app_name:      appName,
         cred_username: username,
         cred_secret:   secret,
+        cred_color:    color,
       }
 
       const query = credential
-        ? supabase
-            .from('credentials')
-            .update(payload)
-            .eq('id', credential.id)
-        : supabase
-            .from('credentials')
-            .insert([payload])
+        ? supabase.from('credentials').update(payload).eq('id', credential.id)
+        : supabase.from('credentials').insert([payload])
 
       const { error: resError } = await query
       if (resError) throw resError
@@ -67,7 +72,11 @@ export default function CredentialModal({ credential, onClose }: Props) {
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <button className={styles.closeBtn} onClick={onClose} aria-label="Cerrar">
+        <button
+          className={styles.closeBtn}
+          onClick={onClose}
+          aria-label="Cerrar"
+        >
           ×
         </button>
         <h2 className={styles.header}>
@@ -75,6 +84,22 @@ export default function CredentialModal({ credential, onClose }: Props) {
         </h2>
 
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
+
+        {/* ↓ Picker de color (solo UI, no rompe nada) ↓ */}
+        <div className={styles.colorPicker}>
+          {COLORS.map((c) => (
+            <div
+              key={c}
+              className={`${styles.colorOption} ${
+                color === c ? styles.selected : ''
+              }`}
+              style={{ background: c }}
+              onClick={() => setColor(c)}
+            >
+              {color === c && <span className={styles.check}>✓</span>}
+            </div>
+          ))}
+        </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
@@ -107,7 +132,7 @@ export default function CredentialModal({ credential, onClose }: Props) {
               className={styles.input}
               value={secret}
               onChange={e => setSecret(e.target.value)}
-              required={!credential} 
+              required={!credential}
             />
           </div>
 
@@ -126,8 +151,12 @@ export default function CredentialModal({ credential, onClose }: Props) {
               disabled={submitting}
             >
               {submitting
-                ? credential ? 'Guardando…' : 'Creando…'
-                : credential ? 'Guardar' : 'Crear'}
+                ? credential
+                  ? 'Guardando…'
+                  : 'Creando…'
+                : credential
+                ? 'Guardar'
+                : 'Crear'}
             </button>
           </div>
         </form>
