@@ -3,8 +3,15 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-import CredentialModal, { Credential } from '@/components/CredentialModal'
+import CredentialModal, { Credential as C } from '@/components/CredentialModal'
 import styles from './styles.module.css'
+
+export type Credential = {
+  id: string
+  user_id: string
+  app_name: string
+  cred_username: string
+}
 
 export default function KeysPage() {
   const router = useRouter()
@@ -12,11 +19,6 @@ export default function KeysPage() {
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
   const [selected, setSelected] = useState<Credential | null>(null)
-
-  // Dinámica de tamaño de círculos
-  const circleSize = creds.length > 0
-    ? Math.min(120, Math.max(60, 240 / creds.length))
-    : 100
 
   useEffect(() => {
     const load = async () => {
@@ -27,7 +29,7 @@ export default function KeysPage() {
 
       const { data, error } = await supabase
         .from('credentials')
-        .select('id, user_id, app_name, cred_username, cred_secret, cred_color')
+        .select('id, user_id, app_name, cred_username')
         .eq('user_id', session.user.id)
         .order('inserted_at', { ascending: false })
 
@@ -50,12 +52,6 @@ export default function KeysPage() {
           <div
             key={c.id}
             className={styles.circle}
-            style={{
-              width:  `${circleSize}px`,
-              height: `${circleSize}px`,
-              fontSize: `${circleSize * 0.3}px`,
-              background: c.cred_color || '#333333',
-            }}
             onClick={() => {
               setSelected(c)
               setModalOpen(true)
@@ -66,18 +62,15 @@ export default function KeysPage() {
         ))}
       </div>
 
-      <div className={styles.addWrap}>
-        <button
-          className={styles.addBtn}
-          onClick={() => {
-            setSelected(null)
-            setModalOpen(true)
-          }}
-        >
-          ＋
-        </button>
-        <span className={styles.addLabel}>Agregar credencial</span>
-      </div>
+      <button
+        className={styles.addBtn}
+        onClick={() => {
+          setSelected(null)
+          setModalOpen(true)
+        }}
+      >
+        ＋
+      </button>
 
       {modalOpen && (
         <CredentialModal
