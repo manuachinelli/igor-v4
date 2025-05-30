@@ -25,7 +25,6 @@
 }
 
 .circle {
-  background: #333333;
   color: #ffffff;
   border-radius: 50%;
   display: flex;
@@ -38,27 +37,6 @@
   transform: scale(1.1);
 }
 
-.addBtn {
-  position: absolute;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #ffc700; /* color original */
-  color: #000000;
-  font-size: 2rem;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s ease;
-}
-.addBtn:hover {
-  transform: translateX(-50%) scale(1.1);
-}
-
-/* texto de carga */
 .loading {
   color: #ffffff;
   font-size: 1.2rem;
@@ -66,3 +44,37 @@
   margin-top: 2rem;
 }
 
+/* ↓ Nuevo wrapper para el botón + con label ↓ */
+
+.addWrap {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.addBtn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #ffc700; /* tu amarillo */
+  color: #000;
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease;
+}
+.addBtn:hover {
+  transform: scale(1.1);
+}
+
+.addLabel {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #ffffff;
+  font-weight: 300;
+}
