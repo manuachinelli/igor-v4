@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';                       // ← import de uuid
 import styles from './IgorChat.module.css';
 import { Mic, SendHorizonal } from 'lucide-react';
-import { supabase } from '@/lib/supabaseClient';  // ← añadí esta línea
+import { supabase } from '@/lib/supabaseClient';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -20,22 +21,19 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
   const [isWaiting, setIsWaiting] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // ——— NUEVAS LÍNEAS PARA CARGAR UUID ———
   const [uuid, setUuid] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string>(() => uuidv4()); // ← sessionId inicial
 
+  // Cargo el UUID de Supabase
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user?.id) {
-        setUuid(session.user.id);
-      } else {
-        console.warn('No hay sesión activa.'); 
-      }
+      if (session?.user?.id) setUuid(session.user.id);
+      else console.warn('No hay sesión activa.');
     });
   }, []);
-  // —————————————————————————————————————
 
   const handleSend = async () => {
-    if (!input.trim() || !uuid) return;  // ← evita enviar sin UUID
+    if (!input.trim() || !uuid) return;
 
     const newMessages: Message[] = [
       ...messages,
@@ -53,7 +51,8 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: input,
-            userId: uuid,               // ← aquí va el UUID real
+            userId: uuid,
+            sessionId,                  // ← envío del sessionId
           }),
         }
       );
@@ -81,6 +80,7 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
       setMessages([]);
       setInput('');
       setIsWaiting(false);
+      setSessionId(uuidv4());   // ← nueva sesión, nuevo sessionId
     },
   }));
 
@@ -118,12 +118,12 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            disabled={isWaiting || !uuid}  // ← opcional: bloquea si UUID no cargó
+            disabled={isWaiting || !uuid}
           />
           <button
             className={styles.iconButton}
             onClick={handleSend}
-            disabled={isWaiting || !uuid}  // ← idem
+            disabled={isWaiting || !uuid}
           >
             <SendHorizonal size={18} />
           </button>
