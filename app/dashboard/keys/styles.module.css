@@ -8,18 +8,15 @@
   padding-bottom: 6rem;
 }
 
-.heading {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 1.5rem;
-}
-
 .loading {
   color: #fff;
   font-size: 1.2rem;
   text-align: center;
   margin-top: 2rem;
+}
+
+.logoWrap {
+  margin-bottom: 1.5rem;
 }
 
 .grid {
@@ -32,20 +29,21 @@
 }
 
 .circle {
+  background: #333333;              /* gris uniforme */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.2s;
   overflow: hidden;
+  /* animación al pasar el mouse */
+  transition: transform 0.3s;
 }
 
 .circle:hover {
-  transform: scale(1.05);
+  transform: rotate(360deg);        /* gira al hacer hover */
 }
 
-/* Ensures text always fits inside the circle */
 .circleText {
   display: block;
   width: 100%;
@@ -76,11 +74,6 @@
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s;
-}
-
-.addBtn:hover {
-  transform: scale(1.1);
 }
 
 .addLabel {
