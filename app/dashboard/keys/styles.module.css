@@ -5,14 +5,21 @@
   align-items: center;
   min-height: 100vh;
   padding: 2rem 1rem;
-  padding-bottom: 6rem; /* deja espacio para el + abajo */
+  padding-bottom: 6rem;
 }
 
 .heading {
   font-size: 2rem;
   font-weight: bold;
-  color: #ffffff;
+  color: #fff;
   margin-bottom: 1.5rem;
+}
+
+.loading {
+  color: #fff;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-top: 2rem;
 }
 
 .grid {
@@ -25,26 +32,29 @@
 }
 
 .circle {
-  color: #ffffff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s;
+  overflow: hidden;
 }
+
 .circle:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
-.loading {
-  color: #ffffff;
-  font-size: 1.2rem;
+/* Ensures text always fits inside the circle */
+.circleText {
+  display: block;
+  width: 100%;
   text-align: center;
-  margin-top: 2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
 }
-
-/* ↓ Nuevo wrapper para el botón + con label ↓ */
 
 .addWrap {
   position: absolute;
@@ -60,14 +70,15 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: #ffc700; /* tu amarillo */
+  background: #ffc700;
   color: #000;
   font-size: 2rem;
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s ease;
+  transition: transform 0.2s;
 }
+
 .addBtn:hover {
   transform: scale(1.1);
 }
@@ -75,6 +86,6 @@
 .addLabel {
   margin-top: 0.5rem;
   font-size: 0.75rem;
-  color: #ffffff;
+  color: #fff;
   font-weight: 300;
 }
