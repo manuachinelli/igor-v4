@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
-import { v4 as uuidv4 } from 'uuid';                       // ← import de uuid
 import styles from './IgorChat.module.css';
 import { Mic, SendHorizonal } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
@@ -22,7 +21,7 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [uuid, setUuid] = useState<string | null>(null);
-  const [sessionId, setSessionId] = useState<string>(() => uuidv4()); // ← sessionId inicial
+  const [sessionId, setSessionId] = useState<string>(() => crypto.randomUUID()); // ← usa crypto.randomUUID()
 
   // Cargo el UUID de Supabase
   useEffect(() => {
@@ -52,7 +51,7 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
           body: JSON.stringify({
             message: input,
             userId: uuid,
-            sessionId,                  // ← envío del sessionId
+            sessionId, // ← envío de sessionId generado nativamente
           }),
         }
       );
@@ -80,7 +79,7 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
       setMessages([]);
       setInput('');
       setIsWaiting(false);
-      setSessionId(uuidv4());   // ← nueva sesión, nuevo sessionId
+      setSessionId(crypto.randomUUID()); // ← genero un nuevo sessionId al resetear
     },
   }));
 
