@@ -86,4 +86,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true, summary: title });
   } catch (err: any) {
-    return NextResponse.json({ ok: false, message: 'Error con OpenAI', error: err.me
+    return NextResponse.json({ ok: false, message: 'Error con OpenAI', error: err.message });
+  }
+}
