@@ -23,19 +23,20 @@
   font-size: 14px;
   line-height: 1.4;
   max-width: 600px;
-  margin: 0 auto;          /* centro las burbujas */
   word-wrap: break-word;
   word-break: break-word;
 }
 
+/* Mensajes del usuario: alineados a la derecha y color igual al del ícono */
 .userBubble {
-  align-self: flex-end;
-  background-color: #2563eb;
+  margin-left: auto;
+  background-color: #0ea5e9; /* Ajusta según el azul exacto de tu logo */
   color: white;
 }
 
+/* Mensajes del asistente: alineados a la izquierda */
 .assistantBubble {
-  align-self: flex-start;
+  margin-right: auto;
   background-color: #262626;
   color: white;
 }
@@ -65,8 +66,8 @@
   padding: 8px 12px;
   border-radius: 20px;
   width: 100%;
-  max-width: 600px;       /* ancho máximo y responsivo */
-  margin: 0 auto;         /* centro el input */
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .input {
