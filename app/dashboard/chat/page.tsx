@@ -32,18 +32,14 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-screen bg-black text-white">
-      {/* IZQUIERDA: tu chat */}
       <div className="flex flex-col flex-1">
         <IgorHeader />
-        <div className="flex-1 overflow-auto">
-          {/* Aquí van los mensajes de IgorChat */}
-        </div>
+        <div className="flex-1 overflow-auto" />
         <div className="border-t border-gray-700 h-80">
           <IgorChat ref={chatRef} sessionId={sessionId} />
         </div>
       </div>
 
-      {/* DERECHA: historial de sesiones */}
       <div className="w-64 bg-gray-900 border-l border-gray-700">
         <ChatHistoryBar
           onNewChat={handleNewChat}
