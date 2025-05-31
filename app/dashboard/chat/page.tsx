@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import ChatHistoryBar from '@/components/ChatHistoryBar';
 import IgorHeader from '@/components/IgorHeader';
 import IgorChat from '@/components/IgorChat';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function ChatPage() {
   const [sessionId, setSessionId] = useState<string>('');
@@ -13,16 +14,37 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const existing = localStorage.getItem('igor_session');
-    if (existing) setSessionId(existing);
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user.id) {
+        const existing = localStorage.getItem('igor_session');
+        if (existing) setSessionId(existing);
+      }
+    });
   }, []);
 
-  const handleNewChat = () => {
+  const handleNewChat = async () => {
     chatRef.current?.resetChat();
-
     if (typeof window === 'undefined') return;
 
     const newSessionId = crypto.randomUUID();
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData.session?.user.id;
+
+    if (!userId) {
+      console.error('No se encontró el user ID');
+      return;
+    }
+
+    const { error } = await supabase
+      .from('chat_sessions')
+      .insert({ session_id: newSessionId, user_id: userId });
+
+    if (error) {
+      console.error('Error al crear sesión en Supabase:', error);
+      return;
+    }
+
     localStorage.setItem('igor_session', newSessionId);
     setSessionId(newSessionId);
     setRefreshSessions((prev) => prev + 1);
