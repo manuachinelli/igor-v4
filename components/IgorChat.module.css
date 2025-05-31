@@ -12,8 +12,11 @@
   flex-grow: 1;
   padding: 16px;
   overflow-y: auto;
+
+  /* 1) centrar todo el contenido de chat (burbujas) */
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 12px;
 }
 
@@ -22,21 +25,21 @@
   border-radius: 20px;
   font-size: 14px;
   line-height: 1.4;
-  max-width: 600px;
+  max-width: 70%;          /* ocupado como porcentaje del ancho del contenedor */
   word-wrap: break-word;
   word-break: break-word;
 }
 
-/* Mensajes del usuario: alineados a la derecha y color igual al del ícono */
 .userBubble {
-  margin-left: auto;
-  background-color: #0ea5e9; /* Ajusta según el azul exacto de tu logo */
+  /* 3) tus mensajes pegados al lado derecho */
+  align-self: flex-end;
+  background-color: #0ea5e9; /* Azul similar al logo */
   color: white;
 }
 
-/* Mensajes del asistente: alineados a la izquierda */
 .assistantBubble {
-  margin-right: auto;
+  /* 3) mensajes de Igor pegados al lado izquierdo */
+  align-self: flex-start;
   background-color: #262626;
   color: white;
 }
@@ -58,6 +61,8 @@
   align-items: center;
 }
 
+/* 1) y 2) el rectángulo de abajo ahora es más ancho (80% del ancho disponible),
+   centrado entre las barras lateral izquierda/derecha */
 .inputBox {
   display: flex;
   align-items: center;
@@ -66,8 +71,8 @@
   padding: 8px 12px;
   border-radius: 20px;
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+  max-width: 80%;         /* ocupa hasta el 80% del ancho padre */
+  margin: 0 auto;         /* centra el rectángulo entre las barras */
 }
 
 .input {
