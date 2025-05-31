@@ -1,10 +1,9 @@
-// app/dashboard/chat/page.tsx
+// components/ChatPage.tsx
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import ChatHistoryBar from '@/components/ChatHistoryBar';
-import IgorHeader from '@/components/IgorHeader';
-import IgorChat from '@/components/IgorChat';
+import IgorChat from './IgorChat';
+import ChatHistoryBar from './ChatHistoryBar';
 
 export default function ChatPage() {
   const [sessionId, setSessionId] = useState<string>('');
@@ -34,13 +33,7 @@ export default function ChatPage() {
     <div className="flex h-screen bg-black text-white">
       {/* IZQUIERDA: tu chat */}
       <div className="flex flex-col flex-1">
-        <IgorHeader />
-        <div className="flex-1 overflow-auto">
-          {/* Espacio donde IgorChat mostrará sus mensajes */}
-        </div>
-        <div className="border-t border-gray-700 h-80">
-          <IgorChat ref={chatRef} sessionId={sessionId} />
-        </div>
+        <IgorChat ref={chatRef} sessionId={sessionId} />
       </div>
 
       {/* DERECHA: historial de sesiones */}
