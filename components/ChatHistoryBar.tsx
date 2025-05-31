@@ -15,11 +15,13 @@ interface Session {
 interface ChatHistoryBarProps {
   onNewChat: () => void;
   onSelectSession: (sessionId: string) => void;
+  refreshTrigger: number;
 }
 
 export default function ChatHistoryBar({
   onNewChat,
   onSelectSession,
+  refreshTrigger,
 }: ChatHistoryBarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -34,7 +36,6 @@ export default function ChatHistoryBar({
   useEffect(() => {
     if (!uuid) return;
 
-    // 1) Traer todas las sesiones del usuario
     const fetchSessions = async () => {
       const { data: allSessions, error: sessError } = await supabase
         .from('chat_sessions')
@@ -47,7 +48,6 @@ export default function ChatHistoryBar({
         return;
       }
 
-      // 2) Traer solo session_ids que tengan al menos un mensaje del usuario
       const { data: msgData, error: msgError } = await supabase
         .from('chat_messages')
         .select('session_id', { count: 'exact' })
@@ -59,14 +59,12 @@ export default function ChatHistoryBar({
       }
 
       const validIds = new Set(msgData.map((m) => m.session_id));
-
-      // 3) Filtrar solo las sesiones cuyo session_id esté en validIds
       const filtered = allSessions.filter((s) => validIds.has(s.session_id));
       setSessions(filtered as Session[]);
     };
 
     fetchSessions();
-  }, [uuid]);
+  }, [uuid, refreshTrigger]);
 
   return (
     <div className={`${styles.chatHistoryBar} ${collapsed ? styles.collapsed : ''}`}>
@@ -106,9 +104,4 @@ export default function ChatHistoryBar({
         </ul>
       )}
 
-      <button className={styles.toggleButton} onClick={() => setCollapsed(!collapsed)}>
-        {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-      </button>
-    </div>
-  );
-}
+      <button className={styles.togg
