@@ -8,6 +8,7 @@ import IgorChat from '@/components/IgorChat';
 
 export default function ChatPage() {
   const [sessionId, setSessionId] = useState<string>('');
+  const [refreshSessions, setRefreshSessions] = useState(0);
   const chatRef = useRef<any>(null);
 
   useEffect(() => {
@@ -18,8 +19,13 @@ export default function ChatPage() {
 
   const handleNewChat = () => {
     chatRef.current?.resetChat();
+
     if (typeof window === 'undefined') return;
-    setSessionId(localStorage.getItem('igor_session') || '');
+
+    const newSessionId = crypto.randomUUID();
+    localStorage.setItem('igor_session', newSessionId);
+    setSessionId(newSessionId);
+    setRefreshSessions((prev) => prev + 1);
   };
 
   const handleSelectSession = (sid: string) => {
@@ -48,6 +54,7 @@ export default function ChatPage() {
         <ChatHistoryBar
           onNewChat={handleNewChat}
           onSelectSession={handleSelectSession}
+          refreshTrigger={refreshSessions}
         />
       </div>
     </div>
