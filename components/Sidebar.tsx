@@ -7,9 +7,9 @@ import { supabase } from '@/lib/supabaseClient'
 import './Sidebar.css'
 
 const menuItems = [
-  { href: '/dashboard', icon: '/sidebar-icons/inicio.png', alt: 'Inicio' },
+  { href: '/dashboard', icon: '/sidebar-icons/home.png', alt: 'Inicio' },
   { href: '/dashboard/chat', icon: '/sidebar-icons/chat.png', alt: 'Chat' },
-  { href: '/dashboard/keys', icon: '/sidebar-icons/auto.png', alt: 'Keys' },
+  { href: '/dashboard/keys', icon: '/sidebar-icons/automation.png', alt: 'Keys' },
   { href: '/dashboard/flows', icon: '/sidebar-icons/flows.png', alt: 'Flows' },
 ]
 
