@@ -33,19 +33,38 @@ export default function ChatHistoryBar({
 
   useEffect(() => {
     if (!uuid) return;
+
+    // 1) Traer todas las sesiones del usuario
     const fetchSessions = async () => {
-      const { data, error } = await supabase
+      const { data: allSessions, error: sessError } = await supabase
         .from('chat_sessions')
         .select('session_id, summary, updated_at')
         .eq('user_id', uuid)
         .order('updated_at', { ascending: false });
 
-      if (error) {
-        console.error('Error al cargar sesiones:', error);
+      if (sessError || !allSessions) {
+        console.error('Error al cargar sesiones:', sessError);
         return;
       }
-      setSessions(data as Session[]);
+
+      // 2) Traer solo session_ids que tengan al menos un mensaje del usuario
+      const { data: msgData, error: msgError } = await supabase
+        .from('chat_messages')
+        .select('session_id', { count: 'exact' })
+        .eq('user_id', uuid);
+
+      if (msgError || !msgData) {
+        console.error('Error al cargar mensajes:', msgError);
+        return;
+      }
+
+      const validIds = new Set(msgData.map((m) => m.session_id));
+
+      // 3) Filtrar solo las sesiones cuyo session_id esté en validIds
+      const filtered = allSessions.filter((s) => validIds.has(s.session_id));
+      setSessions(filtered as Session[]);
     };
+
     fetchSessions();
   }, [uuid]);
 
