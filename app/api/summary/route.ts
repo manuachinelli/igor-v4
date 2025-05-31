@@ -67,7 +67,9 @@ export async function POST(req: NextRequest) {
       temperature: 0.7,
     });
 
-    const summary = completion.choices[0].message?.content.trim() ?? '';
+    // Sustituimos el acceso directo para evitar posibles null/undefined
+    const rawText = completion.choices?.[0]?.message?.content ?? '';
+    const summary = rawText.trim();
 
     // 3.5. Actualizamos la tabla 'chat_sessions' con el summary
     const { error: updateError } = await supabase
