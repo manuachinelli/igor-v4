@@ -13,10 +13,13 @@
   padding: 16px;
   overflow-y: auto;
 
-  /* 1) centrar todo el contenido de chat (burbujas) */
+  /* 1) Que todo el bloque de mensajes tenga el mismo ancho máximo que el inputBox */
+  width: 100%;
+  max-width: 80%;       /* coincide con el max-width del inputBox */
+  margin: 0 auto;       /* centra entre las barras lateral izquierda/derecha */
+
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
 }
 
@@ -25,15 +28,15 @@
   border-radius: 20px;
   font-size: 14px;
   line-height: 1.4;
-  max-width: 70%;          /* ocupado como porcentaje del ancho del contenedor */
+  max-width: 100%;      /* ya que .messagesContainer limita al 80% */
   word-wrap: break-word;
   word-break: break-word;
 }
 
 .userBubble {
-  /* 3) tus mensajes pegados al lado derecho */
+  /* 3) tus mensajes pegados al lado derecho dentro del ancho limitado */
   align-self: flex-end;
-  background-color: #0ea5e9; /* Azul similar al logo */
+  background-color: #0ea5e9; /* azul similar al logo */
   color: white;
 }
 
@@ -61,8 +64,6 @@
   align-items: center;
 }
 
-/* 1) y 2) el rectángulo de abajo ahora es más ancho (80% del ancho disponible),
-   centrado entre las barras lateral izquierda/derecha */
 .inputBox {
   display: flex;
   align-items: center;
@@ -70,9 +71,10 @@
   background-color: #1a1a1a;
   padding: 8px 12px;
   border-radius: 20px;
+
   width: 100%;
-  max-width: 80%;         /* ocupa hasta el 80% del ancho padre */
-  margin: 0 auto;         /* centra el rectángulo entre las barras */
+  max-width: 80%;       /* ocupa hasta el 80% del ancho de pantalla */
+  margin: 0 auto;       /* centra entre las barras lateral izquierda/derecha */
 }
 
 .input {
