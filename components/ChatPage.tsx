@@ -1,39 +1,54 @@
+// components/ChatPage.tsx
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import IgorChat, { IgorChatHandle } from './IgorChat';
+import IgorChat from './IgorChat';
 import ChatHistoryBar from './ChatHistoryBar';
+import IgorHeader from './IgorHeader';
 
 export default function ChatPage() {
-  const [currentSession, setCurrentSession] = useState<string>('');
-  const chatRef = useRef<IgorChatHandle>(null);
+  const [sessionId, setSessionId] = useState<string>('');
+  const chatRef = useRef<any>(null);
 
-  // Al montar: si no existe session guardada, dejar en blanco
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const existing = localStorage.getItem('igor_session');
-    if (existing) setCurrentSession(existing);
+    if (existing) setSessionId(existing);
   }, []);
 
   const handleNewChat = () => {
     chatRef.current?.resetChat();
-    const newId = localStorage.getItem('igor_session') || '';
-    setCurrentSession(newId);
+    if (typeof window === 'undefined') return;
+    setSessionId(localStorage.getItem('igor_session') || '');
   };
 
-  const handleSelectSession = (sessionId: string) => {
-    localStorage.setItem('igor_session', sessionId);
-    setCurrentSession(sessionId);
+  const handleSelectSession = (sid: string) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('igor_session', sid);
+      setSessionId(sid);
+    }
     chatRef.current?.resetChat();
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
-      <ChatHistoryBar
-        onNewChat={handleNewChat}
-        onSelectSession={handleSelectSession}
-      />
-      <div style={{ flex: 1 }}>
-        <IgorChat ref={chatRef} sessionId={currentSession} />
+    <div className="flex h-screen bg-black text-white">
+      {/* IZQUIERDA: tu chat */}
+      <div className="flex flex-col flex-1">
+        <IgorHeader />
+        <div className="flex-1 overflow-auto">
+          {/* Aquí van los mensajes de IgorChat */}
+        </div>
+        <div className="border-t border-gray-700 h-80">
+          <IgorChat ref={chatRef} sessionId={sessionId} />
+        </div>
+      </div>
+
+      {/* DERECHA: historial de sesiones */}
+      <div className="w-64 bg-gray-900 border-l border-gray-700">
+        <ChatHistoryBar
+          onNewChat={handleNewChat}
+          onSelectSession={handleSelectSession}
+        />
       </div>
     </div>
   );
