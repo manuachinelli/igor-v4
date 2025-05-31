@@ -4,11 +4,11 @@
 import { useState, useRef, useEffect } from 'react';
 import ChatHistoryBar from '@/components/ChatHistoryBar';
 import IgorHeader from '@/components/IgorHeader';
-import IgorChat, { IgorChatHandle } from '@/components/IgorChat';
+import IgorChat from '@/components/IgorChat';
 
 export default function ChatPage() {
   const [sessionId, setSessionId] = useState<string>('');
-  const chatRef = useRef<IgorChatHandle>(null);
+  const chatRef = useRef<any>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
