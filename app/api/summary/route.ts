@@ -4,23 +4,27 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 
-// 1. Inicializamos Supabase con las variables de entorno
+// 1. Inicializamos Supabase con Service Role Key
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// 2. Inicializamos OpenAI con tu API key
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error('No se encontró OPENAI_API_KEY en .env.local');
-}
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// 2. NOTA: Ya NO verificamos OPENAI_API_KEY aquí en nivel módulo.
+//    Lo haremos dentro de POST, para que el build no falle.
 
-// 3. Exportamos la función POST que Next.js usará como handler
 export async function POST(req: NextRequest) {
   try {
-    // 3.1. Leemos el body y extraemos sessionId
+    // 2.1. Ahora validamos la clave de OpenAI en el handler (en lugar de en el tope)
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { ok: false, message: 'Falta OPENAI_API_KEY en entorno' },
+        { status: 500 }
+      );
+    }
+    const openai = new OpenAI({ apiKey });
+
+    // 2.2. Leemos el body y extraemos sessionId
     const { sessionId } = await req.json();
     if (!sessionId) {
       return NextResponse.json(
@@ -29,7 +33,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3.2. Traemos los primeros 3 mensajes de esta sesión
+    // 2.3. Traemos los primeros 3 mensajes de esta sesión
     const { data: msgs, error: fetchError } = await supabase
       .from('chat_messages')
       .select('content, role')
@@ -44,7 +48,6 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-
     if (!msgs || msgs.length < 3) {
       return NextResponse.json(
         { ok: false, message: 'No hay suficientes mensajes para resumir.' },
@@ -52,14 +55,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3.3. Construimos el prompt para OpenAI con esos 3 mensajes
+    // 2.4. Construimos el prompt para OpenAI con esos 3 mensajes
     const promptText =
       'Resume estos tres mensajes en una frase breve:\n' +
       msgs
-        .map((m) => (m.role === 'user' ? `Usuario: ${m.content}` : `Asistente: ${m.content}`))
+        .map((m) =>
+          m.role === 'user'
+            ? `Usuario: ${m.content}`
+            : `Asistente: ${m.content}`
+        )
         .join('\n');
 
-    // 3.4. Llamamos a la API de OpenAI para generar un resumen
+    // 2.5. Llamamos a la API de OpenAI para generar un resumen
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: promptText }],
@@ -67,11 +74,11 @@ export async function POST(req: NextRequest) {
       temperature: 0.7,
     });
 
-    // Sustituimos el acceso directo para evitar posibles null/undefined
+    // 2.6. Extraemos el texto de manera segura
     const rawText = completion.choices?.[0]?.message?.content ?? '';
     const summary = rawText.trim();
 
-    // 3.5. Actualizamos la tabla 'chat_sessions' con el summary
+    // 2.7. Actualizamos la tabla 'chat_sessions' con el summary
     const { error: updateError } = await supabase
       .from('chat_sessions')
       .update({ summary })
@@ -85,7 +92,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3.6. Respondemos con ok y el summary generado
+    // 2.8. Respondemos con ok y el summary generado
     return NextResponse.json({ ok: true, summary });
   } catch (err) {
     console.error('Exception en /api/summary:', err);
