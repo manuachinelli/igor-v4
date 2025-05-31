@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     .select('id, content, role, created_at')
     .eq('session_id', sessionId)
     .eq('user_id', userId)
-    .order('created_at', { ascending: true });
+    .order('inserted_at', { ascending: true });
 
   if (msgError) {
     console.error('❌ Supabase error al consultar mensajes:', msgError);
