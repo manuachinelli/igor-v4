@@ -39,7 +39,7 @@ export default function ChatPage() {
           {/* Espacio donde IgorChat mostrará sus mensajes */}
         </div>
         <div className="border-t border-gray-700 h-80">
-          <IgorChat ref={chatRef} />
+          <IgorChat ref={chatRef} sessionId={sessionId} />
         </div>
       </div>
 
