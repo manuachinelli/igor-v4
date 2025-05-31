@@ -29,8 +29,7 @@ export async function getChatSummary(messages: Message[]): Promise<string> {
   const payload = [
     {
       role: 'system',
-      content:
-        'Resume brevemente el siguiente intercambio de mensajes en una sola frase clara, de no mas de 14 caracteres'.',
+      content: 'Resume brevemente el siguiente intercambio de mensajes en una sola frase clara, de no mas de 14 caracteres',
     },
     ...recent,
   ];
@@ -41,5 +40,7 @@ export async function getChatSummary(messages: Message[]): Promise<string> {
     max_tokens: 60,
   });
 
-  return completion.choices[0].message.content.trim();
+  // Aseguramos que siempre sea string antes de hacer .trim()
+  const rawText = completion.choices?.[0]?.message?.content ?? '';
+  return rawText.trim();
 }
