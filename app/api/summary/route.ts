@@ -53,21 +53,44 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, message: 'No hay suficientes mensajes del usuario' });
   }
 
-  // Llamamos a OpenAI para generar un título
   try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'system',
-          content: 'Tu tarea es leer los primeros mensajes del usuario en un chat de trabajo, y generar un título breve de la conversación que sirva para reconocerla. El título debe tener máximo 5 palabras y usar lenguaje claro.',
-        },
-        {
-          role: 'user',
-          content: mensajesUsuario,
-        },
-      ],
-    });
+    let response;
+
+    try {
+      // Intentamos primero con GPT-4
+      response = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: [
+          {
+            role: 'system',
+            content:
+              'Tu tarea es leer los primeros mensajes del usuario en un chat de trabajo, y generar un título breve de la conversación que sirva para reconocerla. El título debe tener máximo 5 palabras y usar lenguaje claro.',
+          },
+          {
+            role: 'user',
+            content: mensajesUsuario,
+          },
+        ],
+      });
+    } catch (gpt4Err) {
+      console.warn('⚠️ GPT-4 falló. Reintentando con GPT-3.5...', gpt4Err);
+
+      // Fallback a gpt-3.5-turbo
+      response = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content:
+              'Tu tarea es leer los primeros mensajes del usuario en un chat de trabajo, y generar un título breve de la conversación que sirva para reconocerla. El título debe tener máximo 5 palabras y usar lenguaje claro.',
+          },
+          {
+            role: 'user',
+            content: mensajesUsuario,
+          },
+        ],
+      });
+    }
 
     const title = response.choices[0].message.content?.trim().replace(/^["']|["']$/g, '') || null;
 
@@ -86,6 +109,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true, summary: title });
   } catch (err: any) {
-    return NextResponse.json({ ok: false, message: 'Error con OpenAI', error: err.message });
+    console.error('❌ Error completo al llamar OpenAI:', err); // 👈 agregá esto para logs
+    return NextResponse.json({
+      ok: false,
+      message: 'Error con OpenAI',
+      error: err.message || JSON.stringify(err),
+    });
   }
 }
