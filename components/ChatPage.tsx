@@ -5,23 +5,58 @@ import { useState, useEffect, useRef } from 'react';
 import IgorChat from './IgorChat';
 import ChatHistoryBar from './ChatHistoryBar';
 import IgorHeader from './IgorHeader';
+import { supabase } from '@/lib/supabaseClient'; // asegúrate de tener esto
 
 export default function ChatPage() {
   const [sessionId, setSessionId] = useState<string>('');
+  const [uuid, setUuid] = useState<string | null>(null);
   const chatRef = useRef<any>(null);
 
+  // 1) Al montar, cargamos uuid y sessionId de localStorage (si existe)
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const existing = localStorage.getItem('igor_session');
-    if (existing) setSessionId(existing);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user.id) {
+        setUuid(session.user.id);
+        const existing = localStorage.getItem('igor_session');
+        if (existing) {
+          setSessionId(existing);
+        }
+      }
+    });
   }, []);
 
-  const handleNewChat = () => {
+  // 2) Cuando el usuario hace clic en “+”, creamos una fila nueva en chat_sessions
+  const handleNewChat = async () => {
+    // 2.a) Si no tenemos userId todavía, abortamos
+    if (!uuid) return;
+
+    // 2.b) Limpiamos el chat visible
     chatRef.current?.resetChat();
-    if (typeof window === 'undefined') return;
-    setSessionId(localStorage.getItem('igor_session') || '');
+
+    // 2.c) Insertamos una nueva sesión vacía en la tabla `chat_sessions`
+    try {
+      const { data: insertData, error: insertError } = await supabase
+        .from('chat_sessions')
+        .insert({ user_id: uuid })
+        .select('session_id')
+        .single(); // llamamos .single() porque esperamos solo un registro
+
+      if (insertError || !insertData) {
+        console.error('Error al crear nueva sesión:', insertError);
+        return;
+      }
+
+      const newSessionId = insertData.session_id;
+      // 2.d) Guardamos en localStorage y en el estado
+      localStorage.setItem('igor_session', newSessionId);
+      setSessionId(newSessionId);
+    } catch (e) {
+      console.error('Exception creando nueva sesión:', e);
+    }
   };
 
+  // 3) Cuando el usuario selecciona otra sesión de la lista
   const handleSelectSession = (sid: string) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('igor_session', sid);
@@ -36,7 +71,7 @@ export default function ChatPage() {
       <div className="flex flex-col flex-1">
         <IgorHeader />
         <div className="flex-1 overflow-auto">
-          {/* Aquí van los mensajes de IgorChat */}
+          {/* Aquí podría ir un lugar para mostrar algo arriba, si quisieras */}
         </div>
         <div className="border-t border-gray-700 h-80">
           <IgorChat ref={chatRef} sessionId={sessionId} />
