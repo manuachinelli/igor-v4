@@ -1,10 +1,10 @@
-// components/ChatPage.tsx
+// app/dashboard/chat/page.tsx
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import IgorChat from './IgorChat';
-import ChatHistoryBar from './ChatHistoryBar';
-import IgorHeader from './IgorHeader';
+import ChatHistoryBar from '@/components/ChatHistoryBar';
+import IgorHeader from '@/components/IgorHeader';
+import IgorChat from '@/components/IgorChat';
 
 export default function ChatPage() {
   const [sessionId, setSessionId] = useState<string>('');
@@ -53,4 +53,3 @@ export default function ChatPage() {
     </div>
   );
 }
-
