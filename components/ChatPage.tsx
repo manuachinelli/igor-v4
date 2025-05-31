@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import IgorChat from './IgorChat';
 import ChatHistoryBar from './ChatHistoryBar';
 import IgorHeader from './IgorHeader';
-import { supabase } from '@/lib/supabaseClient'; // asegúrate de tener esto
+import { supabase } from '@/lib/supabaseClient';
 
 export default function ChatPage() {
   const [sessionId, setSessionId] = useState<string>('');
@@ -31,24 +31,24 @@ export default function ChatPage() {
     // 2.a) Si no tenemos userId todavía, abortamos
     if (!uuid) return;
 
-    // 2.b) Limpiamos el chat visible
+    // 2.b) Genero un nuevo ID de sesión en el cliente
+    const newSessionId = crypto.randomUUID();
+
+    // 2.c) Limpio el chat visible
     chatRef.current?.resetChat();
 
-    // 2.c) Insertamos una nueva sesión vacía en la tabla `chat_sessions`
+    // 2.d) Inserto en Supabase incluyendo ese session_id explícito
     try {
-      const { data: insertData, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('chat_sessions')
-        .insert({ user_id: uuid })
-        .select('session_id')
-        .single(); // llamamos .single() porque esperamos solo un registro
+        .insert({ session_id: newSessionId, user_id: uuid });
 
-      if (insertError || !insertData) {
+      if (insertError) {
         console.error('Error al crear nueva sesión:', insertError);
         return;
       }
 
-      const newSessionId = insertData.session_id;
-      // 2.d) Guardamos en localStorage y en el estado
+      // 2.e) Guardo en localStorage y en el estado
       localStorage.setItem('igor_session', newSessionId);
       setSessionId(newSessionId);
     } catch (e) {
