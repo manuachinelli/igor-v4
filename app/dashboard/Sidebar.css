@@ -1,3 +1,9 @@
+/* FORZAR VISIBILIDAD DE ICONOS */
+.sidebar .icon {
+  opacity: 1 !important;
+  display: block !important;
+}
+
 /* Sidebar.css */
 
 .sidebar {
