@@ -104,4 +104,9 @@ export default function ChatHistoryBar({
         </ul>
       )}
 
-      <button className={styles.togg
+      <button className={styles.toggleButton} onClick={() => setCollapsed(!collapsed)}>
+        {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+      </button>
+    </div>
+  );
+}
