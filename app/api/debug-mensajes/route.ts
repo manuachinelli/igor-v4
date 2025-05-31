@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, message: 'Falta sessionId' }, { status: 400 });
   }
 
+  // Traer el user_id de la sesión
   const { data: sessionData, error: sessionError } = await supabase
     .from('chat_sessions')
     .select('user_id')
@@ -25,6 +26,7 @@ export async function POST(req: NextRequest) {
 
   const userId = sessionData.user_id;
 
+  // Buscar los mensajes de esa sesión y usuario
   const { data: msgs, error: msgError } = await supabase
     .from('chat_messages')
     .select('id, content, role, created_at')
@@ -33,7 +35,12 @@ export async function POST(req: NextRequest) {
     .order('created_at', { ascending: true });
 
   if (msgError) {
-    return NextResponse.json({ ok: false, message: 'Error al consultar mensajes', error: msgError }, { status: 500 });
+    console.error('❌ Supabase error al consultar mensajes:', msgError);
+    return NextResponse.json({
+      ok: false,
+      message: 'Error al consultar mensajes',
+      error: msgError.details ?? msgError.message ?? msgError,
+    }, { status: 500 });
   }
 
   return NextResponse.json({
