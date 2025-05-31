@@ -13,10 +13,10 @@
   padding: 16px;
   overflow-y: auto;
 
-  /* 1) Que todo el bloque de mensajes tenga el mismo ancho máximo que el inputBox */
+  /* Reducido al 70% para evitar solaparse con las barras laterales */
   width: 100%;
-  max-width: 80%;       /* coincide con el max-width del inputBox */
-  margin: 0 auto;       /* centra entre las barras lateral izquierda/derecha */
+  max-width: 70%;
+  margin: 0 auto;
 
   display: flex;
   flex-direction: column;
@@ -28,20 +28,18 @@
   border-radius: 20px;
   font-size: 14px;
   line-height: 1.4;
-  max-width: 100%;      /* ya que .messagesContainer limita al 80% */
+  max-width: 100%;
   word-wrap: break-word;
   word-break: break-word;
 }
 
 .userBubble {
-  /* 3) tus mensajes pegados al lado derecho dentro del ancho limitado */
   align-self: flex-end;
-  background-color: #0ea5e9; /* azul similar al logo */
+  background-color: #0ea5e9;
   color: white;
 }
 
 .assistantBubble {
-  /* 3) mensajes de Igor pegados al lado izquierdo */
   align-self: flex-start;
   background-color: #262626;
   color: white;
@@ -72,9 +70,10 @@
   padding: 8px 12px;
   border-radius: 20px;
 
+  /* Reducido al 70% para que quede bien centrado entre barras */
   width: 100%;
-  max-width: 80%;       /* ocupa hasta el 80% del ancho de pantalla */
-  margin: 0 auto;       /* centra entre las barras lateral izquierda/derecha */
+  max-width: 70%;
+  margin: 0 auto;
 }
 
 .input {
