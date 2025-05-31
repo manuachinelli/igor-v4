@@ -15,19 +15,14 @@ export default function ChatPage() {
   }, []);
 
   const handleNewChat = () => {
-    // Limpiar session actual en IgorChat
     chatRef.current?.resetChat();
-    // El resetChat guardará nuevo sessionId en localStorage y en IgorChat
-    // Luego releyendo localStorage, podríamos setear state para forzar recarga:
     const newId = localStorage.getItem('igor_session') || '';
     setCurrentSession(newId);
   };
 
   const handleSelectSession = (sessionId: string) => {
-    // Actualizar localStorage y state para que IgorChat recargue
     localStorage.setItem('igor_session', sessionId);
     setCurrentSession(sessionId);
-    // Opcional: llamar a resetChat en IgorChat para forzar recarga
     chatRef.current?.resetChat();
   };
 
@@ -38,7 +33,7 @@ export default function ChatPage() {
         onSelectSession={handleSelectSession}
       />
       <div style={{ flex: 1 }}>
-        <IgorChat ref={chatRef} />
+        <IgorChat ref={chatRef} sessionId={currentSession} />
       </div>
     </div>
   );
