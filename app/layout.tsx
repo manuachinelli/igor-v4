@@ -14,10 +14,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           color: '#fff',
           fontFamily: 'inherit',
           display: 'flex',
-          height: '100vh',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
         }}
       >
-        {/* AQUÍ va TU menú global (la barra izquierda) definida en alguna parte */}
         {children}
       </body>
     </html>
