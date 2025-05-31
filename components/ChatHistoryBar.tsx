@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Sparkles, Loader2 } from 'lucide-react';
 import styles from './ChatHistoryBar.module.css';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -26,6 +26,7 @@ export default function ChatHistoryBar({
   const [collapsed, setCollapsed] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [uuid, setUuid] = useState<string | null>(null);
+  const [loadingSummary, setLoadingSummary] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -48,23 +49,27 @@ export default function ChatHistoryBar({
         return;
       }
 
-      const { data: msgData, error: msgError } = await supabase
-        .from('chat_messages')
-        .select('session_id', { count: 'exact' })
-        .eq('user_id', uuid);
-
-      if (msgError || !msgData) {
-        console.error('Error al cargar mensajes:', msgError);
-        return;
-      }
-
-      const validIds = new Set(msgData.map((m) => m.session_id));
-      const filtered = allSessions.filter((s) => validIds.has(s.session_id));
-      setSessions(filtered as Session[]);
+      setSessions(allSessions as Session[]);
     };
 
     fetchSessions();
   }, [uuid, refreshTrigger]);
+
+  const handleGenerateSummary = async (sessionId: string) => {
+    setLoadingSummary(sessionId);
+    try {
+      await fetch('/api/summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId }),
+      });
+    } catch (err) {
+      console.error('Error generando resumen:', err);
+    } finally {
+      setLoadingSummary(null);
+      window.location.reload(); // o usar: setRefreshSessions(prev => prev + 1);
+    }
+  };
 
   return (
     <div className={`${styles.chatHistoryBar} ${collapsed ? styles.collapsed : ''}`}>
@@ -91,10 +96,26 @@ export default function ChatHistoryBar({
               className={styles.sessionItem}
               onClick={() => onSelectSession(s.session_id)}
             >
-              <div className={styles.sessionTitle}>
-                {s.summary
-                  ? s.summary.slice(0, 30) + (s.summary.length > 30 ? '…' : '')
-                  : `Chat ${s.session_id.slice(0, 8)}…`}
+              <div className={styles.sessionTitleWrapper}>
+                <div className={styles.sessionTitle}>
+                  {s.summary
+                    ? s.summary.slice(0, 30) + (s.summary.length > 30 ? '…' : '')
+                    : `Chat ${s.session_id.slice(0, 8)}…`}
+                </div>
+                <button
+                  className={styles.sparkleButton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleGenerateSummary(s.session_id);
+                  }}
+                  title="Renombrar con IA"
+                >
+                  {loadingSummary === s.session_id ? (
+                    <Loader2 className={styles.spinner} size={16} />
+                  ) : (
+                    <Sparkles size={16} />
+                  )}
+                </button>
               </div>
               <div className={styles.sessionDate}>
                 {new Date(s.updated_at).toLocaleString()}
