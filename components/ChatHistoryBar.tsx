@@ -49,7 +49,23 @@ export default function ChatHistoryBar({
         return;
       }
 
-      setSessions(allSessions as Session[]);
+      const { data: msgData, error: msgError } = await supabase
+        .from('chat_messages')
+        .select('session_id')
+        .eq('user_id', uuid);
+
+      if (msgError || !msgData) {
+        console.error('Error al cargar mensajes:', msgError);
+        return;
+      }
+
+      const sessionMsgCount: Record<string, number> = {};
+      msgData.forEach((m) => {
+        sessionMsgCount[m.session_id] = (sessionMsgCount[m.session_id] || 0) + 1;
+      });
+
+      const filtered = allSessions.filter((s) => (sessionMsgCount[s.session_id] || 0) >= 3);
+      setSessions(filtered as Session[]);
     };
 
     fetchSessions();
