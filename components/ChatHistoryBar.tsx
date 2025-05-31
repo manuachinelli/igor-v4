@@ -58,16 +58,23 @@ export default function ChatHistoryBar({
   const handleGenerateSummary = async (sessionId: string) => {
     setLoadingSummary(sessionId);
     try {
-      await fetch('/api/summary', {
+      const res = await fetch('/api/summary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId }),
       });
+
+      const json = await res.json();
+      console.log('🧠 Respuesta de /api/summary:', json);
+
+      if (!json.ok) {
+        console.error('❌ Error al generar resumen:', json.message);
+      }
     } catch (err) {
-      console.error('Error generando resumen:', err);
+      console.error('❌ Error de red al generar resumen:', err);
     } finally {
       setLoadingSummary(null);
-      window.location.reload(); // o usar: setRefreshSessions(prev => prev + 1);
+      window.location.reload(); // o usar setRefreshSessions(prev => prev + 1);
     }
   };
 
