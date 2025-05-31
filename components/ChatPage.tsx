@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+-import { useState, useEffect } from 'react';
++import { useState, useEffect, useRef } from 'react';
 import IgorChat, { IgorChatHandle } from './IgorChat';
 import ChatHistoryBar from './ChatHistoryBar';
 
 export default function ChatPage() {
   const [currentSession, setCurrentSession] = useState<string>('');
-  const chatRef = useRef<IgorChatHandle>(null);
+-  const chatRef = useRef<IgorChatHandle>(null);
++  const chatRef = useRef<IgorChatHandle>(null);
 
   // Al montar: si no existe session guardada, dejar en blanco
   useEffect(() => {
