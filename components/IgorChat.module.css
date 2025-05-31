@@ -1,3 +1,5 @@
+/* IgorChat.module.css */
+
 .chatContainer {
   display: flex;
   flex-direction: column;
@@ -21,6 +23,7 @@
   font-size: 14px;
   line-height: 1.4;
   max-width: 600px;
+  margin: 0 auto;          /* centro las burbujas */
   word-wrap: break-word;
   word-break: break-word;
 }
@@ -61,7 +64,9 @@
   background-color: #1a1a1a;
   padding: 8px 12px;
   border-radius: 20px;
-  width: 880px;
+  width: 100%;
+  max-width: 600px;       /* ancho máximo y responsivo */
+  margin: 0 auto;         /* centro el input */
 }
 
 .input {
