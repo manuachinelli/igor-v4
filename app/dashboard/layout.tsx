@@ -1,6 +1,6 @@
 'use client';
 
-import './globals.css';
+import '../globals.css';
 import { Inter } from 'next/font/google';
 import { useState, useRef, useEffect } from 'react';
 import ChatHistoryBar from '@/components/ChatHistoryBar';
