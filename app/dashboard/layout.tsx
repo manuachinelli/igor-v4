@@ -1,8 +1,6 @@
 'use client';
 
--import '@/styles/globals.css';    // ajusta la ruta si tu globals está en otro lado
-+import '../globals.css';
-
+import '../globals.css';
 import Sidebar from '@/components/Sidebar';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
