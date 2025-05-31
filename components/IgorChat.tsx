@@ -21,26 +21,70 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [uuid, setUuid] = useState<string | null>(null);
-  const [sessionId, setSessionId] = useState<string>(() => crypto.randomUUID()); // ← usa crypto.randomUUID()
+  const [sessionId, setSessionId] = useState<string>(() => {
+    const existing = localStorage.getItem('igor_session');
+    if (existing) return existing;
+    const newId = crypto.randomUUID();
+    localStorage.setItem('igor_session', newId);
+    return newId;
+  });
 
-  // Cargo el UUID de Supabase
+  // Cargar UUID de Supabase y luego inicializar sesión + mensajes
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user?.id) setUuid(session.user.id);
-      else console.warn('No hay sesión activa.');
-    });
-  }, []);
+    async function initSession() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.user?.id) {
+        console.warn('No hay sesión activa.');
+        return;
+      }
+      const userId = session.user.id;
+      setUuid(userId);
+
+      // 1) Upsert en chat_sessions
+      await supabase
+        .from('chat_sessions')
+        .upsert({
+          session_id: sessionId,
+          user_id: userId,
+          updated_at: new Date().toISOString(),
+        });
+
+      // 2) Seleccionar mensajes previos
+      const { data: prevMessages, error } = await supabase
+        .from('chat_messages')
+        .select('role, content')
+        .eq('session_id', sessionId)
+        .order('inserted_at', { ascending: true });
+
+      if (error) {
+        console.error('Error al cargar mensajes:', error);
+        return;
+      }
+      if (prevMessages) {
+        setMessages(prevMessages as Message[]);
+      }
+    }
+
+    initSession();
+  }, [sessionId]);
 
   const handleSend = async () => {
     if (!input.trim() || !uuid) return;
 
-    const newMessages: Message[] = [
-      ...messages,
-      { role: 'user', content: input },
-    ];
-    setMessages(newMessages);
+    const userMsg: Message = { role: 'user', content: input };
+    setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setIsWaiting(true);
+
+    // 1) Insertar mensaje de usuario en Supabase
+    await supabase.from('chat_messages').insert({
+      session_id: sessionId,
+      user_id: uuid,
+      role: 'user',
+      content: userMsg.content,
+    });
 
     try {
       const res = await fetch(
@@ -49,26 +93,39 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            message: input,
+            message: userMsg.content,
             userId: uuid,
-            sessionId, // ← envío de sessionId generado nativamente
+            sessionId,
           }),
         }
       );
 
       const data = await res.json();
       if (data.reply) {
-        setMessages((prev) => [
-          ...prev,
-          { role: 'assistant', content: data.reply },
-        ]);
+        const botMsg: Message = { role: 'assistant', content: data.reply };
+        setMessages((prev) => [...prev, botMsg]);
+
+        // 2) Insertar respuesta del bot en Supabase
+        await supabase.from('chat_messages').insert({
+          session_id: sessionId,
+          user_id: uuid,
+          role: 'assistant',
+          content: botMsg.content,
+        });
       }
     } catch (error) {
       console.error('Error al enviar mensaje:', error);
-      setMessages((prev) => [
-        ...prev,
-        { role: 'assistant', content: 'Error al contactar con Igor.' },
-      ]);
+      const errMsg: Message = {
+        role: 'assistant',
+        content: 'Error al contactar con Igor.',
+      };
+      setMessages((prev) => [...prev, errMsg]);
+      await supabase.from('chat_messages').insert({
+        session_id: sessionId,
+        user_id: uuid,
+        role: 'assistant',
+        content: errMsg.content,
+      });
     } finally {
       setIsWaiting(false);
     }
@@ -79,7 +136,9 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
       setMessages([]);
       setInput('');
       setIsWaiting(false);
-      setSessionId(crypto.randomUUID()); // ← genero un nuevo sessionId al resetear
+      const newId = crypto.randomUUID();
+      localStorage.setItem('igor_session', newId);
+      setSessionId(newId);
     },
   }));
 
@@ -104,7 +163,9 @@ const IgorChat = forwardRef<IgorChatHandle>((_, ref) => {
             {msg.content}
           </div>
         ))}
-        {isWaiting && <div className={styles.waiting}>Igor está escribiendo...</div>}
+        {isWaiting && (
+          <div className={styles.waiting}>Igor está escribiendo...</div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
