@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     .select('id, content, role, created_at')
     .eq('session_id', sessionId)
     .eq('user_id', userId)
-    .order('created_at', { ascending: true });
+    .order('inserted_at', { ascending: true });
 
   if (msgError) {
     return NextResponse.json({ ok: false, message: 'Error al consultar mensajes', error: msgError }, { status: 500 });
