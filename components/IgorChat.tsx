@@ -26,7 +26,6 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(({ sessionId }, ref) 
 
   const [uuid, setUuid] = useState<string | null>(null);
 
-  // Cargo el UUID de Supabase
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user.id) setUuid(session.user.id);
@@ -34,7 +33,6 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(({ sessionId }, ref) 
     });
   }, []);
 
-  // Cada vez que cambie sessionId, cargo el historial
   useEffect(() => {
     if (!uuid || !sessionId) return;
     const fetchHistory = async () => {
@@ -64,7 +62,6 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(({ sessionId }, ref) 
     setIsWaiting(true);
 
     try {
-      // Guardar mensaje de usuario en Supabase
       await supabase.from('chat_messages').insert({
         user_id: uuid,
         session_id: sessionId,
@@ -90,7 +87,6 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(({ sessionId }, ref) 
         const replyMessage: Message = { role: 'assistant', content: data.reply };
         setMessages((prev) => [...prev, replyMessage]);
 
-        // Guardar respuesta en Supabase
         await supabase.from('chat_messages').insert({
           user_id: uuid,
           session_id: sessionId,
@@ -171,7 +167,5 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(({ sessionId }, ref) 
     </div>
   );
 });
-
-export default IgorChat;
 
 export default IgorChat;
