@@ -23,6 +23,7 @@ export default function NoteBox({ note, onDelete }: NoteBoxProps) {
   const [position, setPosition] = useState({ x: note.x_position, y: note.y_position })
   const [size, setSize] = useState({ w: note.width, h: note.height })
   const [content, setContent] = useState(note.content)
+  const [isFocused, setIsFocused] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const onDrag = (e: React.MouseEvent) => {
@@ -77,6 +78,7 @@ export default function NoteBox({ note, onDelete }: NoteBoxProps) {
   }
 
   const handleBlur = async () => {
+    setIsFocused(false)
     await supabase.from('dashboard_notes').update({
       content: content
     }).eq('id', note.id)
@@ -88,15 +90,20 @@ export default function NoteBox({ note, onDelete }: NoteBoxProps) {
       style={{ left: position.x, top: position.y, width: size.w, height: size.h }}
       onMouseDown={onDrag}
     >
-      <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
+      {isFocused && (
+        <>
+          <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
+          <div className={styles.resizeHandle} onMouseDown={onResize} />
+        </>
+      )}
       <textarea
         ref={textareaRef}
         className={styles.textarea}
         value={content}
         onChange={e => setContent(e.target.value)}
+        onFocus={() => setIsFocused(true)}
         onBlur={handleBlur}
       />
-      <div className={styles.resizeHandle} onMouseDown={onResize} />
     </div>
   )
 }
