@@ -1,64 +1,64 @@
 .canvas {
-  position: relative;
-  width: 100%;
+  display: flex;
   height: 100vh;
-  display: flex;
   background-color: #000;
-  color: #fff;
+  color: white;
+  position: relative;
 }
 
-/* Panel flotante a la derecha */
-.floatingPanel {
-  width: 120px; /* más ancho que antes */
-  background-color: #000;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 20px;
-  border-left: 2px solid #fff;
-  flex-shrink: 0;
-}
-
-/* Botón + redondo */
-.floatingButton {
-  background: #000;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  font-size: 32px;
-  cursor: pointer;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.2);
-}
-
-/* Texto debajo del + */
-.infoText {
-  font-size: 12px;
-  text-align: center;
-  margin-top: 8px;
-  color: #ccc;
-  padding: 0 4px;
-}
-
-/* Input flotante */
 .inputOverlay {
-  position: fixed;
-  bottom: 80px;
-  right: 140px;
-  background: #1a1a1a;
-  padding: 8px;
-  border: 1px solid #444;
-  border-radius: 8px;
+  position: absolute;
+  top: 50px;
+  left: 50px;
   z-index: 10;
 }
 
 .inputOverlay input {
+  padding: 10px;
+  border-radius: 6px;
   border: none;
-  outline: none;
   font-size: 16px;
-  background-color: #1a1a1a;
-  color: #fff;
+}
+
+.floatingPanel {
+  width: 240px;
+  background-color: #111;
+  padding: 20px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.floatingButton,
+.textButton,
+.pencilButton {
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.floatingButton:hover,
+.textButton:hover,
+.pencilButton:hover {
+  background-color: #555;
+}
+
+.infoText {
+  text-align: center;
+  font-size: 14px;
 }
