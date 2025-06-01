@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import styles from './QueryBubble.module.css'
-import NoteBox from './NoteBox'
 import { supabase } from '@/lib/supabaseClient'
+import NoteBox from './NoteBox'
 
 interface Query {
   id: string
   text: string
-  x: number
-  y: number
+  x_position: number
+  y_position: number
 }
 
 interface Note {
@@ -22,68 +22,68 @@ interface Note {
 }
 
 export default function IgorBubbles() {
-  const [queries, setQueries] = useState<Query[]>([])
+  const [bubbles, setBubbles] = useState<Query[]>([])
   const [notes, setNotes] = useState<Note[]>([])
 
-  // Cargar notas de Supabase
+  // Cargar pelotitas y notas
   useEffect(() => {
-    fetchNotes()
+    const fetchData = async () => {
+      const { data: queries } = await supabase.from('dashboard_queries').select('*')
+      const { data: notes } = await supabase.from('dashboard_notes').select('*')
+      setBubbles(queries || [])
+      setNotes(notes || [])
+    }
+    fetchData()
   }, [])
 
-  const fetchNotes = async () => {
-    const { data, error } = await supabase.from('dashboard_notes').select('*')
-    if (!error && data) setNotes(data)
-  }
-
-  const addNote = async () => {
+  // Crear una nueva nota
+  const handleAddNote = async () => {
     const { data, error } = await supabase.from('dashboard_notes').insert([
       {
         content: '',
-        x_position: 100 + Math.random() * 200,
-        y_position: 100 + Math.random() * 200,
+        x_position: 200,
+        y_position: 200,
         width: 200,
-        height: 100
-      }
+        height: 100,
+      },
     ]).select()
 
-    if (!error && data && data[0]) {
-      setNotes(prev => [...prev, data[0]])
-    }
+    if (data) setNotes([...notes, data[0]])
   }
 
-  const deleteNote = async (id: string) => {
+  // Eliminar una nota
+  const handleDeleteNote = async (id: string) => {
     await supabase.from('dashboard_notes').delete().eq('id', id)
-    setNotes(prev => prev.filter(n => n.id !== id))
+    setNotes(notes.filter(n => n.id !== id))
   }
-
-  // Manejar tecla T para agregar nota
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 't' || e.key === 'T') {
-        addNote()
-      }
-    }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [])
 
   return (
-    <div className={styles.container}>
-      {/* Burbujas de query */}
-      {queries.map((query) => (
+    <>
+      {/* Burbujas */}
+      {bubbles.map((bubble) => (
         <div
-          key={query.id}
+          key={bubble.id}
           className={styles.bubble}
-          style={{ left: query.x, top: query.y }}
+          style={{ left: bubble.x_position, top: bubble.y_position }}
         >
-          {query.text}
+          {bubble.text}
         </div>
       ))}
 
-      {/* Notas flotantes */}
+      {/* Notas */}
       {notes.map((note) => (
-        <NoteBox key={note.id} note={note} onDelete={deleteNote} />
+        <NoteBox key={note.id} note={note} onDelete={handleDeleteNote} />
       ))}
-    </div>
+
+      {/* Botones */}
+      <div className={styles.iconBar}>
+        <button className={styles.iconButton} onClick={handleAddNote}>
+          T
+        </button>
+        <button className={styles.iconButton}>
+          ✏️
+        </button>
+      </div>
+    </>
   )
 }
