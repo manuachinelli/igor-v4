@@ -105,4 +105,15 @@ export default function IgorBubbles() {
       </div>
 
       {/* Zona derecha: botón + e info */}
-      <div className={styles.floatingPanel
+      <div className={styles.floatingPanel}>
+        <button className={styles.floatingButton} onClick={() => setShowInput(true)}>+</button>
+        <div className={styles.infoText}>
+          Pedile a Igor<br />
+          que cree una bubble<br />
+          que muestre<br />
+          lo que vos quieras.
+        </div>
+      </div>
+    </div>
+  )
+}
