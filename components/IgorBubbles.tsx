@@ -1,89 +1,92 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import styles from './QueryBubble.module.css'
 import { supabase } from '@/lib/supabaseClient'
+import styles from './IgorChat.module.css'
+import QueryBubble from './QueryBubble'
 import NoteBox from './NoteBox'
 
-interface Query {
+export type Bubble = {
   id: string
   text: string
   x_position: number
   y_position: number
 }
 
-interface Note {
+export type Note = {
   id: string
   content: string
   x_position: number
   y_position: number
-  width: number
-  height: number
 }
 
 export default function IgorBubbles() {
-  const [bubbles, setBubbles] = useState<Query[]>([])
+  const [bubbles, setBubbles] = useState<Bubble[]>([])
   const [notes, setNotes] = useState<Note[]>([])
 
-  // Cargar pelotitas y notas
   useEffect(() => {
-    const fetchData = async () => {
-      const { data: queries } = await supabase.from('dashboard_queries').select('*')
-      const { data: notes } = await supabase.from('dashboard_notes').select('*')
-      setBubbles(queries || [])
-      setNotes(notes || [])
+    fetchBubbles()
+    fetchNotes()
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'T') createNote()
     }
-    fetchData()
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
   }, [])
 
-  // Crear una nueva nota
-  const handleAddNote = async () => {
-    const { data, error } = await supabase.from('dashboard_notes').insert([
-      {
-        content: '',
-        x_position: 200,
-        y_position: 200,
-        width: 200,
-        height: 100,
-      },
-    ]).select()
-
-    if (data) setNotes([...notes, data[0]])
+  const fetchBubbles = async () => {
+    const { data, error } = await supabase.from('bubbles').select('*')
+    if (!error && data) setBubbles(data)
   }
 
-  // Eliminar una nota
+  const fetchNotes = async () => {
+    const { data, error } = await supabase.from('notes').select('*')
+    if (!error && data) setNotes(data)
+  }
+
+  const createNote = async () => {
+    const { data, error } = await supabase
+      .from('notes')
+      .insert({ content: 'New note', x_position: 100, y_position: 100 })
+      .select()
+      .single()
+
+    if (!error && data) setNotes(prev => [...prev, data])
+  }
+
   const handleDeleteNote = async (id: string) => {
-    await supabase.from('dashboard_notes').delete().eq('id', id)
-    setNotes(notes.filter(n => n.id !== id))
+    await supabase.from('notes').delete().eq('id', id)
+    setNotes(prev => prev.filter(note => note.id !== id))
+  }
+
+  const handleUpdateNote = async (id: string, x: number, y: number) => {
+    await supabase.from('notes').update({ x_position: x, y_position: y }).eq('id', id)
+    setNotes(prev =>
+      prev.map(note =>
+        note.id === id ? { ...note, x_position: x, y_position: y } : note
+      )
+    )
   }
 
   return (
-    <>
-      {/* Burbujas */}
-      {bubbles.map((bubble) => (
-        <div
+    <div className={styles.igorContainer}>
+      {bubbles.map(bubble => (
+        <QueryBubble
           key={bubble.id}
-          className={styles.bubble}
-          style={{ left: bubble.x_position, top: bubble.y_position }}
-        >
-          {bubble.text}
-        </div>
+          id={bubble.id}
+          text={bubble.text}
+          x={bubble.x_position}
+          y={bubble.y_position}
+        />
       ))}
-
-      {/* Notas */}
-      {notes.map((note) => (
-        <NoteBox key={note.id} note={note} onDelete={handleDeleteNote} />
+      {notes.map(note => (
+        <NoteBox
+          key={note.id}
+          note={note}
+          onDelete={handleDeleteNote}
+          onUpdate={handleUpdateNote}
+        />
       ))}
-
-      {/* Botones */}
-      <div className={styles.iconBar}>
-        <button className={styles.iconButton} onClick={handleAddNote}>
-          T
-        </button>
-        <button className={styles.iconButton}>
-          ✏️
-        </button>
-      </div>
-    </>
+    </div>
   )
 }
