@@ -1,117 +1,104 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import styles from './NoteBox.module.css'
 import { supabase } from '@/lib/supabaseClient'
-import QueryBubble from './QueryBubble'
-import styles from './IgorBubbles.module.css'
 
-interface Bubble {
-  id: string
-  title: string
-  value: string
-  x_position: number
-  y_position: number
-  width: number
-  height: number
-  color: string
+interface NoteProps {
+  note: {
+    id: string
+    content: string
+    x_position: number
+    y_position: number
+    width: number
+    height: number
+  }
+  onDelete: (id: string) => void
 }
 
-export default function IgorBubbles() {
-  const [bubbles, setBubbles] = useState<Bubble[]>([])
-  const [showInput, setShowInput] = useState(false)
-  const [inputValue, setInputValue] = useState('')
+export default function NoteBox({ note, onDelete }: NoteProps) {
+  const [position, setPosition] = useState({ x: note.x_position, y: note.y_position })
+  const [size, setSize] = useState({ w: note.width, h: note.height })
+  const [content, setContent] = useState(note.content)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  useEffect(() => {
-    const fetchBubbles = async () => {
-      const { data: userData } = await supabase.auth.getUser()
-      const userId = userData?.user?.id
-      if (!userId) return
+  // Drag
+  const onDrag = (e: React.MouseEvent) => {
+    const startX = e.clientX
+    const startY = e.clientY
+    const origX = position.x
+    const origY = position.y
 
-      const { data } = await supabase
-        .from('dashboard_queries')
-        .select('*')
-        .eq('user_id', userId)
-
-      if (data) setBubbles(data as Bubble[])
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const dx = moveEvent.clientX - startX
+      const dy = moveEvent.clientY - startY
+      setPosition({ x: origX + dx, y: origY + dy })
     }
-    fetchBubbles()
-  }, [])
 
-  const handleDelete = async (id: string) => {
-    if (id.startsWith('temp-')) {
-      setBubbles(prev => prev.filter(b => b.id !== id))
-    } else {
-      await supabase.from('dashboard_queries').delete().eq('id', id)
-      setBubbles(prev => prev.filter(b => b.id !== id))
+    const onMouseUp = async () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseup', onMouseUp)
+
+      await supabase.from('dashboard_notes').update({
+        x_position: position.x,
+        y_position: position.y
+      }).eq('id', note.id)
     }
+
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseup', onMouseUp)
   }
 
-  const handleSubmit = async () => {
-    const { data: userData } = await supabase.auth.getUser()
-    const userId = userData?.user?.id
-    if (!userId || !inputValue) return
+  // Resize
+  const onResize = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const startX = e.clientX
+    const startY = e.clientY
+    const startW = size.w
+    const startH = size.h
 
-    const tempId = `temp-${Date.now()}`
-    const tempBubble: Bubble = {
-      id: tempId,
-      title: inputValue,
-      value: 'Cargando...',
-      x_position: 100,
-      y_position: 100,
-      width: 200,
-      height: 120,
-      color: '#f0f0f0'
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const dx = moveEvent.clientX - startX
+      const dy = moveEvent.clientY - startY
+      setSize({ w: startW + dx, h: startH + dy })
     }
 
-    setBubbles(prev => [...prev, tempBubble])
-    setShowInput(false)
-    setInputValue('')
+    const onMouseUp = async () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseup', onMouseUp)
 
-    await fetch('https://manuachinelli.app.n8n.cloud/webhook/8b913fc3-69df-43c7-9874-1b6a9a697680', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: userId, query: inputValue })
-    })
+      await supabase.from('dashboard_notes').update({
+        width: size.w,
+        height: size.h
+      }).eq('id', note.id)
+    }
 
-    setTimeout(async () => {
-      const { data } = await supabase
-        .from('dashboard_queries')
-        .select('*')
-        .eq('user_id', userId)
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseup', onMouseUp)
+  }
 
-      if (data) setBubbles(data as Bubble[])
-    }, 5000)
+  // Content update
+  const handleBlur = async () => {
+    await supabase.from('dashboard_notes').update({
+      content: content
+    }).eq('id', note.id)
   }
 
   return (
-    <div className={styles.canvas}>
-      {/* Zona izquierda: burbujas */}
-      <div style={{ flex: 1, position: 'relative' }}>
-        {bubbles.map(bubble => (
-          <QueryBubble key={bubble.id} bubble={bubble} onDelete={handleDelete} />
-        ))}
-
-        {showInput && (
-          <div className={styles.inputOverlay}>
-            <input
-              type="text"
-              value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-              placeholder="¿Qué querés saber?"
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Zona derecha: botones */}
-      <div className={styles.floatingPanel}>
-        <div className={styles.buttonGroup}>
-          <button className={styles.floatingButton} onClick={() => setShowInput(true)}>+</button>
-          <button className={styles.textButton} onClick={() => { /* funcionalidad T */ }}>T</button>
-          <button className={styles.pencilButton} disabled>✎</button>
-        </div>
-      </div>
+    <div
+      className={styles.note}
+      style={{ left: position.x, top: position.y, width: size.w, height: size.h }}
+      onMouseDown={onDrag}
+    >
+      <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
+      <textarea
+        ref={textareaRef}
+        className={styles.textarea}
+        value={content}
+        onChange={e => setContent(e.target.value)}
+        onBlur={handleBlur}
+      />
+      <div className={styles.resizeHandle} onMouseDown={onResize} />
     </div>
   )
 }
