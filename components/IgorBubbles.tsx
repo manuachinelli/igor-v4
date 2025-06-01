@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import QueryBubble from './QueryBubble'
-import './IgorBubbles.module.css'
+import styles from './IgorBubbles.module.css'
 
 interface Bubble {
   id: string
