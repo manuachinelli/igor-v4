@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import './QueryBubble.module.css'
+import styles from './QueryBubble.module.css'
 import { supabase } from '@/lib/supabaseClient'
 
 interface Bubble {
@@ -52,17 +52,17 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
     <div
       ref={bubbleRef}
       onMouseDown={onDrag}
-      className={`bubble ${bubble.value === 'Cargando...' ? 'loading' : ''}`}
+      className={`${styles.bubble} ${bubble.value === 'Cargando...' ? styles.loading : ''}`}
       style={{
         position: 'absolute',
         left: position.x,
         top: position.y,
         width: size.w,
         height: size.h,
-        backgroundColor: bubble.color || '#eee'
+        backgroundColor: bubble.color || '#2c2c2c'
       }}
     >
-      <button className="close-button" onClick={() => onDelete(bubble.id)}>×</button>
+      <button className={styles['close-button']} onClick={() => onDelete(bubble.id)}>×</button>
       <h3>{bubble.title}</h3>
       <p>{bubble.value}</p>
     </div>
