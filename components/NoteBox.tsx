@@ -27,6 +27,7 @@ export default function NoteBox({ note, onDelete }: NoteBoxProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const onDrag = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).tagName === 'TEXTAREA') return
     const startX = e.clientX
     const startY = e.clientY
     const origX = position.x
