@@ -1,92 +1,138 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
 import styles from './IgorChat.module.css'
 import QueryBubble from './QueryBubble'
 import NoteBox from './NoteBox'
+import { supabase } from '@/lib/supabaseClient'
 
-export type Bubble = {
+interface Bubble {
   id: string
-  text: string
+  user_id: string
+  query_text: string
+  title: string
+  value: string
   x_position: number
   y_position: number
+  width: number
+  height: number
+  color: string
+  is_editable: boolean
 }
 
-export type Note = {
+interface Note {
   id: string
+  user_id: string
   content: string
   x_position: number
   y_position: number
+  width: number
+  height: number
 }
 
 export default function IgorBubbles() {
   const [bubbles, setBubbles] = useState<Bubble[]>([])
   const [notes, setNotes] = useState<Note[]>([])
+  const [userId, setUserId] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchBubbles()
-    fetchNotes()
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'T') createNote()
+    const load = async () => {
+      const { data: userData } = await supabase.auth.getUser()
+      const id = userData?.user?.id
+      if (!id) return
+      setUserId(id)
+      fetchBubbles(id)
+      fetchNotes(id)
     }
-    window.addEventListener('keydown', handleKeyPress)
-    return () => window.removeEventListener('keydown', handleKeyPress)
+    load()
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  const fetchBubbles = async () => {
-    const { data, error } = await supabase.from('bubbles').select('*')
-    if (!error && data) setBubbles(data)
+  const fetchBubbles = async (uid: string) => {
+    const { data } = await supabase
+      .from('dashboard_queries')
+      .select('*')
+      .eq('user_id', uid)
+    if (data) setBubbles(data as Bubble[])
   }
 
-  const fetchNotes = async () => {
-    const { data, error } = await supabase.from('notes').select('*')
-    if (!error && data) setNotes(data)
+  const fetchNotes = async (uid: string) => {
+    const { data } = await supabase
+      .from('dashboard_notes')
+      .select('*')
+      .eq('user_id', uid)
+    if (data) setNotes(data as Note[])
+  }
+
+  const createBubble = async () => {
+    if (!userId) return
+    const { data } = await supabase
+      .from('dashboard_queries')
+      .insert({
+        user_id: userId,
+        query_text: 'Nuevo query',
+        title: 'Título',
+        value: 'Cargando...',
+        x_position: 200,
+        y_position: 200,
+        width: 200,
+        height: 120,
+        color: '#333',
+        is_editable: true
+      })
+      .select()
+    if (data) setBubbles([...bubbles, data[0]])
   }
 
   const createNote = async () => {
-    const { data, error } = await supabase
-      .from('notes')
-      .insert({ content: 'New note', x_position: 100, y_position: 100 })
+    if (!userId) return
+    const { data } = await supabase
+      .from('dashboard_notes')
+      .insert({
+        user_id: userId,
+        content: 'Texto libre',
+        x_position: 300,
+        y_position: 200,
+        width: 200,
+        height: 120
+      })
       .select()
-      .single()
+    if (data) setNotes([...notes, data[0]])
+  }
 
-    if (!error && data) setNotes(prev => [...prev, data])
+  const handleDeleteBubble = async (id: string) => {
+    await supabase.from('dashboard_queries').delete().eq('id', id)
+    setBubbles(prev => prev.filter(b => b.id !== id))
   }
 
   const handleDeleteNote = async (id: string) => {
-    await supabase.from('notes').delete().eq('id', id)
-    setNotes(prev => prev.filter(note => note.id !== id))
+    await supabase.from('dashboard_notes').delete().eq('id', id)
+    setNotes(prev => prev.filter(n => n.id !== id))
   }
 
-  const handleUpdateNote = async (id: string, x: number, y: number) => {
-    await supabase.from('notes').update({ x_position: x, y_position: y }).eq('id', id)
-    setNotes(prev =>
-      prev.map(note =>
-        note.id === id ? { ...note, x_position: x, y_position: y } : note
-      )
-    )
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key.toLowerCase() === 't') {
+      e.preventDefault()
+      createNote()
+    }
   }
 
   return (
-    <div className={styles.igorContainer}>
-      {bubbles.map(bubble => (
-        <QueryBubble
-          key={bubble.id}
-          id={bubble.id}
-          text={bubble.text}
-          x={bubble.x_position}
-          y={bubble.y_position}
-        />
+    <div className={styles.chatContainer}>
+      {/* Burbujas */}
+      {bubbles.map(b => (
+        <QueryBubble key={b.id} bubble={b} onDelete={handleDeleteBubble} />
       ))}
-      {notes.map(note => (
-        <NoteBox
-          key={note.id}
-          note={note}
-          onDelete={handleDeleteNote}
-          onUpdate={handleUpdateNote}
-        />
+
+      {/* Notas */}
+      {notes.map(n => (
+        <NoteBox key={n.id} note={n} onDelete={handleDeleteNote} />
       ))}
+
+      {/* Botón + para pelotitas */}
+      <button className={styles.floatingButton} onClick={createBubble}>+</button>
     </div>
   )
 }
