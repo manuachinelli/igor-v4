@@ -1,153 +1,127 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import styles from './IgorChat.module.css'
-import QueryBubble from './QueryBubble'
-import NoteBox from './NoteBox'
-import { supabase } from '@/lib/supabaseClient'
-import { v4 as uuidv4 } from 'uuid'
+import { useEffect, useState } from 'react';
+import QueryBubble from './QueryBubble';
+import NoteBox from './NoteBox';
+import { supabase } from '@/lib/supabaseClient';
+import styles from './IgorChat.module.css';
+import Image from 'next/image';
 
-type Bubble = {
-  id: string
-  user_id: string
-  text: string
-  x_position: number
-  y_position: number
+interface Bubble {
+  id: string;
+  text: string;
+  x_position: number;
+  y_position: number;
 }
 
-type Note = {
-  id: string
-  user_id: string
-  content: string
-  x_position: number
-  y_position: number
-  width: number
-  height: number
+interface Note {
+  id: string;
+  content: string;
+  x_position: number;
+  y_position: number;
+  width: number;
+  height: number;
 }
 
 export default function IgorBubbles() {
-  const [bubbles, setBubbles] = useState<Bubble[]>([])
-  const [notes, setNotes] = useState<Note[]>([])
-  const [userId, setUserId] = useState<string | null>(null)
+  const [bubbles, setBubbles] = useState<Bubble[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [userId, setUserId] = useState<string>('');
 
   useEffect(() => {
-    const fetchSessionAndData = async () => {
+    const fetchData = async () => {
       const {
-        data: { session }
-      } = await supabase.auth.getSession()
-      const uid = session?.user.id
-      if (!uid) return
-      setUserId(uid)
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      setUserId(user.id);
 
       const { data: bubbleData } = await supabase
         .from('dashboard_queries')
         .select('*')
-        .eq('user_id', uid)
+        .eq('user_id', user.id);
 
       const { data: noteData } = await supabase
         .from('dashboard_notes')
         .select('*')
-        .eq('user_id', uid)
+        .eq('user_id', user.id);
 
-      if (bubbleData) setBubbles(bubbleData)
-      if (noteData) setNotes(noteData)
-    }
+      setBubbles(bubbleData || []);
+      setNotes(noteData || []);
+    };
 
-    fetchSessionAndData()
-  }, [])
+    fetchData();
+  }, []);
 
   const handleAddBubble = async () => {
-    if (!userId) return
-    const newBubble: Bubble = {
-      id: uuidv4(),
+    const { data, error } = await supabase.from('dashboard_queries').insert({
       user_id: userId,
-      text: '',
-      x_position: Math.floor(Math.random() * 500),
-      y_position: Math.floor(Math.random() * 300)
-    }
+      text: 'Escribí tu consulta...',
+      x_position: 200,
+      y_position: 200,
+    }).select('*').single();
 
-    const { data, error } = await supabase
-      .from('dashboard_queries')
-      .insert([newBubble])
-
-    if (!error && data) {
-      setBubbles(prev => [...prev, newBubble])
-    }
-  }
+    if (error || !data) return;
+    setBubbles(prev => [...prev, data]);
+  };
 
   const handleAddNote = async () => {
-    if (!userId) return
-    const newNote: Note = {
-      id: uuidv4(),
+    const { data, error } = await supabase.from('dashboard_notes').insert({
       user_id: userId,
-      content: '',
-      x_position: Math.floor(Math.random() * 500),
-      y_position: Math.floor(Math.random() * 300),
+      content: 'Texto libre...',
+      x_position: 400,
+      y_position: 200,
       width: 200,
-      height: 100
-    }
+      height: 100,
+    }).select('*').single();
 
-    const { data, error } = await supabase
-      .from('dashboard_notes')
-      .insert([newNote])
-
-    if (!error && data) {
-      setNotes(prev => [...prev, newNote])
-    }
-  }
-
-  const handleDeleteNote = async (id: string) => {
-    await supabase.from('dashboard_notes').delete().eq('id', id)
-    setNotes(prev => prev.filter(note => note.id !== id))
-  }
-
-  const handleUpdateNote = async (id: string, content: string) => {
-    await supabase
-      .from('dashboard_notes')
-      .update({ content })
-      .eq('id', id)
-  }
+    if (error || !data) return;
+    setNotes(prev => [...prev, data]);
+  };
 
   return (
-    <div className={styles.bubbleWrapper}>
-      {bubbles.map(bubble => (
+    <>
+      {bubbles.map((bubble) => (
         <QueryBubble
           key={bubble.id}
           bubble={bubble}
-          onDelete={() =>
-            setBubbles(prev => prev.filter(b => b.id !== bubble.id))
-          }
+          onDelete={(id) => setBubbles(prev => prev.filter(b => b.id !== id))}
         />
       ))}
 
-      {notes.map(note => (
+      {notes.map((note) => (
         <NoteBox
           key={note.id}
           note={note}
-          onDelete={handleDeleteNote}
-          onUpdate={handleUpdateNote}
+          onDelete={(id) => setNotes(prev => prev.filter(n => n.id !== id))}
         />
       ))}
 
-      <div className={styles.bubbleToolbar}>
-        <img
-          src="/sidebar-icons/plus.png"
+      <div className={styles.rightBar}>
+        <Image
+          src="/sidebar-icons/add.png"
           alt="Add Bubble"
+          width={30}
+          height={30}
           onClick={handleAddBubble}
-          className={styles.bubbleIcon}
+          className={styles.sidebarIcon}
         />
-        <img
-          src="/sidebar-icons/text.png"
-          alt="Add Note"
-          onClick={handleAddNote}
-          className={styles.bubbleIcon}
-        />
-        <img
-          src="/sidebar-icons/pencil.png"
+        <Image
+          src="/sidebar-icons/edit.png"
           alt="Edit"
-          className={styles.bubbleIcon}
+          width={30}
+          height={30}
+          className={styles.sidebarIcon}
+        />
+        <Image
+          src="/sidebar-icons/text.png"
+          alt="Add Text"
+          width={30}
+          height={30}
+          onClick={handleAddNote}
+          className={styles.sidebarIcon}
         />
       </div>
-    </div>
-  )
+    </>
+  );
 }
