@@ -21,9 +21,9 @@
 }
 
 .floatingPanel {
-  width: 240px;
+  width: 120px;
   background-color: #111;
-  padding: 20px;
+  padding: 20px 10px;
   color: white;
   display: flex;
   flex-direction: column;
@@ -35,7 +35,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
 .floatingButton,
@@ -45,9 +45,9 @@
   color: white;
   border: none;
   border-radius: 50%;
-  width: 42px;
-  height: 42px;
-  font-size: 20px;
+  width: 60px;
+  height: 60px;
+  font-size: 26px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -56,9 +56,4 @@
 .textButton:hover,
 .pencilButton:hover {
   background-color: #555;
-}
-
-.infoText {
-  text-align: center;
-  font-size: 14px;
 }
