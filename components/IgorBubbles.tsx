@@ -1,17 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 import QueryBubble from './QueryBubble';
 import NoteBox from './NoteBox';
-import { supabase } from '@/lib/supabaseClient';
-import styles from './IgorChat.module.css';
-import Image from 'next/image';
+import './IgorBubbles.css';
 
 interface Bubble {
   id: string;
-  text: string;
-  x_position: number;
-  y_position: number;
+  x: number;
+  y: number;
+  title: string;
+  value: string;
+  width: number;
+  height: number;
+  color: string;
+  user_id: string;
 }
 
 interface Note {
@@ -21,6 +25,7 @@ interface Note {
   y_position: number;
   width: number;
   height: number;
+  user_id: string;
 }
 
 export default function IgorBubbles() {
@@ -31,53 +36,74 @@ export default function IgorBubbles() {
   useEffect(() => {
     const fetchData = async () => {
       const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-      setUserId(user.id);
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const user_id = session.user.id;
+      setUserId(user_id);
 
       const { data: bubbleData } = await supabase
         .from('dashboard_queries')
         .select('*')
-        .eq('user_id', user.id);
+        .eq('user_id', user_id);
+
+      const bubblesFormatted: Bubble[] = (bubbleData || []).map((b: any) => ({
+        id: b.id,
+        x: b.x_position || 100,
+        y: b.y_position || 100,
+        title: b.title || '',
+        value: b.value || '',
+        width: b.width || 200,
+        height: b.height || 100,
+        color: b.color || '#999',
+        user_id: b.user_id || '',
+      }));
+      setBubbles(bubblesFormatted);
 
       const { data: noteData } = await supabase
         .from('dashboard_notes')
         .select('*')
-        .eq('user_id', user.id);
+        .eq('user_id', user_id);
 
-      setBubbles(bubbleData || []);
       setNotes(noteData || []);
     };
 
     fetchData();
   }, []);
 
-  const handleAddBubble = async () => {
-    const { data, error } = await supabase.from('dashboard_queries').insert({
-      user_id: userId,
-      text: 'Escribí tu consulta...',
-      x_position: 200,
-      y_position: 200,
-    }).select('*').single();
+  const createNewNote = async () => {
+    const { data, error } = await supabase
+      .from('dashboard_notes')
+      .insert({
+        content: '',
+        x_position: 150,
+        y_position: 150,
+        width: 200,
+        height: 100,
+        user_id: userId,
+      })
+      .select()
+      .single();
 
-    if (error || !data) return;
-    setBubbles(prev => [...prev, data]);
+    if (!error && data) {
+      setNotes(prev => [...prev, data]);
+    }
   };
 
-  const handleAddNote = async () => {
-    const { data, error } = await supabase.from('dashboard_notes').insert({
-      user_id: userId,
-      content: 'Texto libre...',
-      x_position: 400,
-      y_position: 200,
-      width: 200,
-      height: 100,
-    }).select('*').single();
-
-    if (error || !data) return;
-    setNotes(prev => [...prev, data]);
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'T') {
+      e.preventDefault();
+      createNewNote();
+    }
   };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [userId]);
 
   return (
     <>
@@ -85,43 +111,14 @@ export default function IgorBubbles() {
         <QueryBubble
           key={bubble.id}
           bubble={bubble}
-          onDelete={(id) => setBubbles(prev => prev.filter(b => b.id !== id))}
+          onDelete={(id) =>
+            setBubbles((prev) => prev.filter((b) => b.id !== id))
+          }
         />
       ))}
-
       {notes.map((note) => (
-        <NoteBox
-          key={note.id}
-          note={note}
-          onDelete={(id) => setNotes(prev => prev.filter(n => n.id !== id))}
-        />
+        <NoteBox key={note.id} {...note} />
       ))}
-
-      <div className={styles.rightBar}>
-        <Image
-          src="/sidebar-icons/add.png"
-          alt="Add Bubble"
-          width={30}
-          height={30}
-          onClick={handleAddBubble}
-          className={styles.sidebarIcon}
-        />
-        <Image
-          src="/sidebar-icons/edit.png"
-          alt="Edit"
-          width={30}
-          height={30}
-          className={styles.sidebarIcon}
-        />
-        <Image
-          src="/sidebar-icons/text.png"
-          alt="Add Text"
-          width={30}
-          height={30}
-          onClick={handleAddNote}
-          className={styles.sidebarIcon}
-        />
-      </div>
     </>
   );
 }
