@@ -76,24 +76,28 @@ export default function IgorBubbles() {
   }
 
   const handleSubmit = async () => {
-    if (!inputValue || !userId) return
+    if (!inputValue || !userId) return;
 
-    const tempId = `temp-${Date.now()}`
-    const tempBubble: Bubble = {
-      id: tempId,
-      user_id: userId,
-      query_text: inputValue,
-      title: 'Título',
-      value: 'Cargando...',
-      x_position: 150,
-      y_position: 150,
-      width: 200,
-      height: 120,
-      color: '#2c2c2c',
-      is_editable: true,
-    }
+    const { data, error } = await supabase
+      .from('dashboard_queries')
+      .insert({
+        user_id: userId,
+        query_text: inputValue,
+        title: 'Título',
+        value: 'Cargando...',
+        x_position: 150,
+        y_position: 150,
+        width: 200,
+        height: 120,
+        color: '#2c2c2c',
+        is_editable: true,
+      })
+      .select()
 
-    setBubbles((prev) => [...prev, tempBubble])
+    if (error || !data || data.length === 0) return
+
+    const newBubble = data[0]
+    setBubbles((prev) => [...prev, newBubble])
     setInputValue('')
     setShowInput(false)
 
@@ -134,7 +138,6 @@ export default function IgorBubbles() {
 
   return (
     <div className={styles.canvas}>
-      {/* Zona izquierda: pelotitas y notas */}
       <div style={{ flex: 1, position: 'relative' }}>
         {bubbles.map(b => (
           <QueryBubble key={b.id} bubble={b} onDelete={handleDeleteBubble} />
@@ -156,7 +159,6 @@ export default function IgorBubbles() {
         )}
       </div>
 
-      {/* Zona derecha: barra de botones */}
       <div className={styles.floatingPanel}>
         <div className={styles.buttonGroup}>
           <button className={styles.floatingButton} onClick={() => setShowInput(true)}>+</button>
