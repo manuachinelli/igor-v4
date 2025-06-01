@@ -1,53 +1,44 @@
 .note {
   position: absolute;
-  background: none;
-  border: none;
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  resize: none;
-  box-shadow: none;
-  z-index: 5;
-  font-family: Inter, sans-serif;
-  min-width: 100px;
-  min-height: 40px;
-  cursor: move;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
 }
 
 .textarea {
   width: 100%;
   height: 100%;
-  background: none;
+  background: transparent;
   border: none;
-  color: white;
-  font-size: 16px;
   resize: none;
-  outline: none;
+  padding: 8px;
+  color: white;
   font-family: inherit;
-  white-space: pre-wrap;
+  font-size: calc(12px + 0.3vw); /* escala suave con tamaño */
+  line-height: 1.4;
+  outline: none;
 }
 
 .closeButton {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
+  top: 4px;
+  right: 8px;
+  background: transparent;
   border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  color: white;
+  font-size: 16px;
   cursor: pointer;
-  z-index: 10;
+  z-index: 2;
 }
 
 .resizeHandle {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 4px;
+  right: 4px;
   width: 12px;
   height: 12px;
-  background-color: rgba(255, 255, 255, 0.4);
+  background: white;
   cursor: se-resize;
-  z-index: 10;
+  z-index: 2;
 }
