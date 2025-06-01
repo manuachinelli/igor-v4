@@ -8,6 +8,10 @@
   resize: none;
   box-shadow: none;
   z-index: 5;
+  font-family: Inter, sans-serif;
+  min-width: 100px;
+  min-height: 40px;
+  cursor: move;
 }
 
 .textarea {
@@ -20,6 +24,7 @@
   resize: none;
   outline: none;
   font-family: inherit;
+  white-space: pre-wrap;
 }
 
 .closeButton {
