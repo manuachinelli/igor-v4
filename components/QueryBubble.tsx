@@ -18,7 +18,9 @@ interface Bubble {
 export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDelete: (id: string) => void }) {
   const bubbleRef = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState({ x: bubble.x_position || 100, y: bubble.y_position || 100 })
-  const [size] = useState({ w: bubble.width || 200, h: bubble.height || 120 })
+
+  // Forzamos tamaño fijo y circular
+  const size = { w: 150, h: 150 }
 
   const onDrag = (e: React.MouseEvent) => {
     const startX = e.clientX
@@ -59,7 +61,7 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
         top: position.y,
         width: size.w,
         height: size.h,
-        backgroundColor: bubble.color || '#2c2c2c'
+        backgroundColor: '#2c2c2c' // ✅ Forzado gris oscuro
       }}
     >
       <button className={styles['close-button']} onClick={() => onDelete(bubble.id)}>×</button>
