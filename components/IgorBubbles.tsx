@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import QueryBubble from './QueryBubble'
-import styles from './IgorBubbles.module.css'
+import styles from './IgorBubbles.module.css' // ✅ IMPORT CORRECTO
 
 interface Bubble {
   id: string
@@ -84,7 +84,7 @@ export default function IgorBubbles() {
   }
 
   return (
-    <div className="canvas">
+    <div className={styles.canvas}>
       {/* Zona izquierda: burbujas */}
       <div style={{ flex: 1, position: 'relative' }}>
         {bubbles.map(bubble => (
@@ -92,7 +92,7 @@ export default function IgorBubbles() {
         ))}
 
         {showInput && (
-          <div className="input-overlay">
+          <div className={styles.inputOverlay}>
             <input
               type="text"
               value={inputValue}
@@ -105,15 +105,4 @@ export default function IgorBubbles() {
       </div>
 
       {/* Zona derecha: botón + e info */}
-      <div className="floating-panel">
-        <button className="floating-button" onClick={() => setShowInput(true)}>+</button>
-        <div className="info-text">
-          Pedile a Igor<br />
-          que cree una bubble<br />
-          que muestre<br />
-          lo que vos quieras.
-        </div>
-      </div>
-    </div>
-  )
-}
+      <div className={styles.floatingPanel
