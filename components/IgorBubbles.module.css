@@ -2,33 +2,51 @@
   position: relative;
   width: 100%;
   height: 100vh;
-  overflow: auto;
+  display: flex;
   background-color: #fdfdfd;
 }
 
+.floating-panel {
+  width: 80px;
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  border-left: 2px solid #fff;
+}
+
 .floating-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
   background: #000;
   color: #fff;
   border: none;
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  font-size: 24px;
+  width: 60px;
+  height: 60px;
+  font-size: 32px;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(255,255,255,0.2);
+}
+
+.info-text {
+  font-size: 12px;
+  text-align: center;
+  margin-top: 8px;
+  color: #ccc;
+  padding: 0 4px;
 }
 
 .input-overlay {
   position: fixed;
   bottom: 80px;
-  right: 20px;
+  right: 100px;
   background: white;
   padding: 8px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
+  z-index: 10;
 }
 
 .input-overlay input {
