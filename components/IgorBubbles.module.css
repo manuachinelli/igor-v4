@@ -1,3 +1,4 @@
+/* components/IgorBubbles.module.css */
 .canvas {
   position: relative;
   width: 100%;
@@ -8,7 +9,7 @@
 }
 
 .floatingPanel {
-  width: 80px;
+  width: 100px; /* Aumentado un 20% desde 80px */
   background-color: #000;
   color: #fff;
   display: flex;
@@ -42,7 +43,7 @@
 .inputOverlay {
   position: fixed;
   bottom: 80px;
-  right: 100px;
+  right: 120px;
   background: #1a1a1a;
   padding: 8px;
   border: 1px solid #444;
@@ -55,5 +56,55 @@
   outline: none;
   font-size: 16px;
   background-color: #1a1a1a;
+  color: #fff;
+}
+
+/* components/QueryBubble.module.css */
+.bubble {
+  position: absolute;
+  padding: 16px;
+  border-radius: 32px; /* más circular */
+  box-shadow: 0 1px 6px rgba(255, 255, 255, 0.1);
+  cursor: grab;
+  transition: box-shadow 0.2s, transform 0.3s ease;
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
+.bubble.loading {
+  animation: pulse 1.2s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.bubble h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #fff;
+}
+
+.bubble p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #fff;
+}
+
+.close-button {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.close-button:hover {
   color: #fff;
 }
