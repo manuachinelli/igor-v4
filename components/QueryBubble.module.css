@@ -1,0 +1,44 @@
+.bubble {
+  position: absolute;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  cursor: grab;
+  transition: box-shadow 0.2s, transform 0.3s ease;
+}
+
+.bubble.loading {
+  animation: pulse 1.2s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.bubble h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.bubble p {
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+.close-button {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #888;
+}
+
+.close-button:hover {
+  color: #000;
+}
