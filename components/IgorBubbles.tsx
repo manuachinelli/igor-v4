@@ -5,22 +5,17 @@ import styles from './IgorChat.module.css'
 import QueryBubble from './QueryBubble'
 import NoteBox from './NoteBox'
 import { supabase } from '@/lib/supabaseClient'
+import { v4 as uuidv4 } from 'uuid'
 
-interface Bubble {
+type Bubble = {
   id: string
   user_id: string
-  query_text: string
-  title: string
-  value: string
+  text: string
   x_position: number
   y_position: number
-  width: number
-  height: number
-  color: string
-  is_editable: boolean
 }
 
-interface Note {
+type Note = {
   id: string
   user_id: string
   content: string
@@ -34,121 +29,124 @@ export default function IgorBubbles() {
   const [bubbles, setBubbles] = useState<Bubble[]>([])
   const [notes, setNotes] = useState<Note[]>([])
   const [userId, setUserId] = useState<string | null>(null)
-  const [showInput, setShowInput] = useState(false)
-  const [inputValue, setInputValue] = useState('')
 
   useEffect(() => {
-    const load = async () => {
-      const { data: userData } = await supabase.auth.getUser()
-      const id = userData?.user?.id
-      if (!id) return
-      setUserId(id)
-      fetchBubbles(id)
-      fetchNotes(id)
-    }
-    load()
+    const fetchSessionAndData = async () => {
+      const {
+        data: { session }
+      } = await supabase.auth.getSession()
+      const uid = session?.user.id
+      if (!uid) return
+      setUserId(uid)
 
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+      const { data: bubbleData } = await supabase
+        .from('dashboard_queries')
+        .select('*')
+        .eq('user_id', uid)
+
+      const { data: noteData } = await supabase
+        .from('dashboard_notes')
+        .select('*')
+        .eq('user_id', uid)
+
+      if (bubbleData) setBubbles(bubbleData)
+      if (noteData) setNotes(noteData)
+    }
+
+    fetchSessionAndData()
   }, [])
 
-  const fetchBubbles = async (uid: string) => {
-    const { data } = await supabase.from('dashboard_queries').select('*').eq('user_id', uid)
-    if (data) setBubbles(data as Bubble[])
-  }
-
-  const fetchNotes = async (uid: string) => {
-    const { data } = await supabase.from('dashboard_notes').select('*').eq('user_id', uid)
-    if (data) setNotes(data as Note[])
-  }
-
-  const createNote = async () => {
+  const handleAddBubble = async () => {
     if (!userId) return
-    const { data } = await supabase.from('dashboard_notes').insert({
+    const newBubble: Bubble = {
+      id: uuidv4(),
       user_id: userId,
-      content: 'Texto libre',
-      x_position: 300,
-      y_position: 200,
-      width: 200,
-      height: 120
-    }).select()
-    if (data) setNotes([...notes, data[0]])
+      text: '',
+      x_position: Math.floor(Math.random() * 500),
+      y_position: Math.floor(Math.random() * 300)
+    }
+
+    const { data, error } = await supabase
+      .from('dashboard_queries')
+      .insert([newBubble])
+
+    if (!error && data) {
+      setBubbles(prev => [...prev, newBubble])
+    }
   }
 
-  const handleDeleteBubble = async (id: string) => {
-    await supabase.from('dashboard_queries').delete().eq('id', id)
-    setBubbles(prev => prev.filter(b => b.id !== id))
+  const handleAddNote = async () => {
+    if (!userId) return
+    const newNote: Note = {
+      id: uuidv4(),
+      user_id: userId,
+      content: '',
+      x_position: Math.floor(Math.random() * 500),
+      y_position: Math.floor(Math.random() * 300),
+      width: 200,
+      height: 100
+    }
+
+    const { data, error } = await supabase
+      .from('dashboard_notes')
+      .insert([newNote])
+
+    if (!error && data) {
+      setNotes(prev => [...prev, newNote])
+    }
   }
 
   const handleDeleteNote = async (id: string) => {
     await supabase.from('dashboard_notes').delete().eq('id', id)
-    setNotes(prev => prev.filter(n => n.id !== id))
+    setNotes(prev => prev.filter(note => note.id !== id))
   }
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key.toLowerCase() === 't') {
-      e.preventDefault()
-      createNote()
-    }
-  }
-
-  const handleSubmitQuery = async () => {
-    if (!userId || !inputValue) return
-
-    const tempId = `temp-${Date.now()}`
-    const tempBubble: Bubble = {
-      id: tempId,
-      user_id: userId,
-      query_text: inputValue,
-      title: 'Título',
-      value: 'Cargando...',
-      x_position: 200,
-      y_position: 200,
-      width: 200,
-      height: 120,
-      color: '#333',
-      is_editable: true
-    }
-
-    setBubbles(prev => [...prev, tempBubble])
-    setShowInput(false)
-    setInputValue('')
-
-    await fetch('https://manuachinelli.app.n8n.cloud/webhook/8b913fc3-69df-43c7-9874-1b6a9a697680', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: userId, query: inputValue })
-    })
-
-    setTimeout(() => fetchBubbles(userId), 5000)
+  const handleUpdateNote = async (id: string, content: string) => {
+    await supabase
+      .from('dashboard_notes')
+      .update({ content })
+      .eq('id', id)
   }
 
   return (
-    <div className={styles.chatContainer}>
-      {bubbles.map(b => (
-        <QueryBubble key={b.id} bubble={b} onDelete={handleDeleteBubble} />
+    <div className={styles.bubbleWrapper}>
+      {bubbles.map(bubble => (
+        <QueryBubble
+          key={bubble.id}
+          bubble={bubble}
+          onDelete={() =>
+            setBubbles(prev => prev.filter(b => b.id !== bubble.id))
+          }
+        />
       ))}
 
-      {notes.map(n => (
-        <NoteBox key={n.id} note={n} onDelete={handleDeleteNote} />
+      {notes.map(note => (
+        <NoteBox
+          key={note.id}
+          note={note}
+          onDelete={handleDeleteNote}
+          onUpdate={handleUpdateNote}
+        />
       ))}
 
-      {showInput && (
-        <div className={styles.inputOverlay}>
-          <input
-            type="text"
-            value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleSubmitQuery()}
-            placeholder="¿Qué querés saber?"
-          />
-        </div>
-      )}
-
-      <div className={styles.buttonGroup}>
-        <button className={styles.floatingButton} onClick={() => setShowInput(true)}>+</button>
-        <button className={styles.textButton} onClick={createNote}>T</button>
-        <button className={styles.pencilButton}>✎</button>
+      <div className={styles.bubbleToolbar}>
+        <img
+          src="/sidebar-icons/plus.png"
+          alt="Add Bubble"
+          onClick={handleAddBubble}
+          className={styles.bubbleIcon}
+        />
+        <img
+          src="/sidebar-icons/text.png"
+          alt="Add Note"
+          onClick={handleAddNote}
+          className={styles.bubbleIcon}
+        />
+        <img
+          src="/sidebar-icons/pencil.png"
+          alt="Edit"
+          className={styles.bubbleIcon}
+        />
       </div>
     </div>
   )
