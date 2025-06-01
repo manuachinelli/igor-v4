@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import styles from './IgorChat.module.css'
+import styles from './IgorBubbles.module.css'
 import QueryBubble from './QueryBubble'
 import NoteBox from './NoteBox'
 import { supabase } from '@/lib/supabaseClient'
@@ -120,19 +120,25 @@ export default function IgorBubbles() {
   }
 
   return (
-    <div className={styles.chatContainer}>
-      {/* Burbujas */}
-      {bubbles.map(b => (
-        <QueryBubble key={b.id} bubble={b} onDelete={handleDeleteBubble} />
-      ))}
+    <div className={styles.canvas}>
+      <div style={{ flex: 1, position: 'relative' }}>
+        {bubbles.map(b => (
+          <QueryBubble key={b.id} bubble={b} onDelete={handleDeleteBubble} />
+        ))}
 
-      {/* Notas */}
-      {notes.map(n => (
-        <NoteBox key={n.id} note={n} onDelete={handleDeleteNote} />
-      ))}
+        {notes.map(n => (
+          <NoteBox key={n.id} note={n} onDelete={handleDeleteNote} />
+        ))}
+      </div>
 
-      {/* Botón + para pelotitas */}
-      <button className={styles.floatingButton} onClick={createBubble}>+</button>
+      <div className={styles.floatingPanel}>
+        <div className={styles.buttonGroup}>
+          <button className={styles.floatingButton} onClick={createBubble}>+</button>
+          <button className={styles.textButton} onClick={createNote}>T</button>
+          <button className={styles.pencilButton}>✎</button>
+        </div>
+      </div>
     </div>
   )
 }
+
