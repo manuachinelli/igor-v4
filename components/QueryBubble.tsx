@@ -17,10 +17,10 @@ interface Bubble {
 
 export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDelete: (id: string) => void }) {
   const bubbleRef = useRef<HTMLDivElement>(null)
-  const [position, setPosition] = useState({ x: bubble.x_position || 100, y: bubble.y_position || 100 })
-
-  // Forzamos tamaño fijo y circular
-  const size = { w: 150, h: 150 }
+  const [position, setPosition] = useState({
+    x: bubble.x_position || 100,
+    y: bubble.y_position || 100,
+  })
 
   const onDrag = (e: React.MouseEvent) => {
     const startX = e.clientX
@@ -39,10 +39,13 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
       window.removeEventListener('mouseup', onMouseUp)
 
       if (!bubble.id.startsWith('temp-')) {
-        await supabase.from('dashboard_queries').update({
-          x_position: position.x,
-          y_position: position.y
-        }).eq('id', bubble.id)
+        await supabase
+          .from('dashboard_queries')
+          .update({
+            x_position: position.x,
+            y_position: position.y,
+          })
+          .eq('id', bubble.id)
       }
     }
 
@@ -59,9 +62,9 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
         position: 'absolute',
         left: position.x,
         top: position.y,
-        width: size.w,
-        height: size.h,
-        backgroundColor: '#2c2c2c' // ✅ Forzado gris oscuro
+        width: 140,
+        height: 140,
+        backgroundColor: '#2c2c2c', // fijo para asegurar gris oscuro
       }}
     >
       <button className={styles['close-button']} onClick={() => onDelete(bubble.id)}>×</button>
