@@ -4,6 +4,7 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  resize: none;
 }
 
 .textarea {
@@ -15,7 +16,7 @@
   padding: 8px;
   color: white;
   font-family: inherit;
-  font-size: calc(12px + 0.3vw); /* escala suave con tamaño */
+  font-size: 14px;
   line-height: 1.4;
   outline: none;
 }
