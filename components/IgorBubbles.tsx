@@ -85,23 +85,35 @@ export default function IgorBubbles() {
 
   return (
     <div className="canvas">
-      {bubbles.map(bubble => (
-        <QueryBubble key={bubble.id} bubble={bubble} onDelete={handleDelete} />
-      ))}
+      {/* Zona izquierda: burbujas */}
+      <div style={{ flex: 1, position: 'relative' }}>
+        {bubbles.map(bubble => (
+          <QueryBubble key={bubble.id} bubble={bubble} onDelete={handleDelete} />
+        ))}
 
-      {showInput && (
-        <div className="input-overlay">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-            placeholder="¿Qué querés saber?"
-          />
+        {showInput && (
+          <div className="input-overlay">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={e => setInputValue(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+              placeholder="¿Qué querés saber?"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Zona derecha: botón + e info */}
+      <div className="floating-panel">
+        <button className="floating-button" onClick={() => setShowInput(true)}>+</button>
+        <div className="info-text">
+          Pedile a Igor<br />
+          que cree una bubble<br />
+          que muestre<br />
+          lo que vos quieras.
         </div>
-      )}
-
-      <button className="floating-button" onClick={() => setShowInput(true)}>+</button>
+      </div>
     </div>
   )
 }
