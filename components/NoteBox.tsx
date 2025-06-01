@@ -1,22 +1,27 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
 import styles from './NoteBox.module.css'
 
-interface Note {
-  id: string
-  content: string
-  x_position: number
-  y_position: number
-  width: number
-  height: number
+interface NoteBoxProps {
+  note: {
+    id: string
+    content: string
+    x_position: number
+    y_position: number
+    width: number
+    height: number
+  }
+  onDelete: (id: string) => void
+  onUpdate: (id: string, updates: Partial<NoteBoxProps['note']>) => void
 }
 
-export default function NoteBox({ note, onDelete }: { note: Note, onDelete: (id: string) => void }) {
-  const noteRef = useRef<HTMLDivElement>(null)
+export default function NoteBox({ note, onDelete, onUpdate }: NoteBoxProps) {
   const [position, setPosition] = useState({ x: note.x_position, y: note.y_position })
+  const [size, setSize] = useState({ w: note.width, h: note.height })
   const [content, setContent] = useState(note.content)
+
+  const noteRef = useRef<HTMLDivElement>(null)
 
   const onDrag = (e: React.MouseEvent) => {
     const startX = e.clientX
@@ -30,41 +35,61 @@ export default function NoteBox({ note, onDelete }: { note: Note, onDelete: (id:
       setPosition({ x: origX + dx, y: origY + dy })
     }
 
-    const onMouseUp = async () => {
+    const onMouseUp = () => {
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseup', onMouseUp)
-
-      await supabase.from('dashboard_notes').update({
-        x_position: position.x,
-        y_position: position.y
-      }).eq('id', note.id)
+      onUpdate(note.id, { x_position: position.x, y_position: position.y })
     }
 
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('mouseup', onMouseUp)
   }
 
-  const onBlur = async () => {
-    await supabase.from('dashboard_notes').update({ content }).eq('id', note.id)
+  const onResize = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const startX = e.clientX
+    const startY = e.clientY
+    const startWidth = size.w
+    const startHeight = size.h
+
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const dx = moveEvent.clientX - startX
+      const dy = moveEvent.clientY - startY
+      setSize({ w: Math.max(100, startWidth + dx), h: Math.max(50, startHeight + dy) })
+    }
+
+    const onMouseUp = () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseup', onMouseUp)
+      onUpdate(note.id, { width: size.w, height: size.h })
+    }
+
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseup', onMouseUp)
   }
 
   return (
     <div
       ref={noteRef}
-      onMouseDown={onDrag}
-      className={styles.noteBox}
+      className={styles.note}
       style={{
         left: position.x,
-        top: position.y
+        top: position.y,
+        width: size.w,
+        height: size.h
       }}
+      onMouseDown={onDrag}
     >
+      <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
       <textarea
         className={styles.textarea}
         value={content}
-        onChange={(e) => setContent(e.target.value)}
-        onBlur={onBlur}
+        onChange={(e) => {
+          setContent(e.target.value)
+          onUpdate(note.id, { content: e.target.value })
+        }}
       />
-      <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
+      <div className={styles.resizeHandle} onMouseDown={onResize} />
     </div>
   )
 }
