@@ -52,6 +52,14 @@ export default function IgorBubbles() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    const isTyping = (e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA'
+    if (!isTyping && e.key.toLowerCase() === 't') {
+      e.preventDefault()
+      createNote()
+    }
+  }
+
   const fetchBubbles = async (uid: string) => {
     const { data } = await supabase
       .from('dashboard_queries')
@@ -68,36 +76,25 @@ export default function IgorBubbles() {
     if (data) setNotes(data as Note[])
   }
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key.toLowerCase() === 't') {
-      e.preventDefault()
-      createNote()
-    }
-  }
-
   const handleSubmit = async () => {
-    if (!inputValue || !userId) return;
+    if (!inputValue || !userId) return
 
-    const { data, error } = await supabase
-      .from('dashboard_queries')
-      .insert({
-        user_id: userId,
-        query_text: inputValue,
-        title: 'Título',
-        value: 'Cargando...',
-        x_position: 150,
-        y_position: 150,
-        width: 200,
-        height: 120,
-        color: '#2c2c2c',
-        is_editable: true,
-      })
-      .select()
+    const tempId = `temp-${Date.now()}`
+    const tempBubble: Bubble = {
+      id: tempId,
+      user_id: userId,
+      query_text: inputValue,
+      title: 'Título',
+      value: 'Cargando...',
+      x_position: 150,
+      y_position: 150,
+      width: 200,
+      height: 120,
+      color: '#2c2c2c',
+      is_editable: true,
+    }
 
-    if (error || !data || data.length === 0) return
-
-    const newBubble = data[0]
-    setBubbles((prev) => [...prev, newBubble])
+    setBubbles((prev) => [...prev, tempBubble])
     setInputValue('')
     setShowInput(false)
 
@@ -138,6 +135,7 @@ export default function IgorBubbles() {
 
   return (
     <div className={styles.canvas}>
+      {/* Zona izquierda: pelotitas y notas */}
       <div style={{ flex: 1, position: 'relative' }}>
         {bubbles.map(b => (
           <QueryBubble key={b.id} bubble={b} onDelete={handleDeleteBubble} />
@@ -159,6 +157,7 @@ export default function IgorBubbles() {
         )}
       </div>
 
+      {/* Zona derecha: barra de botones */}
       <div className={styles.floatingPanel}>
         <div className={styles.buttonGroup}>
           <button className={styles.floatingButton} onClick={() => setShowInput(true)}>+</button>
