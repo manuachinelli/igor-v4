@@ -1,104 +1,60 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import styles from './NoteBox.module.css'
+import { useEffect, useState } from 'react'
+import styles from './IgorBubbles.module.css'
+import NoteBox from './NoteBox'
 import { supabase } from '@/lib/supabaseClient'
 
-interface NoteProps {
-  note: {
-    id: string
-    content: string
-    x_position: number
-    y_position: number
-    width: number
-    height: number
-  }
-  onDelete: (id: string) => void
+interface Note {
+  id: string
+  content: string
+  x_position: number
+  y_position: number
+  width: number
+  height: number
 }
 
-export default function NoteBox({ note, onDelete }: NoteProps) {
-  const [position, setPosition] = useState({ x: note.x_position, y: note.y_position })
-  const [size, setSize] = useState({ w: note.width, h: note.height })
-  const [content, setContent] = useState(note.content)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+export default function IgorBubbles() {
+  const [notes, setNotes] = useState<Note[]>([])
 
-  // Drag
-  const onDrag = (e: React.MouseEvent) => {
-    const startX = e.clientX
-    const startY = e.clientY
-    const origX = position.x
-    const origY = position.y
+  useEffect(() => {
+    fetchNotes()
+  }, [])
 
-    const onMouseMove = (moveEvent: MouseEvent) => {
-      const dx = moveEvent.clientX - startX
-      const dy = moveEvent.clientY - startY
-      setPosition({ x: origX + dx, y: origY + dy })
-    }
-
-    const onMouseUp = async () => {
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mouseup', onMouseUp)
-
-      await supabase.from('dashboard_notes').update({
-        x_position: position.x,
-        y_position: position.y
-      }).eq('id', note.id)
-    }
-
-    window.addEventListener('mousemove', onMouseMove)
-    window.addEventListener('mouseup', onMouseUp)
+  const fetchNotes = async () => {
+    const { data, error } = await supabase.from('dashboard_notes').select('*')
+    if (!error && data) setNotes(data)
   }
 
-  // Resize
-  const onResize = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    const startX = e.clientX
-    const startY = e.clientY
-    const startW = size.w
-    const startH = size.h
+  const createNote = async () => {
+    const { data, error } = await supabase.from('dashboard_notes').insert({
+      content: '',
+      x_position: 200,
+      y_position: 200,
+      width: 200,
+      height: 120
+    }).select().single()
 
-    const onMouseMove = (moveEvent: MouseEvent) => {
-      const dx = moveEvent.clientX - startX
-      const dy = moveEvent.clientY - startY
-      setSize({ w: startW + dx, h: startH + dy })
-    }
-
-    const onMouseUp = async () => {
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mouseup', onMouseUp)
-
-      await supabase.from('dashboard_notes').update({
-        width: size.w,
-        height: size.h
-      }).eq('id', note.id)
-    }
-
-    window.addEventListener('mousemove', onMouseMove)
-    window.addEventListener('mouseup', onMouseUp)
+    if (!error && data) setNotes(prev => [...prev, data])
   }
 
-  // Content update
-  const handleBlur = async () => {
-    await supabase.from('dashboard_notes').update({
-      content: content
-    }).eq('id', note.id)
+  const handleNoteDelete = async (id: string) => {
+    await supabase.from('dashboard_notes').delete().eq('id', id)
+    setNotes(prev => prev.filter(note => note.id !== id))
   }
 
   return (
-    <div
-      className={styles.note}
-      style={{ left: position.x, top: position.y, width: size.w, height: size.h }}
-      onMouseDown={onDrag}
-    >
-      <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
-      <textarea
-        ref={textareaRef}
-        className={styles.textarea}
-        value={content}
-        onChange={e => setContent(e.target.value)}
-        onBlur={handleBlur}
-      />
-      <div className={styles.resizeHandle} onMouseDown={onResize} />
+    <div className={styles.container}>
+      {/* Botones flotantes */}
+      <div className={styles.toolbox}>
+        <button className={styles.toolboxButton} onClick={createNote}>T</button>
+        <button className={styles.toolboxButton}>✏️</button>
+      </div>
+
+      {/* Notas */}
+      {notes.map(note => (
+        <NoteBox key={note.id} note={note} onDelete={handleNoteDelete} />
+      ))}
     </div>
   )
 }
