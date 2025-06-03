@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import styles from './IgorOnboardingChat.module.css'
 import { useRouter } from 'next/navigation'
 
@@ -9,7 +9,7 @@ export default function IgorOnboardingChat() {
   const [input, setInput] = useState('')
   const [waiting, setWaiting] = useState(false)
   const [onboardingDone, setOnboardingDone] = useState(false)
-  const messagesEndRef = useRef(null) as React.MutableRefObject<HTMLDivElement | null>
+  const messagesEndRef = useRef<HTMLDivElement | null>(null)
   const router = useRouter()
 
   useEffect(() => {
