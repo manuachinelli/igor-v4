@@ -153,7 +153,7 @@ export default function OnboardingPage() {
       ) : (
         <>
           <img
-            src="/home.png"
+            src="/sidebar-icons/home.png"
             alt="Home"
             onClick={handleLogoClick}
             style={{
