@@ -52,7 +52,7 @@ export default function OnboardingPage() {
     setShowForm(true)
   }
 
-  const validateUrl = (input) => {
+  const validateUrl = (input: string) => {
     try {
       const full = 'https://' + input.trim()
       const parsed = new URL(full)
@@ -62,7 +62,7 @@ export default function OnboardingPage() {
     }
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validateUrl(urlPart)) {
       setError('Ingresá un dominio válido (ej: manuel.com)')
