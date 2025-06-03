@@ -48,7 +48,8 @@ export default function SignupPage() {
       return
     }
 
-    router.push('/dashboard')
+    // Redirige al onboarding (no al dashboard directo)
+    router.push('/onboarding')
   }
 
   return (
