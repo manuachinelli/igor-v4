@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import styles from './IgorOnboardingChat.module.css'
+import { useRouter } from 'next/navigation'
 
 type Message = {
   sender: string
@@ -9,21 +11,25 @@ type Message = {
 
 export default function IgorOnboardingChat() {
   const [messages, setMessages] = useState<Message[]>([])
-  const [text, setText] = useState('')
+  const [input, setInput] = useState('')
   const [waiting, setWaiting] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [onboardingDone, setOnboardingDone] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
   const getUserId = () => {
-    return localStorage.getItem('igor_user_id') || ''
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('igor-user-id') || 'igor-temp'
+    }
+    return 'igor-temp'
   }
 
-  const handleSend = async () => {
+  const sendToN8N = async (text: string) => {
     if (!text.trim()) return
-
     setWaiting(true)
     const newMessages = [...messages, { sender: 'user', text }]
     setMessages(newMessages)
@@ -39,44 +45,71 @@ export default function IgorOnboardingChat() {
       })
 
       const data = await res.json()
-      setMessages((prev) => [...prev, { sender: 'igor', text: data.message }])
-    } catch (err) {
-      setMessages((prev) => [...prev, { sender: 'igor', text: 'Error al responder.' }])
-    }
+      const reply = data.output || data.reply || '...'
+      setMessages([...newMessages, { sender: 'assistant', text: reply }])
 
-    setText('')
-    setWaiting(false)
+      if (reply.toLowerCase().includes('onboarding ha finalizado')) {
+        setOnboardingDone(true)
+        setTimeout(() => {
+          router.push('/dashboard')
+        }, 3000)
+      }
+    } catch {
+      setMessages([...newMessages, { sender: 'assistant', text: 'Error al conectar con Igor.' }])
+    } finally {
+      setWaiting(false)
+    }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') handleSend()
+  const handleSend = () => {
+    if (!input.trim()) return
+    sendToN8N(input)
+    setInput('')
+  }
+
+  if (onboardingDone) {
+    return (
+      <div className={styles.fullScreenOverlay}>
+        Igor se está alistando para ser tu asesor
+      </div>
+    )
   }
 
   return (
-    <div style={{ padding: '24px', height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#fff' }}>
-      <div style={{ flex: 1, overflowY: 'auto' }}>
-        {messages.map((msg, index) => (
-          <div key={index} style={{ textAlign: msg.sender === 'user' ? 'right' : 'left', marginBottom: 12 }}>
-            <div style={{ display: 'inline-block', padding: '8px 12px', borderRadius: 16, background: msg.sender === 'user' ? '#eee' : '#d0eaff' }}>
-              {msg.text}
-            </div>
+    <div className={styles.chatContainer}>
+      <div className={styles.messagesContainer}>
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            className={`${styles.messageBubble} ${msg.sender === 'user' ? styles.userBubble : styles.assistantBubble}`}
+          >
+            {msg.text}
           </div>
         ))}
+        {waiting && <div className={styles.waiting}>Igor está respondiendo...</div>}
         <div ref={messagesEndRef} />
       </div>
-      <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={handleKeyPress}
-          disabled={waiting}
-          placeholder="Escribí tu mensaje..."
-          style={{ flex: 1, padding: 12, borderRadius: 8, border: '1px solid #ccc' }}
-        />
-        <button onClick={handleSend} disabled={waiting || !text.trim()} style={{ padding: '0 16px', borderRadius: 8, backgroundColor: '#222', color: '#fff', border: 'none' }}>
-          Enviar
-        </button>
+
+      <div className={styles.inputSection}>
+        <div className={styles.inputBox}>
+          <input
+            type="text"
+            className={styles.input}
+            placeholder="Escribí tu mensaje..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            disabled={waiting}
+          />
+          <button
+            className={`${styles.iconButton} ${waiting ? styles.disabled : ''}`}
+            onClick={handleSend}
+            disabled={waiting}
+          >
+            ➤
+          </button>
+        </div>
+        <div className={styles.status}>Estás hablando con Igor v1.0.0</div>
       </div>
     </div>
   )
