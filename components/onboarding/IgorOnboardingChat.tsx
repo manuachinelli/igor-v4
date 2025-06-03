@@ -10,7 +10,12 @@ type Message = {
 }
 
 export default function IgorOnboardingChat() {
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      sender: 'assistant',
+      text: 'Aquí comenzamos este proceso de onboarding, necesito saber algunas cosas de vos para poder automatizar todo tu trabajo. ¿Estás listo para hablar?',
+    },
+  ])
   const [input, setInput] = useState('')
   const [waiting, setWaiting] = useState(false)
   const [onboardingDone, setOnboardingDone] = useState(false)
