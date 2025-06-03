@@ -9,11 +9,13 @@ export default function IgorOnboardingChat() {
   const [input, setInput] = useState('')
   const [waiting, setWaiting] = useState(false)
   const [onboardingDone, setOnboardingDone] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement | null>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
   }, [messages])
 
   const getUserId = () => {
