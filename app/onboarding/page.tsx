@@ -84,8 +84,6 @@ export default function OnboardingPage() {
     }
   }
 
-  const iconNames = ['automation.png', 'billing.png', 'chat.png', 'flows.png']
-
   return (
     <div style={{
       height: '100vh',
@@ -184,11 +182,11 @@ export default function OnboardingPage() {
             justifyContent: 'center',
             alignItems: 'center'
           }}>
-            {iconNames.map((name, index) => (
+            {[...Array(4)].map((_, index) => (
               <img
-                key={name}
-                src={`/${name}`}
-                alt={name}
+                key={index}
+                src="/sidebar-icons/billing.png"
+                alt="Billing Icon"
                 style={{
                   width: '64px',
                   filter: 'drop-shadow(0 0 12px white)',
@@ -214,3 +212,4 @@ export default function OnboardingPage() {
     </div>
   )
 }
+
