@@ -10,14 +10,10 @@
   flex-grow: 1;
   padding: 16px;
   overflow-y: auto;
-
-  width: 100%;
-  max-width: 70%;
-  margin: 0 auto;
-
   display: flex;
   flex-direction: column;
   gap: 12px;
+  align-items: center;
 }
 
 .messageBubble {
@@ -25,14 +21,15 @@
   border-radius: 20px;
   font-size: 14px;
   line-height: 1.4;
-  max-width: 100%;
   word-wrap: break-word;
   word-break: break-word;
+  max-width: 880px;
+  width: fit-content;
 }
 
 .userBubble {
   align-self: flex-end;
-  background-color: #0ea5e9;
+  background-color: #2563eb;
   color: white;
 }
 
@@ -66,10 +63,7 @@
   background-color: #1a1a1a;
   padding: 8px 12px;
   border-radius: 20px;
-
-  width: 100%;
-  max-width: 70%;
-  margin: 0 auto;
+  width: 880px;
 }
 
 .input {
