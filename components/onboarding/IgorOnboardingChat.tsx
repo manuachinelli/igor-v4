@@ -9,7 +9,7 @@ export default function IgorOnboardingChat() {
   const [input, setInput] = useState('')
   const [waiting, setWaiting] = useState(false)
   const [onboardingDone, setOnboardingDone] = useState(false)
-  const messagesEndRef = useRef(null)
+  const messagesEndRef = useRef<HTMLDivElement | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function IgorOnboardingChat() {
     return 'igor-temp'
   }
 
-  const sendToN8N = async (text) => {
+  const sendToN8N = async (text: string) => {
     if (!text.trim()) return
     setWaiting(true)
     const newMessages = [...messages, { sender: 'user', text }]
