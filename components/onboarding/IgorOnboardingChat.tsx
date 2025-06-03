@@ -1,112 +1,116 @@
-.chatContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: #000;
-  color: white;
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
+import styles from './IgorOnboardingChat.module.css'
+import { useRouter } from 'next/navigation'
+
+type Message = {
+  sender: string
+  text: string
 }
 
-.messagesContainer {
-  flex-grow: 1;
-  padding: 16px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-}
+export default function IgorOnboardingChat() {
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState('')
+  const [waiting, setWaiting] = useState(false)
+  const [onboardingDone, setOnboardingDone] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement | null>(null)
+  const router = useRouter()
 
-.messageBubble {
-  padding: 12px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  line-height: 1.4;
-  word-wrap: break-word;
-  word-break: break-word;
-  max-width: 880px;
-  width: fit-content;
-}
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
-.userBubble {
-  align-self: flex-end;
-  background-color: #2563eb;
-  color: white;
-}
+  const getUserId = () => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('igor-user-id') || 'igor-temp'
+    }
+    return 'igor-temp'
+  }
 
-.assistantBubble {
-  align-self: flex-start;
-  background-color: #262626;
-  color: white;
-}
+  const sendToN8N = async (text: string) => {
+    if (!text.trim()) return
+    setWaiting(true)
+    const newMessages = [...messages, { sender: 'user', text }]
+    setMessages(newMessages)
 
-.waiting {
-  font-size: 14px;
-  opacity: 0.6;
-  align-self: flex-start;
-}
+    try {
+      const res = await fetch('https://manuachinelli.app.n8n.cloud/webhook/89bebd77-ed15-4cde-96a1-d04681f3bcd1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: text,
+          userId: getUserId(),
+        }),
+      })
 
-.inputSection {
-  padding: 8px;
-  background-color: #000;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  position: sticky;
-  bottom: 0;
-  align-items: center;
-}
+      const data = await res.json()
+      const reply = data.output || data.reply || '...'
+      setMessages([...newMessages, { sender: 'assistant', text: reply }])
 
-.inputBox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #1a1a1a;
-  padding: 8px 12px;
-  border-radius: 20px;
-  width: 880px;
-}
+      if (reply.toLowerCase().includes('onboarding ha finalizado')) {
+        setOnboardingDone(true)
+        setTimeout(() => {
+          router.push('/dashboard')
+        }, 3000)
+      }
+    } catch {
+      setMessages([...newMessages, { sender: 'assistant', text: 'Error al conectar con Igor.' }])
+    } finally {
+      setWaiting(false)
+    }
+  }
 
-.input {
-  flex-grow: 1;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  color: white;
-  font-size: 14px;
-}
+  const handleSend = () => {
+    if (!input.trim()) return
+    sendToN8N(input)
+    setInput('')
+  }
 
-.iconButton {
-  background: none;
-  border: none;
-  color: white;
-  opacity: 0.8;
-  cursor: pointer;
-  padding: 4px;
-}
+  if (onboardingDone) {
+    return (
+      <div className={styles.fullScreenOverlay}>
+        Igor se está alistando para ser tu asesor
+      </div>
+    )
+  }
 
-.iconButton:hover {
-  opacity: 1;
-}
+  return (
+    <div className={styles.chatContainer}>
+      <div className={styles.messagesContainer}>
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            className={`${styles.messageBubble} ${msg.sender === 'user' ? styles.userBubble : styles.assistantBubble}`}
+          >
+            {msg.text}
+          </div>
+        ))}
+        {waiting && <div className={styles.waiting}>Igor está respondiendo...</div>}
+        <div ref={messagesEndRef} />
+      </div>
 
-.iconButton.disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.status {
-  font-size: 12px;
-  text-align: center;
-  opacity: 0.6;
-}
-
-.fullScreenOverlay {
-  position: fixed;
-  inset: 0;
-  background-color: black;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  z-index: 9999;
+      <div className={styles.inputSection}>
+        <div className={styles.inputBox}>
+          <input
+            type="text"
+            className={styles.input}
+            placeholder="Escribí tu mensaje..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            disabled={waiting}
+          />
+          <button
+            className={`${styles.iconButton} ${waiting ? styles.disabled : ''}`}
+            onClick={handleSend}
+            disabled={waiting}
+          >
+            ➤
+          </button>
+        </div>
+        <div className={styles.status}>Estás hablando con Igor v1.0.0</div>
+      </div>
+    </div>
+  )
 }
