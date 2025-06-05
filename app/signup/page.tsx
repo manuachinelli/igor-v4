@@ -34,6 +34,8 @@ export default function SignupPage() {
     }
 
     const userId = signupData.user.id
+    localStorage.setItem('user_id', userId)       // Para compatibilidad con el resto de la app
+    localStorage.setItem('igor-user-id', userId)  // Para que onboarding lo use bien
 
     const { error: profileError } = await supabase.from('profiles').insert([
       {
@@ -48,7 +50,6 @@ export default function SignupPage() {
       return
     }
 
-    // ✅ Redirige al onboarding
     router.push('/onboarding')
   }
 
