@@ -152,17 +152,31 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
                   </p>
                   <p>¿Cómo? Simplemente escribile y te guiará.</p>
                 </div>
+
                 {input.trim() === '' && (
-                  <div className={styles.suggestionsContainer}>
-                    {suggestions.map((text, idx) => (
-                      <button
-                        key={idx}
-                        className={styles.suggestionBox}
-                        onClick={() => setInput(text)}
+                  <div className={styles.suggestionsWrapper}>
+                    <div className={styles.suggestionsRow}>
+                      <div
+                        className={styles.suggestion}
+                        onClick={() => setInput(suggestions[0])}
                       >
-                        {text}
-                      </button>
-                    ))}
+                        {suggestions[0]}
+                      </div>
+                      <div
+                        className={styles.suggestion}
+                        onClick={() => setInput(suggestions[1])}
+                      >
+                        {suggestions[1]}
+                      </div>
+                    </div>
+                    <div className={styles.suggestionsRow}>
+                      <div
+                        className={styles.suggestion}
+                        onClick={() => setInput(suggestions[2])}
+                      >
+                        {suggestions[2]}
+                      </div>
+                    </div>
                   </div>
                 )}
               </>
