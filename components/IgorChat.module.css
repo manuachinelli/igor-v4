@@ -108,3 +108,33 @@
   text-align: center;
   opacity: 0.6;
 }
+
+.welcomeContainer {
+  position: absolute;
+  top: 0;
+  bottom: 60px; /* no tapa el input */
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+  z-index: 1;
+}
+
+.welcomeLogo {
+  width: 90px;
+  margin-bottom: 24px;
+  opacity: 0.4;
+}
+
+.welcomeText {
+  font-size: 14px;
+  line-height: 1.5;
+  color: white;
+  opacity: 0.7;
+  max-width: 400px;
+  padding: 0 16px;
+}
