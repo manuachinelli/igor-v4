@@ -145,3 +145,30 @@
   transition: opacity 0.5s ease;
 }
 
+.suggestionsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+  padding: 0 24px;
+}
+
+.suggestionBox {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  border-radius: 20px;
+  padding: 16px 20px;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+  max-width: 400px;
+  transition: all 0.3s ease;
+  pointer-events: all;
+}
+
+.suggestionBox:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.03);
+}
