@@ -138,3 +138,10 @@
   max-width: 400px;
   padding: 0 16px;
 }
+
+.logoFaded {
+  opacity: 0.1;
+  filter: brightness(2) blur(0.3px);
+  transition: opacity 0.5s ease;
+}
+
