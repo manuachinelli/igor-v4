@@ -24,6 +24,12 @@ export interface IgorChatHandle {
   resetChat: () => void;
 }
 
+const suggestions = [
+  'Quiero que les escribas a todos mis clientes que no me compran hace más de 6 meses y agendes reunión.',
+  'Quiero que respondas todos los correos que recibo con comprobantes y luego me envíes a mí un resumen diario.',
+  'Quiero que todos los PDFs que recibo por correo se carguen en un Excel.',
+];
+
 const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
   ({ sessionId }, ref) => {
     const [input, setInput] = useState('');
@@ -134,17 +140,32 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
               }`}
             />
             {messages.length === 0 && (
-              <div className={styles.welcomeText}>
-                <p>
-                  Igors puede ayudarte a automatizar todos tus tareas
-                  operativas que te impiden enfocarte en lo que te da valor.
-                </p>
-                <p>
-                  También te ayudará con las métricas y todo lo que necesites
-                  saber de tu trabajo, decisiones y acciones.
-                </p>
-                <p>¿Cómo? Simplemente escribile y te guiará.</p>
-              </div>
+              <>
+                <div className={styles.welcomeText}>
+                  <p>
+                    Igors puede ayudarte a automatizar todos tus tareas
+                    operativas que te impiden enfocarte en lo que te da valor.
+                  </p>
+                  <p>
+                    También te ayudará con las métricas y todo lo que necesites
+                    saber de tu trabajo, decisiones y acciones.
+                  </p>
+                  <p>¿Cómo? Simplemente escribile y te guiará.</p>
+                </div>
+                {input.trim() === '' && (
+                  <div className={styles.suggestionsContainer}>
+                    {suggestions.map((text, idx) => (
+                      <button
+                        key={idx}
+                        className={styles.suggestionBox}
+                        onClick={() => setInput(text)}
+                      >
+                        {text}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
 
