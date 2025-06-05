@@ -17,7 +17,6 @@ interface Message {
   content: string;
 }
 
-// Ahora definimos la interfaz de props con `sessionId`
 interface IgorChatProps {
   sessionId: string;
 }
@@ -26,7 +25,6 @@ export interface IgorChatHandle {
   resetChat: () => void;
 }
 
-// Cambiamos la firma a: forwardRef<Handle, Props>
 const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
   ({ sessionId }, ref) => {
     const [input, setInput] = useState('');
@@ -35,7 +33,6 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
     const [uuid, setUuid] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Obtener userId (uuid) una vez
     useEffect(() => {
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session?.user.id) setUuid(session.user.id);
@@ -43,7 +40,6 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
       });
     }, []);
 
-    // Cargar historial cada vez que cambie `uuid` o `sessionId`
     useEffect(() => {
       if (!uuid || !sessionId) return;
       const loadMessages = async () => {
@@ -61,7 +57,6 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
     const handleSend = async () => {
       if (!input.trim() || !uuid) return;
 
-      // Mostrar mensaje de usuario
       const newMessage: Message = { role: 'user', content: input };
       setMessages((prev) => [...prev, newMessage]);
 
@@ -70,7 +65,6 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
       setIsWaiting(true);
 
       try {
-        // Guardar mensaje de usuario en Supabase
         await supabase.from('chat_messages').insert({
           user_id: uuid,
           session_id: sessionId,
@@ -78,7 +72,6 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
           content: texto,
         });
 
-        // Llamar al webhook
         const res = await fetch(
           'https://manuachinelli.app.n8n.cloud/webhook/d6a72405-e6de-4e91-80da-9219b57633dd',
           {
@@ -96,7 +89,6 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
           };
           setMessages((prev) => [...prev, replyMessage]);
 
-          // Guardar respuesta en Supabase
           await supabase.from('chat_messages').insert({
             user_id: uuid,
             session_id: sessionId,
@@ -115,17 +107,14 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
       }
     };
 
-    // Exponer resetChat() para el ref
     useImperativeHandle(ref, () => ({
       resetChat() {
         setMessages([]);
         setInput('');
         setIsWaiting(false);
-        // NOTA: ya no generamos sessionId aquí; ChatPage lo hace
       },
     }));
 
-    // Scroll down cuando llegan mensajes
     useEffect(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
@@ -137,6 +126,27 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
     return (
       <div className={styles.chatContainer}>
         <div className={styles.messagesContainer}>
+          <div className={styles.welcomeContainer}>
+            <img
+              src="/sidebar-icons/igor-proactive.png"
+              alt="Logo IGOR"
+              className={styles.welcomeLogo}
+            />
+            {messages.length === 0 && (
+              <div className={styles.welcomeText}>
+                <p>
+                  Igors puede ayudarte a automatizar todos tus tareas
+                  operativas que te impiden enfocarte en lo que te da valor.
+                </p>
+                <p>
+                  También te ayudará con las métricas y todo lo que necesites
+                  saber de tu trabajo, decisiones y acciones.
+                </p>
+                <p>¿Cómo? Simplemente escribile y te guiará.</p>
+              </div>
+            )}
+          </div>
+
           {messages.map((msg, idx) => (
             <div
               key={idx}
@@ -149,6 +159,7 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
               {msg.content}
             </div>
           ))}
+
           {isWaiting && (
             <div className={styles.waiting}>Igor está escribiendo...</div>
           )}
