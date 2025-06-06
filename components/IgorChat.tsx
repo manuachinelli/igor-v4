@@ -132,55 +132,55 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
       <div className={styles.chatContainer}>
         <div className={styles.messagesContainer}>
           <div className={styles.welcomeContainer}>
-            <img
-              src="/sidebar-icons/igor-proactive.png"
-              alt="Logo IGOR"
-              className={`${styles.welcomeLogo} ${
-                messages.length > 0 ? styles.logoFaded : ''
-              }`}
-            />
-            {messages.length === 0 && (
-              <>
-                <div className={styles.welcomeText}>
-                  <p>
-                    Igors puede ayudarte a automatizar todos tus tareas
-                    operativas que te impiden enfocarte en lo que te da valor.
-                  </p>
-                  <p>
-                    También te ayudará con las métricas y todo lo que necesites
-                    saber de tu trabajo, decisiones y acciones.
-                  </p>
-                  <p>¿Cómo? Simplemente escribile y te guiará.</p>
-                </div>
-
-                {input.trim() === '' && (
-                  <div className={styles.suggestionsWrapper}>
-                    <div className={styles.suggestionsRow}>
-                      <div
-                        className={styles.suggestion}
-                        onClick={() => setInput(suggestions[0])}
-                      >
-                        {suggestions[0]}
-                      </div>
-                      <div
-                        className={styles.suggestion}
-                        onClick={() => setInput(suggestions[1])}
-                      >
-                        {suggestions[1]}
-                      </div>
-                    </div>
-                    <div className={styles.suggestionsRow}>
-                      <div
-                        className={styles.suggestion}
-                        onClick={() => setInput(suggestions[2])}
-                      >
-                        {suggestions[2]}
-                      </div>
-                    </div>
+            <div className={styles.welcomeContent}>
+              <img
+                src="/sidebar-icons/igor-proactive.png"
+                alt="Logo IGOR"
+                className={`${styles.welcomeLogo} ${
+                  messages.length > 0 ? styles.logoFaded : ''
+                }`}
+              />
+              {messages.length === 0 && (
+                <>
+                  <div className={styles.welcomeText}>
+                    <p>
+                      Igors puede ayudarte a automatizar todos tus tareas operativas que te impiden enfocarte en lo que te da valor.
+                    </p>
+                    <p>
+                      También te ayudará con las métricas y todo lo que necesites saber de tu trabajo, decisiones y acciones.
+                    </p>
+                    <p>¿Cómo? Simplemente escribile y te guiará.</p>
                   </div>
-                )}
-              </>
-            )}
+
+                  {input.trim() === '' && (
+                    <div className={styles.suggestionsWrapper}>
+                      <div className={styles.suggestionsRow}>
+                        <div
+                          className={styles.suggestion}
+                          onClick={() => setInput(suggestions[0])}
+                        >
+                          {suggestions[0]}
+                        </div>
+                        <div
+                          className={styles.suggestion}
+                          onClick={() => setInput(suggestions[1])}
+                        >
+                          {suggestions[1]}
+                        </div>
+                      </div>
+                      <div className={styles.suggestionsRow}>
+                        <div
+                          className={styles.suggestion}
+                          onClick={() => setInput(suggestions[2])}
+                        >
+                          {suggestions[2]}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
 
           {messages.map((msg, idx) => (
@@ -231,6 +231,3 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
       </div>
     );
   }
-);
-
-export default IgorChat;
