@@ -115,6 +115,21 @@ export default function FlowsPage() {
         ))}
       </div>
 
+      {/* Cargador de batería */}
+      <div className={styles.batteryContainer}>
+        <div className={styles.batteryBarOuter}>
+          <div
+            className={styles.batteryBarInner}
+            style={{
+              width: `${Math.min(flows.length / 5, 1) * 100}%`,
+            }}
+          />
+        </div>
+        <p className={styles.batteryText}>
+          {flows.length}/5
+        </p>
+      </div>
+
       {/* Logo abajo centro */}
       <Image
         src="/sidebar-icons/flows.png"
@@ -143,3 +158,4 @@ export default function FlowsPage() {
     </div>
   )
 }
+
