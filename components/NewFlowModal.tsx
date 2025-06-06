@@ -10,13 +10,14 @@ type NewFlowModalProps = {
 
 export default function NewFlowModal({ isOpen, onClose }: NewFlowModalProps) {
   const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
   const [error, setError] = useState('')
 
   if (!isOpen) return null
 
   const handleCreateFlow = async () => {
-    if (!title.trim()) {
-      setError('El nombre del Flow es obligatorio.')
+    if (!title.trim() || !description.trim()) {
+      setError('Todos los campos son obligatorios.')
       return
     }
 
@@ -24,6 +25,7 @@ export default function NewFlowModal({ isOpen, onClose }: NewFlowModalProps) {
       {
         title: title,
         state: 'requested',
+        description: description,
       },
     ])
 
@@ -31,6 +33,7 @@ export default function NewFlowModal({ isOpen, onClose }: NewFlowModalProps) {
       setError('Error al crear el Flow.')
     } else {
       setTitle('')
+      setDescription('')
       setError('')
       onClose()
     }
@@ -57,9 +60,9 @@ export default function NewFlowModal({ isOpen, onClose }: NewFlowModalProps) {
           padding: '32px',
           borderRadius: '16px',
           minWidth: '500px',
-          minHeight: '400px', // doble de alto aprox
+          minHeight: '450px',
           textAlign: 'center',
-          color: '#000', // texto negro
+          color: '#000',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -70,8 +73,7 @@ export default function NewFlowModal({ isOpen, onClose }: NewFlowModalProps) {
         <h2 style={{ fontSize: '22px', fontWeight: '600' }}>Solicita un nuevo Flow</h2>
 
         <p style={{ fontSize: '14px', color: '#333', lineHeight: '1.5', maxWidth: '400px' }}>
-          Si solicitás un Flow desde acá, nuestro equipo lo revisará manualmente y te lo configurará. 
-          No es automático. Te avisaremos cuando esté listo.
+          Igor se pondrá a trabajar en el flow y te avisará cuando ya esté listo!
         </p>
 
         <input
@@ -86,6 +88,22 @@ export default function NewFlowModal({ isOpen, onClose }: NewFlowModalProps) {
             fontSize: '14px',
             width: '100%',
             maxWidth: '400px',
+          }}
+        />
+
+        <textarea
+          placeholder="¿Qué querés automatizar?"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          style={{
+            padding: '10px',
+            borderRadius: '6px',
+            border: '1px solid #ccc',
+            fontSize: '14px',
+            width: '100%',
+            maxWidth: '400px',
+            minHeight: '100px',
+            resize: 'none',
           }}
         />
 
