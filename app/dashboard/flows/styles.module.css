@@ -42,15 +42,21 @@
 
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columnas */
-  grid-template-rows: repeat(2, 1fr);    /* 2 filas */
-  gap: 24px 32px; /* más elegante, menos gap */
-  margin-top: 120px; /* para dejar espacio arriba */
-  margin-bottom: 120px; /* para dejar espacio para logo */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  overflow-x: auto;
+  max-height: calc((160px + 24px) * 2); /* 2 filas */
+  gap: 24px 32px;
+  margin-top: 120px;
+  margin-bottom: 120px;
+  padding-right: 32px;
+  padding-bottom: 8px;
   width: 100%;
   max-width: 1200px;
 }
+
 
 
 .flowButton {
