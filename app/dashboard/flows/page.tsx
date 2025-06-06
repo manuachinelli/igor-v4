@@ -48,7 +48,6 @@ export default function FlowsPage() {
   }
 
   const handleOpenNewFlow = async () => {
-    // Insert flow solicitado en Supabase
     const { data, error } = await supabase.from('dashboard_flows').insert([
       {
         title: 'Nuevo Flow',
@@ -61,7 +60,6 @@ export default function FlowsPage() {
       return
     }
 
-    // Refrescar lista y abrir modal nuevo
     fetchFlows()
     setShowNewFlowModal(true)
   }
@@ -103,6 +101,33 @@ export default function FlowsPage() {
 
   return (
     <div className={styles.container}>
+      {/* Botón + arriba derecha */}
+      <div className={styles.addButtonContainer}>
+        <button className={styles.addButton} onClick={handleOpenNewFlow}>
+          +
+        </button>
+        <p className={styles.addButtonText}>Solicitar un nuevo flow</p>
+      </div>
+
+      {/* Grid de flows */}
+      <div className={styles.grid}>
+        {flows.map((flow) => (
+          <button
+            key={flow.id}
+            className={styles.flowButton}
+            onClick={() => handleOpenFlow(flow)}
+          >
+            <div className={styles.flowTitle}>{flow.title}</div>
+            <div
+              className={styles.statusDot}
+              style={{ backgroundColor: getStateColor(flow.state) }}
+            />
+            <div className={styles.statusLabel}>{getStateLabel(flow.state)}</div>
+          </button>
+        ))}
+      </div>
+
+      {/* Logo abajo centro */}
       <Image
         src="/sidebar-icons/flows.png"
         alt="Flows Logo"
@@ -111,34 +136,7 @@ export default function FlowsPage() {
         className={styles.logo}
       />
 
-      <div className={styles.scrollContainer}>
-        <div className={styles.grid}>
-          {flows.map((flow) => (
-            <button
-              key={flow.id}
-              className={styles.flowButton}
-              onClick={() => handleOpenFlow(flow)}
-            >
-              <div className={styles.flowTitle}>{flow.title}</div>
-              <div
-                className={styles.statusDot}
-                style={{ backgroundColor: getStateColor(flow.state) }}
-              />
-              <div className={styles.statusLabel}>{getStateLabel(flow.state)}</div>
-            </button>
-          ))}
-        </div>
-
-        {flows.length > 6 && (
-          <div className={styles.arrowRight}>→</div>
-        )}
-      </div>
-
-      <p className={styles.solicitarTexto}>Solicitar un nuevo flow</p>
-      <button className={styles.addButton} onClick={handleOpenNewFlow}>
-        +
-      </button>
-
+      {/* Modals */}
       {selectedFlow && (
         <FlowModal
           isOpen={true}
