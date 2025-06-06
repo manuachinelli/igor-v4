@@ -54,18 +54,22 @@ export default function NewFlowModal({ isOpen, onClose }: NewFlowModalProps) {
       <div
         style={{
           backgroundColor: '#fff',
-          padding: '24px',
-          borderRadius: '12px',
-          minWidth: '340px',
+          padding: '32px',
+          borderRadius: '16px',
+          minWidth: '500px',
+          minHeight: '400px', // doble de alto aprox
           textAlign: 'center',
+          color: '#000', // texto negro
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
           gap: '16px',
         }}
       >
-        <h2>Solicita un nuevo Flow</h2>
+        <h2 style={{ fontSize: '22px', fontWeight: '600' }}>Solicita un nuevo Flow</h2>
 
-        <p style={{ fontSize: '13px', color: '#555', lineHeight: '1.4' }}>
+        <p style={{ fontSize: '14px', color: '#333', lineHeight: '1.5', maxWidth: '400px' }}>
           Si solicitás un Flow desde acá, nuestro equipo lo revisará manualmente y te lo configurará. 
           No es automático. Te avisaremos cuando esté listo.
         </p>
@@ -76,10 +80,12 @@ export default function NewFlowModal({ isOpen, onClose }: NewFlowModalProps) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           style={{
-            padding: '8px',
-            borderRadius: '4px',
+            padding: '10px',
+            borderRadius: '6px',
             border: '1px solid #ccc',
             fontSize: '14px',
+            width: '100%',
+            maxWidth: '400px',
           }}
         />
 
@@ -87,11 +93,16 @@ export default function NewFlowModal({ isOpen, onClose }: NewFlowModalProps) {
           <p style={{ color: 'red', fontSize: '12px' }}>{error}</p>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '16px' }}>
           <button
             style={{
-              padding: '8px 16px',
+              padding: '10px 20px',
+              borderRadius: '6px',
+              border: 'none',
+              backgroundColor: '#7B61FF',
+              color: '#fff',
               cursor: 'pointer',
+              fontSize: '14px',
             }}
             onClick={handleCreateFlow}
           >
@@ -100,8 +111,13 @@ export default function NewFlowModal({ isOpen, onClose }: NewFlowModalProps) {
 
           <button
             style={{
-              padding: '8px 16px',
+              padding: '10px 20px',
+              borderRadius: '6px',
+              border: '1px solid #ccc',
+              backgroundColor: '#fff',
+              color: '#000',
               cursor: 'pointer',
+              fontSize: '14px',
             }}
             onClick={onClose}
           >
