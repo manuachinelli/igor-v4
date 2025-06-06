@@ -40,8 +40,6 @@
   text-align: center;
 }
 
-
-
 .grid {
   display: flex;
   flex-wrap: wrap;
@@ -58,8 +56,6 @@
   max-width: 1200px;
 }
 
-
-
 .flowButton {
   background-color: #1A1A1A;
   color: white;
@@ -74,7 +70,7 @@
   height: 160px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* importante! alineamos arriba */
+  justify-content: space-between; /* este es el cambio clave */
   align-items: center;
 }
 
@@ -82,39 +78,34 @@
   background-color: #262626;
 }
 
+.flowTitle {
+  margin-top: 8px; /* un poco de espacio arriba */
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
 .flowLine {
   width: 60%;
   height: 1px; /* más fina */
   background-color: white;
-  margin-top: 4px;
-  margin-bottom: 20px; /* más espacio hasta la pelotita */
-}
-
-.flowTitle {
-  margin-bottom: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  text-align: center;
+  margin-bottom: 12px; /* spacing hacia la pelotita */
 }
 
 .statusDot {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  margin-top: 16px; /* empuja la pelotita más abajo */
-  margin-bottom: 40px; /* más margen hasta el estado */
+  margin-bottom: 12px; /* un poco de espacio con el label */
 }
-
 
 .statusLabel {
   font-size: 12px;
   color: #fff;
   text-align: center;
-  margin-top: auto; /* empuja el label bien abajo */
-  padding-bottom: 8px; /* un poco de espacio con el borde inferior */
+  padding-bottom: 8px; /* espacio con borde inferior */
 }
-
-
 
 .logo {
   position: absolute;
