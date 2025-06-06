@@ -115,7 +115,16 @@ export default function FlowsPage() {
         ))}
       </div>
 
-      {/* Cargador de batería */}
+      {/* Logo abajo centro */}
+      <Image
+        src="/sidebar-icons/flows.png"
+        alt="Flows Logo"
+        width={80}
+        height={80}
+        className={styles.logo}
+      />
+
+      {/* Cargador de batería debajo del logo */}
       <div className={styles.batteryContainer}>
         <div className={styles.batteryBarOuter}>
           <div
@@ -126,18 +135,12 @@ export default function FlowsPage() {
           />
         </div>
         <p className={styles.batteryText}>
-          {flows.length}/5
+          Te quedan {Math.max(5 - flows.length, 0)} flows disponibles,{' '}
+          <span style={{ textDecoration: 'underline', cursor: 'pointer' }}>
+            clickea aquí para aumentar tu plan
+          </span>
         </p>
       </div>
-
-      {/* Logo abajo centro */}
-      <Image
-        src="/sidebar-icons/flows.png"
-        alt="Flows Logo"
-        width={80}
-        height={80}
-        className={styles.logo}
-      />
 
       {/* Modals */}
       {selectedFlow && (
@@ -158,4 +161,3 @@ export default function FlowsPage() {
     </div>
   )
 }
-
