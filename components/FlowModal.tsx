@@ -1,6 +1,13 @@
 'use client'
 
-export function FlowModal({ isOpen, onClose, flow, onSave }) {
+type FlowModalProps = {
+  isOpen: boolean
+  onClose: () => void
+  flow: any
+  onSave: () => void
+}
+
+export function FlowModal({ isOpen, onClose, flow, onSave }: FlowModalProps) {
   if (!isOpen) return null
 
   return (
