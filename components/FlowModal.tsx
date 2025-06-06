@@ -1,94 +1,84 @@
 'use client'
 
-import { useState } from 'react'
-import styles from './FlowModal.module.css'
+import React from 'react'
 
-type Flow = {
-  name: string
-  description: string
-  platforms: string[]
-  stats24h: number
-  stats30d: number
-}
-
-type Props = {
+type FlowModalProps = {
   isOpen: boolean
   onClose: () => void
-  flow: Flow
-  onSave: (updatedFlow: Flow) => void
+  flow: {
+    id: string
+    user_id: string
+    title: string
+    state: string
+    executions_count: number
+    executions_success_count: number
+    executions_error_count: number
+  }
+  onSave: () => void
 }
 
-export default function FlowModal({ isOpen, onClose, flow, onSave }: Props) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [name, setName] = useState(flow.name)
-  const [description, setDescription] = useState(flow.description)
-
+export default function FlowModal({ isOpen, onClose, flow, onSave }: FlowModalProps) {
   if (!isOpen) return null
 
-  const handleSave = () => {
-    onSave({ ...flow, name, description })
-    setIsEditing(false)
+  const getStateLabel = (state: string) => {
+    switch (state) {
+      case 'active':
+        return 'Activa'
+      case 'error':
+        return 'Activa con errores'
+      case 'requested':
+        return 'Solicitada'
+      case 'review':
+        return 'Revisión'
+      default:
+        return ''
+    }
   }
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.header}>
-          {isEditing ? (
-            <input
-              className={styles.inputTitle}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          ) : (
-            <h2 className={styles.title}>
-              {name}
-              <span
-                onClick={() => setIsEditing(true)}
-                style={{ cursor: 'pointer', fontSize: 18, marginLeft: 8 }}
-              >
-                ✏️
-              </span>
-            </h2>
-          )}
-          <hr className={styles.separator} />
-        </div>
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 9999,
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: '#fff',
+          padding: '24px',
+          borderRadius: '12px',
+          minWidth: '400px',
+          textAlign: 'center',
+        }}
+      >
+        <h2 style={{ marginBottom: '16px' }}>{flow.title}</h2>
+        <p><strong>Estado:</strong> {getStateLabel(flow.state)}</p>
+        <p><strong>Ejecuciones totales:</strong> {flow.executions_count}</p>
+        <p><strong>Con éxito:</strong> {flow.executions_success_count}</p>
+        <p><strong>Con error:</strong> {flow.executions_error_count}</p>
 
-        <div className={styles.platforms}>
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className={styles.circle} />
-          ))}
-        </div>
-
-        <div className={styles.description}>
-          {isEditing ? (
-            <textarea
-              className={styles.textarea}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          ) : (
-            <p>{description}</p>
-          )}
-        </div>
-
-        <div className={styles.stats}>
-          <div className={styles.statCircle}>
-            <div className={styles.statNumber}>{flow.stats24h}</div>
-            <div className={styles.statLabel}>Task en las últimas 24hs</div>
-          </div>
-          <div className={styles.statCircle}>
-            <div className={styles.statNumber}>{flow.stats30d}</div>
-            <div className={styles.statLabel}>Task en últimos 30 días</div>
-          </div>
-        </div>
-
-        {isEditing && (
-          <button className={styles.saveButton} onClick={handleSave}>
-            Guardar
-          </button>
-        )}
+        <button
+          style={{
+            marginTop: '16px',
+            padding: '8px 16px',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            onSave()
+          }}
+        >
+          Guardar / Cerrar
+        </button>
       </div>
     </div>
   )
 }
+
