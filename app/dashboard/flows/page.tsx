@@ -48,19 +48,6 @@ export default function FlowsPage() {
   }
 
   const handleOpenNewFlow = async () => {
-    const { data, error } = await supabase.from('dashboard_flows').insert([
-      {
-        title: 'Nuevo Flow',
-        state: 'requested',
-      },
-    ]).select()
-
-    if (error) {
-      console.error('Error creating new flow:', error)
-      return
-    }
-
-    fetchFlows()
     setShowNewFlowModal(true)
   }
 
@@ -118,7 +105,7 @@ export default function FlowsPage() {
             onClick={() => handleOpenFlow(flow)}
           >
             <div className={styles.flowTitle}>{flow.title}</div>
-            <div className={styles.flowLine} /> {/* la línea blanca que pediste */}
+            <div className={styles.flowLine} />
             <div
               className={styles.statusDot}
               style={{ backgroundColor: getStateColor(flow.state) }}
