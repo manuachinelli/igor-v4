@@ -23,9 +23,18 @@ export default function FlowsPage() {
   const [showNewFlowModal, setShowNewFlowModal] = useState(false)
 
   const fetchFlows = async () => {
+    const { data: userData, error: userError } = await supabase.auth.getUser()
+    const user_id = userData?.user?.id
+
+    if (!user_id) {
+      console.error('Error: No se pudo obtener el user_id.')
+      return
+    }
+
     const { data, error } = await supabase
       .from('dashboard_flows')
       .select('*')
+      .eq('user_id', user_id)
       .order('created_at', { ascending: false })
 
     if (error) {
