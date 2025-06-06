@@ -44,6 +44,7 @@ export function FlowModal({ isOpen, onClose, flow, onSave }: FlowModalProps) {
           display: 'flex',
           flexDirection: 'column',
           gap: '16px',
+          color: '#000', // Todo el texto en negro
         }}
       >
         <h2 style={{ fontSize: '20px' }}>{flow.title}</h2>
@@ -81,7 +82,7 @@ export function FlowModal({ isOpen, onClose, flow, onSave }: FlowModalProps) {
         </div>
 
         {/* Botones */}
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '16px' }}>
           <button
             style={{
               padding: '8px 16px',
