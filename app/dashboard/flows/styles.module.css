@@ -13,28 +13,68 @@
   margin-bottom: 32px;
 }
 
+.scrollContainer {
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow-x: auto;
+  width: 100%;
+  max-width: 1200px;
+}
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 32px 40px;
-  margin-bottom: 32px;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(200px, 1fr);
+  gap: 32px;
+  padding-bottom: 16px;
 }
 
 .flowButton {
-  background-color: #2E2E2E;
+  background-color: #1A1A1A;
   color: white;
   font-weight: 400;
   border: none;
   border-radius: 20px;
-  padding: 40px 60px;
+  padding: 20px;
   cursor: pointer;
-  font-size: 22px;
+  font-size: 18px;
   transition: background-color 0.2s;
-  min-width: 280px;
+  min-width: 200px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .flowButton:hover {
-  background-color: #3a3a3a;
+  background-color: #262626;
+}
+
+.flowTitle {
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.statusDot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-bottom: 8px;
+}
+
+.statusLabel {
+  font-size: 14px;
+  color: #fff;
+}
+
+.arrowRight {
+  font-size: 32px;
+  color: #fff;
+  margin-left: 16px;
+  user-select: none;
 }
 
 .solicitarTexto {
@@ -46,7 +86,7 @@
 
 .addButton {
   margin-top: 8px;
-  background-color: #888;
+  background-color: #7B61FF;
   color: white;
   font-size: 32px;
   width: 64px;
