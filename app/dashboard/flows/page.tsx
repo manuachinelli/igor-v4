@@ -106,7 +106,7 @@ export default function FlowsPage() {
         <button className={styles.addButton} onClick={handleOpenNewFlow}>
           +
         </button>
-        <p className={styles.addButtonText}>Solicitar un nuevo flow</p>
+        <p className={styles.addButtonText}>Solicita un nuevo flow</p>
       </div>
 
       {/* Grid de flows */}
