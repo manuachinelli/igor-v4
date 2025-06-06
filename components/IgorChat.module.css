@@ -109,27 +109,24 @@
   opacity: 0.6;
 }
 
+/* 👇 CAMBIO: .welcomeContainer sin position: absolute */
 .welcomeContainer {
-  position: absolute;
-  top: 20px; /* antes estaba en 40px */
-  left: 0;
-  right: 0;
-  bottom: 60px;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  pointer-events: none;
+  justify-content: center;
   text-align: center;
+  pointer-events: none;
   z-index: 1;
 }
 
 .welcomeLogo {
   width: 360px;
-  margin-bottom: 12px; /* antes era 24px */
+  margin-bottom: 12px;
   opacity: 0.7;
   filter: drop-shadow(0 0 4px #ffffffaa) brightness(1.3);
 }
-
 
 .welcomeText {
   font-size: 14px;
@@ -207,6 +204,7 @@
   background-color: rgba(255, 255, 255, 0.1);
   transform: scale(1.03);
 }
+
 .welcomeContent {
   display: flex;
   flex-direction: column;
@@ -217,4 +215,3 @@
   padding: 24px 16px;
   box-sizing: border-box;
 }
-
