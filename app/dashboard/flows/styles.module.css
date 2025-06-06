@@ -109,16 +109,18 @@
 
 .logo {
   position: relative;
-  margin-top: 32px;
-  margin-bottom: 12px; /* para que quede un poco de espacio con la barrita */
+  margin-top: 120px; /* subimos mucho más el espacio arriba */
+  margin-bottom: 16px; /* un poco de espacio con la barrita */
 
 }
 .batteryContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 16px;
+  justify-content: center;
+  margin-bottom: 80px; /* MUCHO más espacio abajo */
 }
+
 
 .batteryBarOuter {
   width: 200px;
