@@ -231,3 +231,6 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
       </div>
     );
   }
+);
+
+export default IgorChat;
