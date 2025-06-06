@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import styles from './styles.module.css'
 import Image from 'next/image'
-import FlowModal from '@/components/FlowModal'
+import { FlowModal } from '@/components/FlowModal'
 import NewFlowModal from '@/components/NewFlowModal'
 import { supabase } from '@/lib/supabaseClient'
 
