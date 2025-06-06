@@ -33,12 +33,13 @@
 }
 
 .addButtonText {
-  margin-top: 12px;
-  font-size: 16px;
+  margin-top: 8px;
+  font-size: 12px; /* más chiquita */
   font-weight: 400;
   color: #fff;
   text-align: center;
 }
+
 
 
 .grid {
