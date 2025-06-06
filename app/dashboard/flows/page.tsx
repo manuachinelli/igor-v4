@@ -118,6 +118,7 @@ export default function FlowsPage() {
             onClick={() => handleOpenFlow(flow)}
           >
             <div className={styles.flowTitle}>{flow.title}</div>
+            <div className={styles.flowLine} /> {/* la línea blanca que pediste */}
             <div
               className={styles.statusDot}
               style={{ backgroundColor: getStateColor(flow.state) }}
