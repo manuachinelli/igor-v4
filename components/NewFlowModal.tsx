@@ -21,11 +21,24 @@ export default function NewFlowModal({ isOpen, onClose }: NewFlowModalProps) {
       return
     }
 
+    // Obtener el user_id desde Supabase Auth
+    const { data: userData, error: userError } = await supabase.auth.getUser()
+    const user_id = userData?.user?.id
+
+    if (!user_id) {
+      setError('Error: No se pudo obtener el usuario.')
+      return
+    }
+
     const { error } = await supabase.from('dashboard_flows').insert([
       {
         title: title,
         state: 'requested',
         description: description,
+        user_id: user_id,
+        executions_count: 0,
+        executions_success_count: 0,
+        executions_error_count: 0,
       },
     ])
 
