@@ -41,17 +41,17 @@
 }
 
 
-/* Grid con 2 filas */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 32px 40px;
-  margin-top: 120px; /* separo del botón + */
-  margin-bottom: 80px; /* dejo espacio para logo abajo */
+  grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+  grid-template-rows: repeat(2, 1fr);    /* 2 filas */
+  gap: 24px 32px; /* más elegante, menos gap */
+  margin-top: 120px; /* para dejar espacio arriba */
+  margin-bottom: 120px; /* para dejar espacio para logo */
   width: 100%;
   max-width: 1200px;
 }
+
 
 .flowButton {
   background-color: #1A1A1A;
@@ -59,12 +59,12 @@
   font-weight: 400;
   border: none;
   border-radius: 20px;
-  padding: 20px;
+  padding: 16px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   transition: background-color 0.2s;
-  min-width: 200px;
-  height: 200px;
+  min-width: 180px;
+  height: 160px; /* más bajo */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -74,6 +74,7 @@
 .flowButton:hover {
   background-color: #262626;
 }
+
 
 .flowTitle {
   margin-bottom: 12px;
