@@ -84,9 +84,10 @@
 
 .flowLine {
   width: 60%;
-  height: 2px;
+  height: 1px; /* más fina */
   background-color: white;
-  margin-bottom: 12px;
+  margin-top: 4px;
+  margin-bottom: 20px; /* más espacio hasta la pelotita */
 }
 
 .flowTitle {
@@ -100,15 +101,19 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  margin-bottom: 8px;
+  margin-top: 16px; /* empuja la pelotita más abajo */
+  margin-bottom: 40px; /* más margen hasta el estado */
 }
 
+
 .statusLabel {
-  font-size: 12px; /* más chiquito */
+  font-size: 12px;
   color: #fff;
   text-align: center;
-  margin-top: 4px;
+  margin-top: auto; /* empuja el label bien abajo */
+  padding-bottom: 8px; /* un poco de espacio con el borde inferior */
 }
+
 
 
 .logo {
