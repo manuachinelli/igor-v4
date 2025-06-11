@@ -80,7 +80,7 @@ export default function SignupPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://igors.app/auth/callback', // ← cambiá esto si tu dominio es otro
+          redirectTo: 'https://www.igors.app/auth/callback', // ← cambiá esto si tu dominio es otro
         },
       });
 
