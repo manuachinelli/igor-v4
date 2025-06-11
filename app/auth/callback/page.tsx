@@ -6,15 +6,16 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export default function GoogleCallbackPage() {
   const supabase = createClientComponentClient({
-  cookieOptions: {
-    name: 'sb-auth-token',
-    path: '/',
-    sameSite: 'None',
-    secure: true,
-  },
-})
-  const router = useRouter()
+    cookieOptions: {
+      name: 'sb-auth-token',
+      path: '/',
+      domain: 'www.igors.app',
+      sameSite: 'None',
+      secure: true,
+    },
+  })
 
+  const router = useRouter()
   const [errorMsg, setErrorMsg] = useState('')
   const [loading, setLoading] = useState(true)
 
@@ -22,13 +23,10 @@ export default function GoogleCallbackPage() {
     const run = async () => {
       console.log('🔁 Ejecutando callback...')
 
-      const {
-        data: { user },
-        error: authError,
-      } = await supabase.auth.getUser()
+      const { data: { user }, error } = await supabase.auth.getUser()
 
-      if (authError) {
-        console.error('❌ auth.getUser ERROR:', authError)
+      if (error) {
+        console.error('❌ auth.getUser ERROR:', error)
         setErrorMsg('No se pudo recuperar el usuario. Intentá iniciar sesión de nuevo.')
         setLoading(false)
         return
@@ -36,25 +34,17 @@ export default function GoogleCallbackPage() {
 
       if (!user) {
         console.warn('⚠️ No hay user, aunque no hubo error.')
-        setErrorMsg('Usuario no encontrado. Intentá de nuevo.')
+        setErrorMsg('No se pudo recuperar el usuario. Intentá iniciar sesión de nuevo.')
         setLoading(false)
         return
       }
 
-      console.log('✅ Usuario autenticado:', user)
-
-      const { data: existingProfile, error: profileError } = await supabase
+      // Insertar perfil si no existe
+      const { data: existingProfile } = await supabase
         .from('profiles')
         .select('id')
         .eq('id', user.id)
         .single()
-
-      if (profileError && profileError.code !== 'PGRST116') {
-        console.error('❌ Error al buscar perfil:', profileError)
-        setErrorMsg('Error al verificar el perfil del usuario.')
-        setLoading(false)
-        return
-      }
 
       if (!existingProfile) {
         const { error: insertError } = await supabase.from('profiles').insert([
@@ -64,7 +54,6 @@ export default function GoogleCallbackPage() {
             company_name: '',
           },
         ])
-
         if (insertError) {
           console.error('❌ No se pudo guardar el perfil:', insertError)
           setErrorMsg('No se pudo guardar el perfil del usuario.')
@@ -73,6 +62,7 @@ export default function GoogleCallbackPage() {
         }
       }
 
+      // Guardar en localStorage
       localStorage.setItem('user_id', user.id)
       localStorage.setItem('igor-user-id', user.id)
 
@@ -98,4 +88,5 @@ export default function GoogleCallbackPage() {
     </div>
   )
 }
+
 
