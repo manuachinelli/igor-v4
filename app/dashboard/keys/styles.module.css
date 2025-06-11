@@ -37,8 +37,8 @@
 }
 
 .circle {
-  background: #333333;              /* gris uniforme */
-  border-radius: 0;                  /* cuadrado perfecto */
+  background: #333333;
+  border-radius: 16px;                /* borde redondeado como el ejemplo */
   display: flex;
   align-items: center;
   justify-content: center;
