@@ -62,13 +62,21 @@ export default function KeysPage() {
             style={{
               width:  `${circleSize}px`,
               height: `${circleSize}px`,
+              flexDirection: 'column', // para que se apilen
+              padding: '8px',          // para que respire un poco
             }}
             onClick={() => {
               setSelected(c)
               setModalOpen(true)
             }}
           >
-            <span className={styles.circleText}>{c.app_name}</span>
+            <div className={styles.appName}>{c.app_name}</div>
+            <div className={styles.divider}></div>
+            <img
+              src={`/sidebar-icons/${c.app_name.replace(/\s+/g, '').toLowerCase()}.png`}
+              alt={c.app_name}
+              className={styles.circleIcon}
+            />
           </div>
         ))}
       </div>
@@ -95,4 +103,3 @@ export default function KeysPage() {
     </div>
   )
 }
-
