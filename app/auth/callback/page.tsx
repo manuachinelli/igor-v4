@@ -14,6 +14,16 @@ export default function GoogleCallbackPage() {
     const run = async () => {
       console.log('[IGOR] 🔁 Callback iniciado')
 
+      // 👇 Este paso es CLAVE
+      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession()
+
+      if (exchangeError) {
+        console.error('[IGOR] ❌ Error al intercambiar código:', exchangeError)
+        setErrorMsg('No se pudo establecer sesión. Intentá iniciar sesión de nuevo.')
+        setLoading(false)
+        return
+      }
+
       const { data: { user }, error } = await supabase.auth.getUser()
 
       if (error || !user) {
