@@ -17,6 +17,14 @@
 
 .logoWrap {
   margin-bottom: 1.5rem;
+  width: 120px; /* tamaño fijo */
+  height: 120px; /* tamaño fijo */
+}
+
+.logoWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .grid {
@@ -30,13 +38,12 @@
 
 .circle {
   background: #333333;              /* gris uniforme */
-  border-radius: 50%;
+  border-radius: 0;                  /* cuadrado perfecto */
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   overflow: hidden;
-  /* animación al pasar el mouse */
   transition: transform 0.3s;
 }
 
