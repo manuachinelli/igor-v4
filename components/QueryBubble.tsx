@@ -39,13 +39,19 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
       window.removeEventListener('mouseup', onMouseUp)
 
       if (!bubble.id.startsWith('temp-')) {
-        await supabase
+        const { error } = await supabase
           .from('dashboard_queries')
           .update({
             x_position: position.x,
             y_position: position.y,
           })
           .eq('id', bubble.id)
+
+        if (error) {
+          console.error('❌ Error al guardar posición:', error)
+        } else {
+          console.log('✅ Posición guardada en Supabase:', position)
+        }
       }
     }
 
@@ -64,7 +70,10 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
         top: position.y,
         width: 140,
         height: 140,
-        backgroundColor: bubble.color?.trim() ? bubble.color : '#2c2c2c', // ✅ color dinámico seguro
+        backgroundColor:
+          bubble.color?.trim().toLowerCase() === '#ffffff'
+            ? '#2c2c2c'
+            : bubble.color?.trim() || '#2c2c2c',
       }}
     >
       <button className={styles['close-button']} onClick={() => onDelete(bubble.id)}>×</button>
