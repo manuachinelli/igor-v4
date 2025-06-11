@@ -14,13 +14,10 @@ export default function KeysPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [selected, setSelected] = useState<Credential | null>(null)
 
-  // calcula tamaño dinámico de cada círculo
+  // calcula tamaño dinámico de cada cuadrado (antes círculo)
   const circleSize = creds.length > 0
     ? Math.min(120, Math.max(60, 240 / creds.length))
     : 100
-
-  // logo 4× el tamaño del círculo
-  const logoSize = circleSize * 4
 
   useEffect(() => {
     const load = async () => {
@@ -47,12 +44,11 @@ export default function KeysPage() {
 
   return (
     <div className={styles.container}>
-      {/* logo en lugar del texto */}
+      {/* logo en tamaño fijo */}
       <div className={styles.logoWrap}>
         <Image
           src="/sidebar-icons/automation.png"
-          width={logoSize}
-          height={logoSize}
+          fill
           alt="Tus credenciales"
         />
       </div>
@@ -98,3 +94,4 @@ export default function KeysPage() {
     </div>
   )
 }
+
