@@ -24,7 +24,23 @@ export default function AuthCallbackPage() {
         return
       }
 
-      // ✅ Sesión creada → redirigimos a onboarding
+      // ✅ Pedimos la sesión actual
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+
+      if (sessionError || !sessionData?.session?.user?.id) {
+        console.error('[IGOR] ❌ Error al obtener la sesión:', sessionError)
+        setError('Error al obtener sesión. Por favor, intentá nuevamente.')
+        return
+      }
+
+      // ✅ Seteamos el user_id en localStorage igual que en el signup normal
+      const userId = sessionData.session.user.id
+      localStorage.setItem('user_id', userId)
+      localStorage.setItem('igor-user-id', userId)
+
+      console.log('[IGOR] ✅ Sesión creada correctamente con user_id:', userId)
+
+      // ✅ Redirigimos a /onboarding
       router.push('/onboarding')
     }
 
@@ -32,7 +48,15 @@ export default function AuthCallbackPage() {
   }, [router])
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '100px' }}>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100vh',
+      backgroundColor: '#000',
+      color: '#fff'
+    }}>
       <img src="/logo.png" alt="Logo" style={{ width: '100px', marginBottom: '20px' }} />
       <h2>Procesando inicio de sesión...</h2>
       {error && <p style={{ color: 'red', marginTop: '20px' }}>{error}</p>}
