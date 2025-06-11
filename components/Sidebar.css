@@ -1,15 +1,18 @@
-/* Sidebar.css */
-
 .sidebar {
-  position: relative; /* para el menú desplegable */
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   background-color: #111;
   padding: 1rem 0.5rem;
-  width: 120px; /* DOBLE tamaño original */
+  width: 60px; /* empieza finita */
   height: 100vh;
-  flex-shrink: 0; /* para que no se colapse */
+  flex-shrink: 0;
+  transition: width 0.3s ease; /* animación suave */
+}
+
+.sidebar:hover {
+  width: 120px; /* al pasar el mouse, se agranda */
 }
 
 .sidebar-top,
@@ -17,12 +20,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem; /* lo agrando un poco por el tamaño mayor */
+  gap: 2rem;
 }
 
-/* Íconos de navegación, billing y logout */
+/* Íconos */
 .icon {
-  width: 56px; /* DOBLE de 28px */
+  width: 56px;
   height: 56px;
   opacity: 0.6;
   transition: transform 0.2s, opacity 0.2s;
@@ -37,7 +40,7 @@
   opacity: 1;
 }
 
-/* Botón de logout (hereda .icon) */
+/* Botón logout */
 .logout-btn {
   background: none;
   border: none;
@@ -57,11 +60,12 @@
   cursor: pointer;
 }
 
+/* Menú desplegable */
 .account-menu {
   position: absolute;
-  bottom: 100px; /* o el valor que ya tenías */
-  left: 10px; /* lo pegamos a la izquierda */
-  transform: none; /* sacamos el centrar */
+  bottom: 100px;
+  left: 10px;
+  transform: none;
   background-color: #222;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
@@ -72,8 +76,6 @@
   z-index: 10;
 }
 
-
-/* Cada opción del menú */
 .account-menu .menu-item {
   padding: 0.7rem 1rem;
   color: #eee;
@@ -86,7 +88,6 @@
   background: #333;
 }
 
-/* Estilo específico para la opción de logout */
 .account-menu .logout-item {
   color: #f55;
 }
