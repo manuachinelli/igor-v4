@@ -71,6 +71,28 @@ export default function SignupPage() {
           <input type="password" placeholder="Repetir contraseña" value={repeatPassword} onChange={e => setRepeatPassword(e.target.value)} required />
           <button type="submit">Registrarme</button>
           {error && <p className="signup-error">{error}</p>}
+          <div className="google-login-wrapper">
+  <p className="signup-divider">o</p>
+  <button
+    type="button"
+    className="google-button"
+    onClick={async () => {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'https://igorapp.vercel.app/auth/callback', // ← cambiá esto si tu dominio es otro
+        },
+      });
+
+      if (error) {
+        console.error('Error al iniciar sesión con Google:', error.message);
+      }
+    }}
+  >
+    Registrarme con Google
+  </button>
+</div>
+
         </form>
         <p className="signup-footer">
           ¿Ya tenés cuenta?{' '}
