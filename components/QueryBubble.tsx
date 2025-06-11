@@ -64,7 +64,7 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
         top: position.y,
         width: 140,
         height: 140,
-        backgroundColor: '#2c2c2c', // fijo para asegurar gris oscuro
+        backgroundColor: bubble.color || '#2c2c2c',
       }}
     >
       <button className={styles['close-button']} onClick={() => onDelete(bubble.id)}>×</button>
