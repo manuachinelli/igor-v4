@@ -14,19 +14,15 @@ export default function GoogleCallbackPage() {
     const run = async () => {
       console.log('[IGOR] 🔁 Callback iniciado')
 
-    const { data, error } = await supabase.auth.getSession()
-const session = data.session
-console.log('[IGOR] ✅ Sesión recibida:', session)
+      const { data: { user }, error } = await supabase.auth.getUser()
 
-if (error || !session || !session.user) {
-
-        console.error('[IGOR] ❌ Error al obtener sesión:', error)
+      if (error || !user) {
+        console.error('[IGOR] ❌ Error al obtener usuario:', error)
         setErrorMsg('No se pudo recuperar el usuario. Intentá iniciar sesión de nuevo.')
         setLoading(false)
         return
       }
 
-      const user = session.user
       console.log('[IGOR] ✅ Usuario:', user)
 
       const { data: existingProfile, error: profileError } = await supabase
