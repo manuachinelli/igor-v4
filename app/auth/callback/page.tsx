@@ -5,7 +5,14 @@ import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export default function GoogleCallbackPage() {
-  const supabase = createClientComponentClient()
+  const supabase = createClientComponentClient({
+  cookieOptions: {
+    path: '/',
+    sameSite: 'None',
+    secure: true,
+  },
+})
+
   const router = useRouter()
 
   const [errorMsg, setErrorMsg] = useState('')
