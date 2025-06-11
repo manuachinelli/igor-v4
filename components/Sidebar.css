@@ -27,17 +27,26 @@
 .icon {
   width: 56px;
   height: 56px;
-  opacity: 0.6;
-  transition: transform 0.2s, opacity 0.2s;
+  opacity: 0.8; /* MAS VIVO DE BASE */
+  transition: transform 0.2s, opacity 0.2s, filter 0.2s;
+  filter: brightness(1); /* brillo normal */
 }
 
 .icon:hover {
   transform: scale(1.15);
   opacity: 1;
+  filter: brightness(1.2); /* MAS BRILLO AL HACER HOVER SOBRE ICONO */
 }
 
 .icon.active {
   opacity: 1;
+  filter: brightness(1.2); /* MAS BRILLO SI ESTA ACTIVO */
+}
+
+/* CUANDO LA SIDEBAR ESTA EN HOVER, TODOS LOS ICONOS SE VUELVEN MAS VIVOS */
+.sidebar:hover .icon {
+  opacity: 1;
+  filter: brightness(1.2); /* MAS BRILLO EN TODOS LOS ICONOS */
 }
 
 /* Botón logout */
