@@ -101,11 +101,16 @@ export default function IgorBubbles() {
     setInputValue('')
     setShowInput(false)
 
-    await fetch('https://manuachinelli.app.n8n.cloud/webhook/8b913fc3-69df-43c7-9874-1b6a9a697680', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: userId, query: inputValue }),
-    })
+  await fetch('https://manuachinelli.app.n8n.cloud/webhook/8b913fc3-69df-43c7-9874-1b6a9a697680', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    user_id: userId,
+    query: inputValue,
+    color: bubbleColor, // ✅ incluí el color elegido
+  }),
+})
+
 
     setTimeout(() => fetchBubbles(userId), 4000)
   }
