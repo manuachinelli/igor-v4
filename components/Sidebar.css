@@ -5,7 +5,7 @@
   justify-content: space-between;
   background-color: #111;
   padding: 1rem 0.5rem;
-  width: 60px; /* empieza finita */
+  width: 80px; /* empieza finita */
   height: 100vh;
   flex-shrink: 0;
   transition: width 0.3s ease; /* animación suave */
