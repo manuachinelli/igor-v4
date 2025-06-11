@@ -37,7 +37,7 @@
 }
 
 .circle {
-  background: ##2d2d2d;
+  background: #2d2d2d;
   border-radius: 16px;                /* borde redondeado como el ejemplo */
   display: flex;
   align-items: center;
