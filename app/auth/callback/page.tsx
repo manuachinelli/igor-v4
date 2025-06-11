@@ -13,16 +13,29 @@ export default function GoogleCallbackPage() {
 
   useEffect(() => {
     const run = async () => {
-      // Paso 1: obtener usuario autenticado
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      console.log('🔁 Ejecutando callback...')
 
-      if (authError || !user) {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser()
+
+      if (authError) {
+        console.error('❌ auth.getUser ERROR:', authError)
         setErrorMsg('No se pudo recuperar el usuario. Intentá iniciar sesión de nuevo.')
         setLoading(false)
         return
       }
 
-      // Paso 2: verificar si ya tiene perfil
+      if (!user) {
+        console.warn('⚠️ No hay user, aunque no hubo error.')
+        setErrorMsg('Usuario no encontrado. Intentá de nuevo.')
+        setLoading(false)
+        return
+      }
+
+      console.log('✅ Usuario autenticado:', user)
+
       const { data: existingProfile, error: profileError } = await supabase
         .from('profiles')
         .select('id')
@@ -30,32 +43,33 @@ export default function GoogleCallbackPage() {
         .single()
 
       if (profileError && profileError.code !== 'PGRST116') {
+        console.error('❌ Error al buscar perfil:', profileError)
         setErrorMsg('Error al verificar el perfil del usuario.')
         setLoading(false)
         return
       }
 
-      // Paso 3: si no existe perfil, lo insertamos
       if (!existingProfile) {
         const { error: insertError } = await supabase.from('profiles').insert([
           {
             id: user.id,
-            full_name: user.user_metadata.name || user.user_metadata.full_name || user.email,
+            full_name: user.user_metadata.full_name || user.email,
             company_name: '',
-          }
+          },
         ])
+
         if (insertError) {
+          console.error('❌ No se pudo guardar el perfil:', insertError)
           setErrorMsg('No se pudo guardar el perfil del usuario.')
           setLoading(false)
           return
         }
       }
 
-      // Paso 4: guardar en localStorage
       localStorage.setItem('user_id', user.id)
       localStorage.setItem('igor-user-id', user.id)
 
-      // Paso 5: redirigir
+      console.log('🎯 Redirigiendo a onboarding...')
       router.push('/onboarding')
     }
 
@@ -77,3 +91,4 @@ export default function GoogleCallbackPage() {
     </div>
   )
 }
+
