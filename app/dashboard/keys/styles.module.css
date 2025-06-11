@@ -89,3 +89,24 @@
   color: #fff;
   font-weight: 300;
 }
+.appName {
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.divider {
+  width: 60%;
+  height: 1px;
+  background-color: #ffffff;
+  margin: 0 auto 8px auto;
+}
+
+.circleIcon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
