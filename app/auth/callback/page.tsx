@@ -40,7 +40,7 @@ export default function GoogleCallbackPage() {
         const { error: insertError } = await supabase.from('profiles').insert([
           {
             id: user.id,
-            full_name: user.user_metadata.full_name || user.email,
+            full_name: user.user_metadata.name || user.user_metadata.full_name || user.email,
             company_name: '',
           }
         ])
