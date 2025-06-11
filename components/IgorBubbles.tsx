@@ -36,6 +36,9 @@ export default function IgorBubbles() {
   const [inputValue, setInputValue] = useState('')
   const [showInput, setShowInput] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
+  const [bubbleColor, setBubbleColor] = useState('#2c2c2c') // color elegido
+
+  const darkColorOptions = ['#1e1e1e', '#2c2c2c', '#3b3b3b', '#2a2a40', '#1f2d3d']
 
   useEffect(() => {
     const load = async () => {
@@ -90,7 +93,7 @@ export default function IgorBubbles() {
       y_position: 150,
       width: 200,
       height: 120,
-      color: '#2c2c2c',
+      color: bubbleColor,
       is_editable: true,
     }
 
@@ -153,6 +156,23 @@ export default function IgorBubbles() {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             />
+            <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
+              {darkColorOptions.map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setBubbleColor(color)}
+                  style={{
+                    backgroundColor: color,
+                    border: bubbleColor === color ? '2px solid white' : '1px solid #666',
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    cursor: 'pointer',
+                  }}
+                  title={`Color: ${color}`}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>
