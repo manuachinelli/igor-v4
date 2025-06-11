@@ -158,6 +158,8 @@ export default function CredentialModal({ credential, onClose }: Props) {
   const [secret, setSecret] = useState<string>(credential?.cred_secret ?? '')
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -193,7 +195,6 @@ export default function CredentialModal({ credential, onClose }: Props) {
       setSubmitting(false)
     }
   }
-
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
@@ -216,16 +217,40 @@ export default function CredentialModal({ credential, onClose }: Props) {
             <input
               id="app"
               className={styles.input}
-              list="apps-list"
-              value={appName}
-              onChange={e => setAppName(e.target.value)}
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value)
+                setShowDropdown(true)
+              }}
+              onFocus={() => setShowDropdown(true)}
+              onBlur={() => setTimeout(() => setShowDropdown(false), 200)} // delay para permitir click
+              placeholder="Buscar aplicación..."
               required
             />
-            <datalist id="apps-list">
-              {APPS.map(app => (
-                <option key={app.name} value={app.name} />
-              ))}
-            </datalist>
+            {showDropdown && (
+              <div className={styles.dropdown}>
+                {APPS.filter(app =>
+                  app.name.toLowerCase().includes(query.toLowerCase())
+                ).map(app => (
+                  <div
+                    key={app.name}
+                    className={styles.dropdownItem}
+                    onClick={() => {
+                      setAppName(app.name)
+                      setQuery(app.name)
+                      setShowDropdown(false)
+                    }}
+                  >
+                    <img
+                      src={`/sidebar-icons/${app.name.replace(/\s+/g, '').toLowerCase()}.png`}
+                      alt={app.name}
+                      className={styles.appIcon}
+                    />
+                    <span>{app.name}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className={styles.field}>
@@ -279,3 +304,5 @@ export default function CredentialModal({ credential, onClose }: Props) {
     </div>
   )
 }
+
+
