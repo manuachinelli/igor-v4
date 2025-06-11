@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import styles from './QueryBubble.module.css'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -21,6 +21,14 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
     x: bubble.x_position || 100,
     y: bubble.y_position || 100,
   })
+
+  // ✅ Este useEffect hace que el componente actualice su posición al recibir nuevos datos
+  useEffect(() => {
+    setPosition({
+      x: bubble.x_position || 100,
+      y: bubble.y_position || 100,
+    })
+  }, [bubble.x_position, bubble.y_position])
 
   const onDrag = (e: React.MouseEvent) => {
     const startX = e.clientX
