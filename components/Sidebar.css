@@ -7,7 +7,7 @@
   justify-content: space-between;
   background-color: #111;
   padding: 1rem 0.5rem;
-  width: 60px;
+  width: 120px; /* DOBLE tamaño original */
   height: 100vh;
   flex-shrink: 0; /* para que no se colapse */
 }
@@ -17,13 +17,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem; /* lo agrando un poco por el tamaño mayor */
 }
 
 /* Íconos de navegación, billing y logout */
 .icon {
-  width: 28px;
-  height: 28px;
+  width: 56px; /* DOBLE de 28px */
+  height: 56px;
   opacity: 0.6;
   transition: transform 0.2s, opacity 0.2s;
 }
@@ -60,7 +60,7 @@
 /* Contenedor del menú desplegable */
 .account-menu {
   position: absolute;
-  bottom: 70px;            /* ajusta según altura de sidebar-bottom */
+  bottom: 100px; /* ajustado por el nuevo tamaño */
   left: 50%;
   transform: translateX(-50%);
   background-color: #222;
@@ -69,15 +69,15 @@
   padding: 0.5rem 0;
   display: flex;
   flex-direction: column;
-  min-width: 140px;
+  min-width: 160px; /* un poco más ancho por íconos más grandes */
   z-index: 10;
 }
 
 /* Cada opción del menú */
 .account-menu .menu-item {
-  padding: 0.5rem 1rem;
+  padding: 0.7rem 1rem;
   color: #eee;
-  font-size: 0.9rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: background 0.2s;
 }
