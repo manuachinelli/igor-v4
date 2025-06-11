@@ -48,7 +48,8 @@ export default function KeysPage() {
       <div className={styles.logoWrap}>
         <Image
           src="/sidebar-icons/automation.png"
-          fill
+          width={120}
+          height={120}
           alt="Tus credenciales"
         />
       </div>
