@@ -7,12 +7,12 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 export default function GoogleCallbackPage() {
   const supabase = createClientComponentClient({
   cookieOptions: {
+    name: 'sb-auth-token',
     path: '/',
     sameSite: 'None',
     secure: true,
   },
 })
-
   const router = useRouter()
 
   const [errorMsg, setErrorMsg] = useState('')
