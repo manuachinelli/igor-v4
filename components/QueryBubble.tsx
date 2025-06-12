@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import styles from './QueryBubble.module.css'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -18,41 +18,51 @@ interface Bubble {
 export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDelete: (id: string) => void }) {
   const bubbleRef = useRef<HTMLDivElement>(null)
 
+  // ✅ Posición temporal para mostrar el movimiento en tiempo real
+  const [position, setPosition] = useState({
+    x: bubble.x_position || 100,
+    y: bubble.y_position || 100,
+  })
+
+  // ✅ Sync desde props (cuando se actualiza desde Supabase)
+  useEffect(() => {
+    setPosition({
+      x: bubble.x_position || 100,
+      y: bubble.y_position || 100,
+    })
+  }, [bubble.x_position, bubble.y_position])
+
   const onDrag = (e: React.MouseEvent) => {
     const startX = e.clientX
     const startY = e.clientY
-    const origX = bubble.x_position || 100
-    const origY = bubble.y_position || 100
+    const origX = position.x
+    const origY = position.y
 
-    const onMouseMove = async (moveEvent: MouseEvent) => {
+    const onMouseMove = (moveEvent: MouseEvent) => {
       const dx = moveEvent.clientX - startX
       const dy = moveEvent.clientY - startY
-      const newX = origX + dx
-      const newY = origY + dy
+      setPosition({ x: origX + dx, y: origY + dy })
+    }
+
+    const onMouseUp = async () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseup', onMouseUp)
 
       if (!bubble.id.startsWith('temp-')) {
         const { error } = await supabase
           .from('dashboard_queries')
           .update({
-            x_position: newX,
-            y_position: newY,
+            x_position: position.x,
+            y_position: position.y,
           })
           .eq('id', bubble.id)
 
         if (error) {
           console.error('❌ Error al guardar posición:', error)
         } else {
-          console.log('✅ Posición guardada en Supabase:', { x: newX, y: newY })
+          console.log('✅ Posición guardada en Supabase:', position)
         }
       }
-
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mouseup', onMouseUp)
-    }
-
-    const onMouseUp = () => {
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mouseup', onMouseUp)
     }
 
     window.addEventListener('mousemove', onMouseMove)
@@ -66,8 +76,8 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
       className={`${styles.bubble} ${bubble.value === 'Cargando...' ? styles.loading : ''}`}
       style={{
         position: 'absolute',
-        left: bubble.x_position || 100,
-        top: bubble.y_position || 100,
+        left: position.x,
+        top: position.y,
         width: 140,
         height: 140,
         backgroundColor:
