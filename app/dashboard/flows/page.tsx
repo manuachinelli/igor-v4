@@ -126,20 +126,42 @@ export default function FlowsPage() {
         <p className={styles.addButtonText}>Solicita un nuevo flow</p>
       </div>
 
-      <div className={styles.grid}>
-        {flows.map((flow) => (
-          <div key={flow.id} className={styles.flowButton}>
-            {/* Toggle ON/OFF arriba del título */}
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
-              <label className={styles.toggleSwitch}>
-                <input
-                  type="checkbox"
-                  checked={flow.enabled}
-                  onChange={() => handleToggleEnabled(flow.id, flow.enabled)}
-                />
-                <span className={styles.toggleSlider}></span>
-              </label>
-            </div>
+   <div className={styles.grid}>
+  {flows.map((flow) => (
+    <div
+      key={flow.id}
+      className={styles.flowButton}
+      style={{ opacity: flow.enabled ? 1 : 0.6 }}
+    >
+      {/* Toggle ON/OFF */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+        <label className={styles.toggleSwitch}>
+          <input
+            type="checkbox"
+            checked={flow.enabled}
+            onChange={() => handleToggleEnabled(flow.id, flow.enabled)}
+          />
+          <span className={styles.toggleSlider}></span>
+        </label>
+      </div>
+
+      <div className={styles.flowLine} />
+
+      {/* Título */}
+      <div className={styles.flowTitle}>{flow.title}</div>
+
+      <div className={styles.flowLine} />
+
+      {/* Status */}
+      <div
+        className={styles.statusDot}
+        style={{ backgroundColor: getStateColor(flow.state) }}
+      />
+      <div className={styles.statusLabel}>{getStateLabel(flow.state)}</div>
+    </div>
+  ))}
+</div>
+
 
             {/* Título clickable */}
             <button
