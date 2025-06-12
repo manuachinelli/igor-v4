@@ -291,3 +291,10 @@ input:checked + .toggleSlider::after {
   left: 6px;
   font-size: 6px; /* AGREGÁS ESTO */
 }
+.statusDot {
+  visibility: hidden;
+}
+
+.statusLabel {
+  visibility: hidden;
+}
