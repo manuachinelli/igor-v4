@@ -66,13 +66,14 @@
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.2s, opacity 0.3s;
-  width: 200px;
-  height: 240px;
+  width: 200px;   /* fijo */
+  height: 220px;  /* más bajo que 240, más cuadrado */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
 }
+
 
 .flowButton:hover {
   background-color: #262626;
