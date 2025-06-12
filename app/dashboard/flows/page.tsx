@@ -129,18 +129,6 @@ export default function FlowsPage() {
       <div className={styles.grid}>
         {flows.map((flow) => (
           <div key={flow.id} className={styles.flowButton}>
-            {/* Toggle ON/OFF arriba del título */}
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
-              <label className={styles.toggleSwitch}>
-                <input
-                  type="checkbox"
-                  checked={flow.enabled}
-                  onChange={() => handleToggleEnabled(flow.id, flow.enabled)}
-                />
-                <span className={styles.toggleSlider}></span>
-              </label>
-            </div>
-
             {/* Título clickable */}
             <button
               onClick={() => handleOpenFlow(flow)}
@@ -159,17 +147,39 @@ export default function FlowsPage() {
               <div className={styles.flowLine} />
               <div
                 className={styles.statusDot}
-                style={{ backgroundColor: getStateColor(flow.state) }}
+                style={{
+                  backgroundColor: getStateColor(flow.state),
+                  visibility: 'hidden', // lo ocultamos
+                }}
               />
-              <div className={styles.statusLabel}>{getStateLabel(flow.state)}</div>
+              <div
+                className={styles.statusLabel}
+                style={{
+                  visibility: 'hidden', // lo ocultamos
+                }}
+              >
+                {getStateLabel(flow.state)}
+              </div>
             </button>
+
+            {/* Toggle ON/OFF abajo */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '12px' }}>
+              <label className={styles.toggleSwitch}>
+                <input
+                  type="checkbox"
+                  checked={flow.enabled}
+                  onChange={() => handleToggleEnabled(flow.id, flow.enabled)}
+                />
+                <span className={styles.toggleSlider}></span>
+              </label>
+            </div>
           </div>
         ))}
       </div>
 
       <Image
-        src="/sidebar-icons/flows.png"
-        alt="Flows Logo"
+        src="/sidebar-icons/flows.png'
+        alt='Flows Logo'
         width={80}
         height={80}
         className={styles.logo}
