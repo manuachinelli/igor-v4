@@ -199,3 +199,10 @@ input:checked + .toggleSlider::after {
   right: 6px;
   font-size: 6px;
 }
+.flowContent {
+  min-height: 100px; /* PROBALO, podés ajustar: 100px, 110px, 120px según te guste */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
