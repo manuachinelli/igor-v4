@@ -1,8 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 32px;
+  position: relative;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+}
+
+.addButtonContainer {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.addButton {
+  background-color: #7B61FF;
+  color: white;
+  font-size: 48px; /* más grande el + */
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+.addButtonText {
+  margin-top: 8px;
+  font-size: 12px; /* más chiquita */
+  font-weight: 400;
+  color: #fff;
+  text-align: center;
+}
+
 .grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
   align-content: flex-start;
+  overflow-x: auto;
+  max-height: calc((160px + 24px) * 2); /* 2 filas */
   gap: 24px 32px;
   margin-top: 120px;
   margin-bottom: 120px;
@@ -21,13 +65,13 @@
   padding: 16px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.2s, opacity 0.3s;
-  width: 200px;
-  height: 220px;
+  transition: background-color 0.2s;
+  min-width: 180px;
+  height: 160px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between; /* este es el cambio clave */
   align-items: center;
-  justify-content: flex-start;
 }
 
 .flowButton:hover {
@@ -35,40 +79,150 @@
 }
 
 .flowTitle {
-  margin: 8px 0;
-  font-size: 14px;
+  margin-top: 8px; /* un poco de espacio arriba */
+  margin-bottom: 8px;
+  font-size: 16px;
   font-weight: 600;
   text-align: center;
-  padding: 0 4px;
 }
 
 .flowLine {
-  width: 80%;
-  height: 1px;
+  width: 60%;
+  height: 1px; /* más fina */
   background-color: white;
-  margin: 8px 0;
+  margin-bottom: 12px; /* spacing hacia la pelotita */
 }
 
 .statusDot {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  margin-top: 12px;
-  margin-bottom: 4px;
+  margin-bottom: 12px; /* un poco de espacio con el label */
 }
 
 .statusLabel {
   font-size: 12px;
   color: #fff;
   text-align: center;
+  padding-bottom: 8px; /* espacio con borde inferior */
 }
 
-/* Toggle Switch ajustado */
-.toggleSwitch {
+.logo {
+  position: relative;
+  margin-top: 120px; /* subimos mucho más el espacio arriba */
+  margin-bottom: 16px; /* un poco de espacio con la barrita */
+
+}
+.batteryContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 80px; /* MUCHO más espacio abajo */
+}
+
+
+.batteryBarOuter {
+  width: 200px;
+  height: 20px;
+  border: 2px solid #7B61FF;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #1a1a1a;
+}
+
+.batteryBarInner {
+  height: 100%;
+  background-color: #7B61FF;
+  transition: width 0.3s ease;
+}
+
+.batteryText {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #fff;
+  text-align: center;
+  max-width: 250px;
+}
+.batteryContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px; /* espacio abajo */
+}
+
+.batteryBarOuter {
+  width: 200px;
+  height: 16px;
+  border: 2px solid #7B61FF;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.batteryBarInner {
+  height: 100%;
+  background-color: #7B61FF;
+  transition: width 0.3s ease;
+}
+
+.batteryText {
+  font-size: 12px;
+  color: white;
+  text-align: center;
+}
+.switch {
   position: relative;
   display: inline-block;
   width: 50px;
   height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #00FF7F;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+
+.toggleSwitch {
+  position: relative;
+  display: inline-block;
+  width: 70px;
+  height: 32px;
 }
 
 .toggleSwitch input {
@@ -84,14 +238,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #e74c3c;
+  background-color: #e74c3c; /* rojo OFF */
   transition: 0.4s;
   border-radius: 34px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   padding: 0 6px;
-  font-size: 10px;
+  font-size: 12px;
   color: white;
   font-weight: bold;
 }
@@ -99,8 +253,8 @@
 .toggleSlider:before {
   content: '';
   position: absolute;
-  height: 18px;
-  width: 18px;
+  height: 26px;
+  width: 26px;
   left: 3px;
   bottom: 3px;
   background-color: white;
@@ -109,24 +263,24 @@
 }
 
 input:checked + .toggleSlider {
-  background-color: #2ecc71;
+  background-color: #2ecc71; /* verde ON */
   justify-content: flex-end;
 }
 
 input:checked + .toggleSlider:before {
-  transform: translateX(26px);
+  transform: translateX(38px);
 }
 
 input:checked + .toggleSlider::after {
   content: 'ON';
   color: white;
   position: absolute;
-  left: 10px;
+  left: 12px;
 }
 
 .toggleSlider::after {
   content: 'OFF';
   color: white;
   position: absolute;
-  right: 10px;
+  right: 12px;
 }
