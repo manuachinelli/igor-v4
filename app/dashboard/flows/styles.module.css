@@ -45,8 +45,6 @@
   flex-wrap: wrap;
   justify-content: flex-start;
   align-content: flex-start;
-  overflow-x: auto;
-  max-height: calc((160px + 24px) * 2); /* 2 filas */
   gap: 24px 32px;
   margin-top: 120px;
   margin-bottom: 120px;
@@ -55,6 +53,7 @@
   width: 100%;
   max-width: 1200px;
 }
+
 
 .flowButton {
   background-color: #1A1A1A;
