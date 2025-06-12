@@ -138,36 +138,40 @@ export default function FlowsPage() {
               }}
             >
               {/* Título clickable */}
-              <button
-                onClick={() => handleOpenFlow(flow)}
-                style={{
-                  all: 'unset',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '8px',
-                  width: '100%',
-                }}
-              >
-                <div className={styles.flowTitle}>{flow.title}</div>
-                <div className={styles.flowLine} />
-                <div
-                  className={styles.statusDot}
-                  style={{
-                    backgroundColor: getStateColor(flow.state),
-                    visibility: 'hidden',
-                  }}
-                />
-                <div
-                  className={styles.statusLabel}
-                  style={{
-                    visibility: 'hidden',
-                  }}
-                >
-                  {getStateLabel(flow.state)}
-                </div>
-              </button>
+             <button
+  onClick={() => handleOpenFlow(flow)}
+  style={{
+    all: 'unset',
+    cursor: 'pointer',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '8px',
+    width: '100%',
+    height: '100%',
+  }}
+>
+  <div className={styles.flowContent}>
+    <div className={styles.flowTitle}>{flow.title}</div>
+    <div className={styles.flowLine} />
+    <div
+      className={styles.statusDot}
+      style={{
+        backgroundColor: getStateColor(flow.state),
+        visibility: 'hidden', // oculto
+      }}
+    />
+    <div
+      className={styles.statusLabel}
+      style={{
+        visibility: 'hidden', // oculto
+      }}
+    >
+      {getStateLabel(flow.state)}
+    </div>
+  </div>
+</button>
+
 
               {/* Toggle ON/OFF abajo */}
               <div style={{ marginTop: '12px', marginBottom: '12px' }}>
