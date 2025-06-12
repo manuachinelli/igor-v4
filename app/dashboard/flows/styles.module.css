@@ -24,7 +24,7 @@
 .addButton {
   background-color: #7B61FF;
   color: white;
-  font-size: 48px; /* más grande el + */
+  font-size: 48px;
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -34,7 +34,7 @@
 
 .addButtonText {
   margin-top: 8px;
-  font-size: 12px; /* más chiquita */
+  font-size: 12px;
   font-weight: 400;
   color: #fff;
   text-align: center;
@@ -46,7 +46,7 @@
   justify-content: flex-start;
   align-content: flex-start;
   overflow-x: auto;
-  max-height: calc((160px + 24px) * 2); /* 2 filas */
+  max-height: calc((160px + 24px) * 2);
   gap: 24px 32px;
   margin-top: 120px;
   margin-bottom: 120px;
@@ -65,236 +65,9 @@
   padding: 16px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.2s;
-  min-width: 180px;
-  height: 160px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* este es el cambio clave */
-  align-items: center;
-}
-
-.flowButton:hover {
-  background-color: #262626;
-}
-
-.flowTitle {
-  margin-top: 8px; /* un poco de espacio arriba */
-  margin-bottom: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.flowLine {
-  width: 60%;
-  height: 1px; /* más fina */
-  background-color: white;
-  margin-bottom: 12px; /* spacing hacia la pelotita */
-}
-
-.statusDot {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  margin-bottom: 12px; /* un poco de espacio con el label */
-}
-
-.statusLabel {
-  font-size: 12px;
-  color: #fff;
-  text-align: center;
-  padding-bottom: 8px; /* espacio con borde inferior */
-}
-
-.logo {
-  position: relative;
-  margin-top: 120px; /* subimos mucho más el espacio arriba */
-  margin-bottom: 16px; /* un poco de espacio con la barrita */
-
-}
-.batteryContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 80px; /* MUCHO más espacio abajo */
-}
-
-
-.batteryBarOuter {
-  width: 200px;
-  height: 20px;
-  border: 2px solid #7B61FF;
-  border-radius: 10px;
-  overflow: hidden;
-  background-color: #1a1a1a;
-}
-
-.batteryBarInner {
-  height: 100%;
-  background-color: #7B61FF;
-  transition: width 0.3s ease;
-}
-
-.batteryText {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #fff;
-  text-align: center;
-  max-width: 250px;
-}
-.batteryContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 32px; /* espacio abajo */
-}
-
-.batteryBarOuter {
-  width: 200px;
-  height: 16px;
-  border: 2px solid #7B61FF;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  overflow: hidden;
-}
-
-.batteryBarInner {
-  height: 100%;
-  background-color: #7B61FF;
-  transition: width 0.3s ease;
-}
-
-.batteryText {
-  font-size: 12px;
-  color: white;
-  text-align: center;
-}
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 24px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-
-.slider:before {
-  position: absolute;
-  content: '';
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: #00FF7F;
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-.toggleSwitch {
-  position: relative;
-  display: inline-block;
-  width: 70px;
-  height: 32px;
-}
-
-.toggleSwitch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggleSlider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #e74c3c; /* rojo OFF */
-  transition: 0.4s;
-  border-radius: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0 6px;
-  font-size: 12px;
-  color: white;
-  font-weight: bold;
-}
-
-.toggleSlider:before {
-  content: '';
-  position: absolute;
-  height: 26px;
-  width: 26px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-input:checked + .toggleSlider {
-  background-color: #2ecc71; /* verde ON */
-  justify-content: flex-end;
-}
-
-input:checked + .toggleSlider:before {
-  transform: translateX(38px);
-}
-
-input:checked + .toggleSlider::after {
-  content: 'ON';
-  color: white;
-  position: absolute;
-  left: 12px;
-}
-
-.toggleSlider::after {
-  content: 'OFF';
-  color: white;
-  position: absolute;
-  right: 12px;
-}
-/* Flow Button ajustes */
-.flowButton {
-  background-color: #1A1A1A;
-  color: white;
-  font-weight: 400;
-  border: none;
-  border-radius: 20px;
-  padding: 16px;
-  cursor: pointer;
-  font-size: 16px;
   transition: background-color 0.2s, opacity 0.3s;
-  width: 200px; /* todos iguales */
-  height: 240px; /* todos iguales */
+  width: 200px;
+  height: 240px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -332,6 +105,43 @@ input:checked + .toggleSlider::after {
   font-size: 12px;
   color: #fff;
   text-align: center;
+}
+
+.logo {
+  position: relative;
+  margin-top: 120px;
+  margin-bottom: 16px;
+}
+
+.batteryContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.batteryBarOuter {
+  width: 200px;
+  height: 16px;
+  border: 2px solid #7B61FF;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  background-color: #1a1a1a;
+}
+
+.batteryBarInner {
+  height: 100%;
+  background-color: #7B61FF;
+  transition: width 0.3s ease;
+}
+
+.batteryText {
+  font-size: 12px;
+  color: white;
+  text-align: center;
+  max-width: 250px;
 }
 
 /* Toggle Switch ajustado */
