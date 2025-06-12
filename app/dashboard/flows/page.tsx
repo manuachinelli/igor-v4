@@ -15,6 +15,7 @@ type Flow = {
   executions_count: number
   executions_success_count: number
   executions_error_count: number
+  enabled: boolean
 }
 
 export default function FlowsPage() {
@@ -23,7 +24,7 @@ export default function FlowsPage() {
   const [showNewFlowModal, setShowNewFlowModal] = useState(false)
 
   const fetchFlows = async () => {
-    const { data: userData, error: userError } = await supabase.auth.getUser()
+    const { data: userData } = await supabase.auth.getUser()
     const user_id = userData?.user?.id
 
     if (!user_id) {
@@ -83,21 +84,20 @@ export default function FlowsPage() {
   const getStateColor = (state: string) => {
     switch (state) {
       case 'active':
-        return '#00FF7F' // verde
+        return '#00FF7F'
       case 'error':
-        return '#FFD700' // amarillo
+        return '#FFD700'
       case 'requested':
-        return '#FF69B4' // rosa
+        return '#FF69B4'
       case 'review':
-        return '#FF4500' // rojo
+        return '#FF4500'
       default:
-        return '#999999' // gris default
+        return '#999999'
     }
   }
 
   return (
     <div className={styles.container}>
-      {/* Botón + arriba derecha */}
       <div className={styles.addButtonContainer}>
         <button className={styles.addButton} onClick={handleOpenNewFlow}>
           +
@@ -105,7 +105,6 @@ export default function FlowsPage() {
         <p className={styles.addButtonText}>Solicita un nuevo flow</p>
       </div>
 
-      {/* Grid de flows */}
       <div className={styles.grid}>
         {flows.map((flow) => (
           <button
@@ -124,7 +123,6 @@ export default function FlowsPage() {
         ))}
       </div>
 
-      {/* Logo abajo centro */}
       <Image
         src="/sidebar-icons/flows.png"
         alt="Flows Logo"
@@ -133,7 +131,6 @@ export default function FlowsPage() {
         className={styles.logo}
       />
 
-      {/* Cargador de batería debajo del logo */}
       <div className={styles.batteryContainer}>
         <div className={styles.batteryBarOuter}>
           <div
@@ -151,7 +148,6 @@ export default function FlowsPage() {
         </p>
       </div>
 
-      {/* Modals */}
       {selectedFlow && (
         <FlowModal
           isOpen={true}
