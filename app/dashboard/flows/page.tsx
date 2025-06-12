@@ -128,62 +128,49 @@ export default function FlowsPage() {
       <div className={styles.grid}>
         {flows.map((flow) => (
           <div key={flow.id} className={styles.flowButton}>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                height: '100%',
-              }}
-            >
-              {/* Título clickable */}
-             <button
-  onClick={() => handleOpenFlow(flow)}
-  style={{
-    all: 'unset',
-    cursor: 'pointer',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '8px',
-    width: '100%',
-    height: '100%',
-  }}
->
-  <div className={styles.flowContent}>
-    <div className={styles.flowTitle}>{flow.title}</div>
-    <div className={styles.flowLine} />
-    <div
-      className={styles.statusDot}
-      style={{
-        backgroundColor: getStateColor(flow.state),
-        visibility: 'hidden', // oculto
-      }}
-    />
-    <div
-      className={styles.statusLabel}
-      style={{
-        visibility: 'hidden', // oculto
-      }}
-    >
-      {getStateLabel(flow.state)}
-    </div>
-  </div>
-</button>
+            {/* contenido del cuadrado */}
+            <div className={styles.flowContent}>
+              {/* título clickable */}
+              <button
+                onClick={() => handleOpenFlow(flow)}
+                style={{
+                  all: 'unset',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                  width: '100%',
+                }}
+              >
+                <div className={styles.flowTitle}>{flow.title}</div>
+                <div className={styles.flowLine} />
+                <div
+                  className={styles.statusDot}
+                  style={{
+                    backgroundColor: getStateColor(flow.state),
+                    visibility: 'hidden',
+                  }}
+                />
+                <div
+                  className={styles.statusLabel}
+                  style={{
+                    visibility: 'hidden',
+                  }}
+                >
+                  {getStateLabel(flow.state)}
+                </div>
+              </button>
 
-
-              {/* Toggle ON/OFF abajo */}
-              <div style={{ marginTop: '12px', marginBottom: '12px' }}>
-                <label className={styles.toggleSwitch}>
-                  <input
-                    type="checkbox"
-                    checked={flow.enabled}
-                    onChange={() => handleToggleEnabled(flow.id, flow.enabled)}
-                  />
-                  <span className={styles.toggleSlider}></span>
-                </label>
-              </div>
+              {/* toggle abajo */}
+              <label className={styles.toggleSwitch}>
+                <input
+                  type="checkbox"
+                  checked={flow.enabled}
+                  onChange={() => handleToggleEnabled(flow.id, flow.enabled)}
+                />
+                <span className={styles.toggleSlider}></span>
+              </label>
             </div>
           </div>
         ))}
