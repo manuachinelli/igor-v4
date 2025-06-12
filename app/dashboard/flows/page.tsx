@@ -79,7 +79,6 @@ export default function FlowsPage() {
       return
     }
 
-    // Actualizar el estado local
     setFlows((prevFlows) =>
       prevFlows.map((flow) =>
         flow.id === flowId ? { ...flow, enabled: newEnabled } : flow
@@ -129,49 +128,58 @@ export default function FlowsPage() {
       <div className={styles.grid}>
         {flows.map((flow) => (
           <div key={flow.id} className={styles.flowButton}>
-            {/* Título clickable */}
-            <button
-              onClick={() => handleOpenFlow(flow)}
+            <div
               style={{
-                all: 'unset',
-                cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '8px',
-                width: '100%',
+                justifyContent: 'space-between',
                 height: '100%',
               }}
             >
-              <div className={styles.flowTitle}>{flow.title}</div>
-              <div className={styles.flowLine} />
-              <div
-                className={styles.statusDot}
+              {/* Título clickable */}
+              <button
+                onClick={() => handleOpenFlow(flow)}
                 style={{
-                  backgroundColor: getStateColor(flow.state),
-                  visibility: 'hidden', // lo ocultamos
-                }}
-              />
-              <div
-                className={styles.statusLabel}
-                style={{
-                  visibility: 'hidden', // lo ocultamos
+                  all: 'unset',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                  width: '100%',
                 }}
               >
-                {getStateLabel(flow.state)}
-              </div>
-            </button>
-
-            {/* Toggle ON/OFF abajo */}
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '12px' }}>
-              <label className={styles.toggleSwitch}>
-                <input
-                  type="checkbox"
-                  checked={flow.enabled}
-                  onChange={() => handleToggleEnabled(flow.id, flow.enabled)}
+                <div className={styles.flowTitle}>{flow.title}</div>
+                <div className={styles.flowLine} />
+                <div
+                  className={styles.statusDot}
+                  style={{
+                    backgroundColor: getStateColor(flow.state),
+                    visibility: 'hidden',
+                  }}
                 />
-                <span className={styles.toggleSlider}></span>
-              </label>
+                <div
+                  className={styles.statusLabel}
+                  style={{
+                    visibility: 'hidden',
+                  }}
+                >
+                  {getStateLabel(flow.state)}
+                </div>
+              </button>
+
+              {/* Toggle ON/OFF abajo */}
+              <div style={{ marginTop: '12px', marginBottom: '12px' }}>
+                <label className={styles.toggleSwitch}>
+                  <input
+                    type="checkbox"
+                    checked={flow.enabled}
+                    onChange={() => handleToggleEnabled(flow.id, flow.enabled)}
+                  />
+                  <span className={styles.toggleSlider}></span>
+                </label>
+              </div>
             </div>
           </div>
         ))}
@@ -179,7 +187,7 @@ export default function FlowsPage() {
 
       <Image
         src="/sidebar-icons/flows.png"
-        alt='Flows Logo'
+        alt="Flows Logo"
         width={80}
         height={80}
         className={styles.logo}
