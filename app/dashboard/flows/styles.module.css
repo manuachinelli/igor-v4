@@ -63,43 +63,39 @@
   padding: 16px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.2s, box-shadow 0.3s ease;
-  min-width: 180px;
-  height: 200px; /* le damos un height un poco más estable */
+  transition: background-color 0.2s;
+  width: 200px;
+  height: 200px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 0 12px rgba(123, 97, 255, 0.2);
+  box-shadow: 0 0 8px rgba(123, 97, 255, 0.4);
 }
-
-
 
 .flowButton:hover {
   background-color: #262626;
 }
 
+.flowContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+}
+
 .flowTitle {
-  margin-top: 8px;
-  margin-bottom: 8px;
   font-size: 16px;
   font-weight: 600;
   text-align: center;
+  padding: 0 8px;
 }
 
 .flowLine {
   width: 60%;
   height: 1px;
   background-color: white;
-  margin-bottom: 12px;
-}
-
-.statusDot {
-  visibility: hidden;
-}
-
-.statusLabel {
-  visibility: hidden;
+  margin: 12px 0;
 }
 
 .logo {
@@ -136,7 +132,6 @@
   font-size: 12px;
   color: white;
   text-align: center;
-  max-width: 250px;
 }
 
 .toggleSwitch {
@@ -184,14 +179,6 @@ input:checked + .toggleSlider:before {
   transform: translateX(26px);
 }
 
-input:checked + .toggleSlider::after {
-  content: 'ON';
-  color: white;
-  position: absolute;
-  left: 6px;
-  font-size: 6px;
-}
-
 .toggleSlider::after {
   content: 'OFF';
   color: white;
@@ -199,10 +186,11 @@ input:checked + .toggleSlider::after {
   right: 6px;
   font-size: 6px;
 }
-.flowContent {
-  min-height: 100px; /* PROBALO, podés ajustar: 100px, 110px, 120px según te guste */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+
+input:checked + .toggleSlider::after {
+  content: 'ON';
+  color: white;
+  position: absolute;
+  left: 6px;
+  font-size: 6px;
 }
