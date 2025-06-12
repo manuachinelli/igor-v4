@@ -178,7 +178,7 @@ export default function FlowsPage() {
       </div>
 
       <Image
-        src="/sidebar-icons/flows.png'
+        src="/sidebar-icons/flows.png"
         alt='Flows Logo'
         width={80}
         height={80}
