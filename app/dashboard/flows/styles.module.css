@@ -267,12 +267,12 @@ input:checked + .toggleSlider::after {
   content: 'ON';
   color: white;
   position: absolute;
-  left: 12px;
+  left: 6px;
 }
 
 .toggleSlider::after {
   content: 'OFF';
   color: white;
   position: absolute;
-  right: 12px;
+  right: 6px;
 }
