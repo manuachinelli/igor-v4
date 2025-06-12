@@ -128,13 +128,9 @@ export default function FlowsPage() {
 
       <div className={styles.grid}>
         {flows.map((flow) => (
-          <div
-            key={flow.id}
-            className={styles.flowButton}
-            style={{ opacity: flow.enabled ? 1 : 0.6 }}
-          >
-            {/* Toggle ON/OFF */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+          <div key={flow.id} className={styles.flowButton}>
+            {/* Toggle ON/OFF arriba del título */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
               <label className={styles.toggleSwitch}>
                 <input
                   type="checkbox"
@@ -145,18 +141,18 @@ export default function FlowsPage() {
               </label>
             </div>
 
-            <div className={styles.flowLine} />
-
-            {/* Título */}
-            <div
+            {/* Título clickable */}
+            <button
               onClick={() => handleOpenFlow(flow)}
               style={{
+                all: 'unset',
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: '8px',
                 width: '100%',
+                height: '100%',
               }}
             >
               <div className={styles.flowTitle}>{flow.title}</div>
@@ -166,7 +162,7 @@ export default function FlowsPage() {
                 style={{ backgroundColor: getStateColor(flow.state) }}
               />
               <div className={styles.statusLabel}>{getStateLabel(flow.state)}</div>
-            </div>
+            </button>
           </div>
         ))}
       </div>
