@@ -131,14 +131,13 @@ export default function FlowsPage() {
           <div key={flow.id} className={styles.flowButton}>
             {/* Toggle ON/OFF arriba del título */}
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '12px' }}>Activado</span>
-              <label className="switch">
+              <label className={styles.toggleSwitch}>
                 <input
                   type="checkbox"
                   checked={flow.enabled}
                   onChange={() => handleToggleEnabled(flow.id, flow.enabled)}
                 />
-                <span className="slider round"></span>
+                <span className={styles.toggleSlider}></span>
               </label>
             </div>
 
