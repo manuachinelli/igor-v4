@@ -66,6 +66,27 @@ export default function FlowsPage() {
     fetchFlows()
   }
 
+  const handleToggleEnabled = async (flowId: string, currentEnabled: boolean) => {
+    const newEnabled = !currentEnabled
+
+    const { error } = await supabase
+      .from('dashboard_flows')
+      .update({ enabled: newEnabled })
+      .eq('id', flowId)
+
+    if (error) {
+      console.error('Error updating enabled:', error)
+      return
+    }
+
+    // Actualizar el estado local
+    setFlows((prevFlows) =>
+      prevFlows.map((flow) =>
+        flow.id === flowId ? { ...flow, enabled: newEnabled } : flow
+      )
+    )
+  }
+
   const getStateLabel = (state: string) => {
     switch (state) {
       case 'active':
@@ -107,19 +128,43 @@ export default function FlowsPage() {
 
       <div className={styles.grid}>
         {flows.map((flow) => (
-          <button
-            key={flow.id}
-            className={styles.flowButton}
-            onClick={() => handleOpenFlow(flow)}
-          >
-            <div className={styles.flowTitle}>{flow.title}</div>
-            <div className={styles.flowLine} />
-            <div
-              className={styles.statusDot}
-              style={{ backgroundColor: getStateColor(flow.state) }}
-            />
-            <div className={styles.statusLabel}>{getStateLabel(flow.state)}</div>
-          </button>
+          <div key={flow.id} className={styles.flowButton}>
+            {/* Toggle ON/OFF arriba del título */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px' }}>Activado</span>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={flow.enabled}
+                  onChange={() => handleToggleEnabled(flow.id, flow.enabled)}
+                />
+                <span className="slider round"></span>
+              </label>
+            </div>
+
+            {/* Título clickable */}
+            <button
+              onClick={() => handleOpenFlow(flow)}
+              style={{
+                all: 'unset',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '8px',
+                width: '100%',
+                height: '100%',
+              }}
+            >
+              <div className={styles.flowTitle}>{flow.title}</div>
+              <div className={styles.flowLine} />
+              <div
+                className={styles.statusDot}
+                style={{ backgroundColor: getStateColor(flow.state) }}
+              />
+              <div className={styles.statusLabel}>{getStateLabel(flow.state)}</div>
+            </button>
+          </div>
         ))}
       </div>
 
