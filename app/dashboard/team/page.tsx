@@ -244,7 +244,7 @@ export default function TeamPage() {
               textAlign: 'center',
               marginBottom: '1.5rem'
             }}>
-              Pasará de <strong>{users.length * 220} USD</strong> a <strong>{(users.length + 1) * 220} USD</strong> que serán debitados en la siguiente factura.
+              Tu suscripción pasará de <strong>{users.length * 220} USD</strong> a <strong>{(users.length + 1) * 220} USD</strong> que serán debitados en la siguiente factura.
             </p>
             <div className={styles.modalActions}>
               <button onClick={confirmAddUser}>Confirmar</button>
