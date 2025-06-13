@@ -195,7 +195,7 @@ export default function TeamPage() {
       {showModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
-            <h2>Añadir usuario</h2>
+            <h2 className={styles.modalTitle}>Añadir usuario</h2>
             <input
               type="text"
               placeholder="Nombre"
@@ -224,7 +224,7 @@ export default function TeamPage() {
               <p style={{
                 fontSize: '0.85rem',
                 color: '#999',
-                marginTop: '0.5rem',
+                marginTop: '1rem',
                 textAlign: 'center'
               }}>
                 {newEmail} recibirá un mail de IGORS para generar sus credenciales.
@@ -237,8 +237,15 @@ export default function TeamPage() {
       {showConfirmModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
-            <h2>Confirmar acción</h2>
-            <p>Esto sumará <strong>220 USD</strong> a tu suscripción mensual.</p>
+            <p style={{
+              fontSize: '1rem',
+              fontWeight: 300,
+              color: '#fff',
+              textAlign: 'center',
+              marginBottom: '1.5rem'
+            }}>
+              Pasará de <strong>{users.length * 220} USD</strong> a <strong>{(users.length + 1) * 220} USD</strong> que serán debitados en la siguiente factura.
+            </p>
             <div className={styles.modalActions}>
               <button onClick={confirmAddUser}>Confirmar</button>
               <button onClick={cancelAddUser}>Cancelar</button>
