@@ -8,20 +8,50 @@
   background-color: #1c1c1c;
   padding: 2rem;
   border-radius: 20px;
-  width: 80%;
+  width: 55%;
   color: #fff;
   position: relative;
   font-family: 'Inter', sans-serif;
   font-weight: 300;
 }
 
-.title {
-  text-align: center;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
   border-bottom: 1px solid #fff;
   padding-bottom: 0.5rem;
+}
+
+.title {
   font-size: 1.6rem;
   font-weight: 400;
+}
+
+.avatarBox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #fff;
+}
+
+.avatarName {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: #ccc;
 }
 
 .companyInfo {
