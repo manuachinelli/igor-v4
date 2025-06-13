@@ -219,6 +219,17 @@ export default function TeamPage() {
               <button onClick={handleAddUser}>Guardar</button>
               <button onClick={() => setShowModal(false)}>Cancelar</button>
             </div>
+
+            {newEmail && (
+              <p style={{
+                fontSize: '0.85rem',
+                color: '#999',
+                marginTop: '0.5rem',
+                textAlign: 'center'
+              }}>
+                {newEmail} recibirá un mail de IGORS para generar sus credenciales.
+              </p>
+            )}
           </div>
         </div>
       )}
