@@ -126,18 +126,19 @@ export default function TeamPage() {
                 <td>{user.email}</td>
                 <td>{user.role}</td>
                 <td>
-                  <span
-                    className={styles.actionIcon}
-                    onClick={() => alert('Editar no implementado todavía')}
-                  >
-                    ✏️
-                  </span>
-                  <span
-                    className={styles.actionIcon}
-                    onClick={() => handleDeleteUser(user.id)}
-                  >
-                    🗑️
-                  </span>
+                 <span
+  className={styles.actionIcon}
+  onClick={() => alert('Editar no implementado todavía')}
+>
+  📝
+</span>
+<span
+  className={styles.actionIcon}
+  onClick={() => handleDeleteUser(user.id)}
+>
+  🗑️
+</span>
+
                 </td>
               </tr>
             ))}
