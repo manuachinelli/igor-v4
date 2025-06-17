@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 
 type Subscription = {
-  plan_price: number
   next_billing_date: string
 }
 
@@ -26,10 +25,9 @@ export default function BillingPage() {
     const fetchData = async () => {
       const { data: userData } = await supabase.auth.getUser()
       const userId = userData?.user?.id
-
       if (!userId) return
 
-      // buscar company_id desde users_metadata
+      // obtener company_id
       const { data: metadata } = await supabase
         .from('users_metadata')
         .select('company_id')
@@ -40,10 +38,10 @@ export default function BillingPage() {
       const company_id = metadata.company_id
       setCompanyId(company_id)
 
-      // traer subscription
+      // obtener subscription
       const { data: subs } = await supabase
         .from('subscriptions')
-        .select('plan_price, next_billing_date')
+        .select('next_billing_date')
         .eq('company_id', company_id)
         .single()
 
@@ -57,7 +55,7 @@ export default function BillingPage() {
 
       setUserCount(count || 0)
 
-      // traer facturas
+      // obtener facturas
       const { data: allInvoices } = await supabase
         .from('invoices')
         .select('*')
@@ -70,13 +68,15 @@ export default function BillingPage() {
     fetchData()
   }, [])
 
+  const totalMonthly = userCount * 220
+
   return (
     <div style={{ padding: '2rem' }}>
       <h1>Billing</h1>
 
       {subscription && (
         <div style={{ marginTop: '2rem', marginBottom: '2rem' }}>
-          <h2>${subscription.plan_price} USD / mes</h2>
+          <h2>${totalMonthly} USD / mes</h2>
           <p>{userCount} usuarios activos</p>
           <p>Próxima facturación: {new Date(subscription.next_billing_date).toLocaleDateString()}</p>
         </div>
