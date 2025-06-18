@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import styles from './styles.module.css'
 
 type Subscription = {
   next_billing_date: string
@@ -27,7 +28,6 @@ export default function BillingPage() {
       const userId = userData?.user?.id
       if (!userId) return
 
-      // obtener company_id
       const { data: metadata } = await supabase
         .from('users_metadata')
         .select('company_id')
@@ -38,7 +38,6 @@ export default function BillingPage() {
       const company_id = metadata.company_id
       setCompanyId(company_id)
 
-      // obtener subscription
       const { data: subs } = await supabase
         .from('subscriptions')
         .select('next_billing_date')
@@ -47,7 +46,6 @@ export default function BillingPage() {
 
       setSubscription(subs)
 
-      // contar usuarios
       const { count } = await supabase
         .from('users_metadata')
         .select('*', { count: 'exact', head: true })
@@ -55,7 +53,6 @@ export default function BillingPage() {
 
       setUserCount(count || 0)
 
-      // obtener facturas
       const { data: allInvoices } = await supabase
         .from('invoices')
         .select('*')
@@ -71,46 +68,49 @@ export default function BillingPage() {
   const totalMonthly = userCount * 220
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Billing</h1>
-
-      {subscription && (
-        <div style={{ marginTop: '2rem', marginBottom: '2rem' }}>
-          <h2>${totalMonthly} USD / mes</h2>
-          <p>{userCount} usuarios activos</p>
-          <p>Próxima facturación: {new Date(subscription.next_billing_date).toLocaleDateString()}</p>
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <div className={styles.header}>
+          <div className={styles.title}>Tu plan actual: ${totalMonthly} USD / mes</div>
+          <div className={styles.title}>{userCount} usuarios activos</div>
+          <div className={styles.subinfo}>
+            Próxima facturación: {subscription ? new Date(subscription.next_billing_date).toLocaleDateString() : '-'}
+          </div>
         </div>
-      )}
 
-      <h3>Facturas</h3>
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Monto</th>
-            <th>Estado</th>
-            <th>Descarga</th>
-          </tr>
-        </thead>
-        <tbody>
-          {invoices.map((inv) => (
-            <tr key={inv.id}>
-              <td>{new Date(inv.date).toLocaleDateString()}</td>
-              <td>${inv.amount}</td>
-              <td>{inv.status}</td>
-              <td>
-                {inv.pdf_url ? (
-                  <a href={inv.pdf_url} target="_blank" rel="noopener noreferrer">
-                    Descargar PDF
-                  </a>
-                ) : (
-                  '-'
-                )}
-              </td>
+        <div className={styles.divider} />
+
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Fecha factura</th>
+              <th>Monto</th>
+              <th>Estado</th>
+              <th>Descargar</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {invoices.map((inv) => (
+              <tr key={inv.id}>
+                <td>{new Date(inv.date).toLocaleDateString()}</td>
+                <td>${inv.amount}</td>
+                <td>{inv.status}</td>
+                <td>
+                  {inv.pdf_url ? (
+                    <a href={inv.pdf_url} target="_blank" rel="noopener noreferrer">
+                      Descargar PDF
+                    </a>
+                  ) : (
+                    '-'
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <button className={styles.addButton}>+</button>
+      </div>
     </div>
   )
 }
