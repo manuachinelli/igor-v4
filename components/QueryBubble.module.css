@@ -1,90 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
 .bubble {
   position: absolute;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background-color: #fdfdfd;
+  color: #111;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  cursor: grab;
+  font-weight: 400;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #eee;
   transition: box-shadow 0.2s ease;
+  overflow: hidden;
+  cursor: grab;
 }
 
-.bubble:active {
-  cursor: grabbing;
-  box-shadow: 0 0 0 2px #fff;
+.bubble:hover {
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
 }
 
-.text {
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: #111;
-  line-height: 1.5;
+.selected {
+  box-shadow: 0 0 0 2px #00000022;
 }
 
-.textarea {
-  width: 100%;
-  height: 100%;
-  border: none;
-  outline: none;
-  resize: none;
-  background: transparent;
-  font-family: inherit;
-  font-size: inherit;
-  color: #111;
+.bubble h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #222;
 }
 
-.closeButton {
+.bubble p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #444;
+}
+
+.close-button {
   position: absolute;
   top: 6px;
-  right: 6px;
-  background: rgba(255, 255, 255, 0.8);
+  right: 8px;
+  background: transparent;
   border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 14px;
+  font-size: 18px;
+  font-weight: 400;
   cursor: pointer;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
+  color: #888;
+  display: none;
+  z-index: 10;
 }
 
-.closeButton:hover {
-  background: rgba(255, 100, 100, 0.8);
-  color: white;
+.selected .close-button {
+  display: block;
 }
 
-.colorPicker {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
-  display: flex;
-  gap: 6px;
-  z-index: 2;
+.close-button:hover {
+  color: #000;
 }
 
-.colorDot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
-  transition: transform 0.15s ease;
-}
-
-.colorDot:hover {
-  transform: scale(1.2);
-}
-
-.resizeHandle {
+/* 📌 Esquina doblada */
+.bubble::after {
+  content: '';
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, transparent 50%, #ddd 50%);
+  z-index: 5;
+}
+
+/* 🔄 Resizer visible solo al seleccionar */
+.resizer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
   cursor: nwse-resize;
+  z-index: 10;
   background: transparent;
+}
+
+.selected .resizer {
+  background: linear-gradient(135deg, transparent 50%, #aaa 50%);
 }
