@@ -210,3 +210,12 @@
   padding: 24px 16px;
   box-sizing: border-box;
 }
+.miniLogo {
+  width: 60px;
+  height: auto;
+  margin-bottom: 16px;
+  opacity: 0.35;
+  filter: grayscale(100%) contrast(0.85);
+  transition: opacity 0.3s ease;
+}
+
