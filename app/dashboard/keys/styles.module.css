@@ -6,10 +6,11 @@
   min-height: 100vh;
   padding: 2rem 1rem;
   padding-bottom: 6rem;
+  background-color: #ffffff;
 }
 
 .loading {
-  color: #fff;
+  color: #111;
   font-size: 1.2rem;
   text-align: center;
   margin-top: 2rem;
@@ -17,8 +18,8 @@
 
 .logoWrap {
   margin-bottom: 1.5rem;
-  width: 120px; /* tamaño fijo */
-  height: 120px; /* tamaño fijo */
+  width: 120px;
+  height: 120px;
 }
 
 .logoWrap img {
@@ -37,18 +38,19 @@
 }
 
 .circle {
-  background: #2d2d2d;
-  border-radius: 16px;                /* borde redondeado como el ejemplo */
+  background: #f3f4f6; /* gris claro en lugar de #2d2d2d */
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   overflow: hidden;
   transition: transform 0.3s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
 }
 
 .circle:hover {
-  transform: rotate(360deg);        /* gira al hacer hover */
+  transform: rotate(360deg);
 }
 
 .circleText {
@@ -58,7 +60,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #fff;
+  color: #111;
 }
 
 .addWrap {
@@ -75,32 +77,33 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: #ffc700;
+  background: #ffc700; /* amarillo respetado */
   color: #000;
   font-size: 2rem;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .addLabel {
   margin-top: 0.5rem;
   font-size: 0.75rem;
-  color: #fff;
-  font-weight: 300;
+  color: #111;
+  font-weight: 400;
 }
+
 .appName {
   font-weight: 600;
   font-size: 0.95rem;
   text-align: center;
-  color: #ffffff;
+  color: #111;
   margin-bottom: 4px;
 }
 
 .divider {
   width: 60%;
   height: 1px;
-  background-color: #ffffff;
+  background-color: #ccc;
   margin: 0 auto 8px auto;
 }
 
