@@ -1,4 +1,3 @@
-// app/dashboard/chat/page.tsx
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -15,12 +14,42 @@ export default function ChatPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user.id) {
-        const existing = localStorage.getItem('igor_session');
-        if (existing) setSessionId(existing);
+    const initSession = async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData.session?.user.id;
+      if (!userId) return;
+
+      const existing = localStorage.getItem('igor_session');
+      let shouldCreateNew = true;
+
+      if (existing) {
+        const { data: existingMessages } = await supabase
+          .from('chat_messages')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('session_id', existing)
+          .limit(1);
+
+        if (existingMessages && existingMessages.length > 0) {
+          setSessionId(existing);
+          shouldCreateNew = false;
+        }
       }
-    });
+
+      if (shouldCreateNew) {
+        const newSessionId = crypto.randomUUID();
+        await supabase.from('chat_sessions').insert({
+          session_id: newSessionId,
+          user_id: userId,
+          started_at: new Date().toISOString(),
+          current_agent: null,
+        });
+        localStorage.setItem('igor_session', newSessionId);
+        setSessionId(newSessionId);
+      }
+    };
+
+    initSession();
   }, []);
 
   const handleNewChat = async () => {
@@ -38,7 +67,12 @@ export default function ChatPage() {
 
     const { error } = await supabase
       .from('chat_sessions')
-      .insert({ session_id: newSessionId, user_id: userId });
+      .insert({
+        session_id: newSessionId,
+        user_id: userId,
+        started_at: new Date().toISOString(),
+        current_agent: null,
+      });
 
     if (error) {
       console.error('Error al crear sesión en Supabase:', error);
@@ -82,3 +116,4 @@ export default function ChatPage() {
     </div>
   );
 }
+
