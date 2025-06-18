@@ -36,7 +36,7 @@ export default function IgorBubbles() {
   const [inputValue, setInputValue] = useState('')
   const [showInput, setShowInput] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
-  const [bubbleColor, setBubbleColor] = useState('#2c2c2c') // color elegido
+  const [bubbleColor, setBubbleColor] = useState('#2c2c2c')
 
   const darkColorOptions = ['#1e1e1e', '#2c2c2c', '#3b3b3b', '#2a2a40', '#1f2d3d']
 
@@ -101,16 +101,15 @@ export default function IgorBubbles() {
     setInputValue('')
     setShowInput(false)
 
-  await fetch('https://manuachinelli.app.n8n.cloud/webhook/8b913fc3-69df-43c7-9874-1b6a9a697680', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    user_id: userId,
-    query: inputValue,
-    color: bubbleColor, // ✅ incluí el color elegido
-  }),
-})
-
+    await fetch('https://manuachinelli.app.n8n.cloud/webhook/8b913fc3-69df-43c7-9874-1b6a9a697680', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: userId,
+        query: inputValue,
+        color: bubbleColor,
+      }),
+    })
 
     setTimeout(() => fetchBubbles(userId), 4000)
   }
@@ -143,7 +142,6 @@ export default function IgorBubbles() {
 
   return (
     <div className={styles.canvas}>
-      {/* Zona izquierda: pelotitas y notas */}
       <div style={{ flex: 1, position: 'relative' }}>
         {bubbles.map(b => (
           <QueryBubble key={b.id} bubble={b} onDelete={handleDeleteBubble} />
@@ -182,13 +180,22 @@ export default function IgorBubbles() {
         )}
       </div>
 
-      {/* Zona derecha: barra de botones */}
-      <div className={styles.floatingPanel}>
-        <div className={styles.buttonGroup}>
-          <button className={styles.floatingButton} onClick={() => setShowInput(true)}>+</button>
-          <button className={styles.textButton} onClick={createNote}>T</button>
-          <button className={styles.pencilButton}>✎</button>
-        </div>
+      <div className={styles.toolbox}>
+        <button className={styles.toolButton} onClick={() => setShowInput(true)}>+</button>
+        <button className={styles.toolButton} onClick={createNote}>T</button>
+        <button className={styles.toolButton}>✎</button>
+        <button className={styles.toolButton}>💬</button>
+        <button className={styles.toolButton}>🖼️</button>
+        <button className={styles.toolButton}>🔀</button>
+        <button className={styles.toolButton}>📊</button>
+        <button className={styles.toolButton}>↩️</button>
+        <button className={styles.toolButton}>🔡</button>
+        <button className={styles.toolButton}>🔗</button>
+        <button className={styles.toolButton}>📝</button>
+        <button className={styles.toolButton}>🗓️</button>
+        <button className={styles.toolButton}>✨</button>
+        <button className={styles.toolButton}>🧱</button>
+        <button className={styles.toolButton}>➕</button>
       </div>
     </div>
   )
