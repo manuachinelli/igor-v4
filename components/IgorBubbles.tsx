@@ -57,7 +57,7 @@ export default function IgorBubbles() {
   }, [])
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    const isTyping = (e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA'
+const isTyping = (e.target as HTMLElement).isContentEditable || ['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)
     if (!isTyping && e.key.toLowerCase() === 't') {
       e.preventDefault()
       createNote()
