@@ -1,4 +1,4 @@
-'use client'
+ 'use client'
 
 import { useRef, useState, useEffect } from 'react'
 import styles from './NoteBox.module.css'
@@ -25,120 +25,94 @@ interface NoteBoxProps {
 export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: NoteBoxProps) {
   const [position, setPosition] = useState({ x: note.x_position, y: note.y_position })
   const [size, setSize] = useState({ w: note.width, h: note.height })
-  const [htmlContent, setHtmlContent] = useState(note.content)
+  const [content, setContent] = useState(note.content)
   const [fontSize, setFontSize] = useState(note.font_size || 16)
-  const [showToolbar, setShowToolbar] = useState(false)
-  const [toolbarPos, setToolbarPos] = useState({ x: 0, y: 0 })
-  const contentRef = useRef<HTMLDivElement>(null)
+  const [bold, setBold] = useState(false)
 
+  const contentRef = useRef<HTMLDivElement>(null)
   const isSelected = selectedId === note.id
 
   useEffect(() => {
     setPosition({ x: note.x_position, y: note.y_position })
     setSize({ w: note.width, h: note.height })
-    setHtmlContent(note.content)
+    setContent(note.content)
     setFontSize(note.font_size || 16)
   }, [note])
 
   const handleBlur = async () => {
     await supabase.from('dashboard_notes').update({
-      content: contentRef.current?.innerHTML || '',
+      content,
       font_size: fontSize
     }).eq('id', note.id)
   }
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    // Solo mover si se clickea fuera del editor
-    if (e.target === e.currentTarget) {
-      const startX = e.clientX
-      const startY = e.clientY
-      const origX = position.x
-      const origY = position.y
+  const handleDrag = (e: React.MouseEvent) => {
+    if (!isSelected) return
+    const startX = e.clientX
+    const startY = e.clientY
+    const origX = position.x
+    const origY = position.y
 
-      const handleMove = async (moveEvent: MouseEvent) => {
-        const dx = moveEvent.clientX - startX
-        const dy = moveEvent.clientY - startY
-        const newX = origX + dx
-        const newY = origY + dy
-        setPosition({ x: newX, y: newY })
-
-        await supabase.from('dashboard_notes').update({
-          x_position: newX,
-          y_position: newY
-        }).eq('id', note.id)
-      }
-
-      const stopDragging = () => {
-        window.removeEventListener('mousemove', handleMove)
-        window.removeEventListener('mouseup', stopDragging)
-      }
-
-      window.addEventListener('mousemove', handleMove)
-      window.addEventListener('mouseup', stopDragging)
+    const onMove = (moveEvent: MouseEvent) => {
+      const dx = moveEvent.clientX - startX
+      const dy = moveEvent.clientY - startY
+      const newX = origX + dx
+      const newY = origY + dy
+      setPosition({ x: newX, y: newY })
     }
+
+    const onUp = async () => {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+      await supabase.from('dashboard_notes').update({
+        x_position: position.x,
+        y_position: position.y
+      }).eq('id', note.id)
+    }
+
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
   }
 
-  const onResize = (e: React.MouseEvent) => {
+  const handleResize = (e: React.MouseEvent) => {
     e.stopPropagation()
-    setSelectedId(note.id)
     const startX = e.clientX
     const startY = e.clientY
     const startW = size.w
     const startH = size.h
 
-    const onMouseMove = async (moveEvent: MouseEvent) => {
+    const onMove = (moveEvent: MouseEvent) => {
       const dx = moveEvent.clientX - startX
       const dy = moveEvent.clientY - startY
-      const newW = startW + dx
-      const newH = startH + dy
-      setSize({ w: newW, h: newH })
+      setSize({ w: startW + dx, h: startH + dy })
+    }
 
+    const onUp = async () => {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
       await supabase.from('dashboard_notes').update({
-        width: newW,
-        height: newH
+        width: size.w,
+        height: size.h
       }).eq('id', note.id)
     }
 
-    const onMouseUp = () => {
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mouseup', onMouseUp)
-    }
-
-    window.addEventListener('mousemove', onMouseMove)
-    window.addEventListener('mouseup', onMouseUp)
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
   }
 
-  const applyStyle = (command: string, value?: string) => {
-    document.execCommand(command, false, value)
-    handleBlur()
+  const handleChange = (e: React.FormEvent<HTMLDivElement>) => {
+    const value = e.currentTarget.innerText
+    setContent(value)
   }
 
-  const handleMouseUp = () => {
-    const sel = window.getSelection()
-    if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
-      const rect = sel.getRangeAt(0).getBoundingClientRect()
-      setToolbarPos({ x: rect.left + rect.width / 2, y: rect.top - 40 })
-      setShowToolbar(true)
-    } else {
-      setShowToolbar(false)
-    }
-  }
-
-  const handleFontSizeChange = (delta: number) => {
-    const selection = window.getSelection()
-    if (!selection || selection.isCollapsed) return
-
-    const span = document.createElement('span')
-    const newSize = fontSize + delta
-    span.style.fontSize = `${newSize}px`
-    span.innerHTML = selection.toString()
-
-    const range = selection.getRangeAt(0)
-    range.deleteContents()
-    range.insertNode(span)
-
+  const changeFontSize = (delta: number) => {
+    const newSize = Math.max(8, fontSize + delta)
     setFontSize(newSize)
     handleBlur()
+  }
+
+  const toggleBold = () => {
+    setBold(!bold)
   }
 
   return (
@@ -149,17 +123,25 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
         top: position.y,
         width: size.w,
         height: size.h,
+        fontSize: `${fontSize}px`,
+        fontWeight: bold ? 'bold' : 'normal',
         zIndex: isSelected ? 999 : 1,
-        fontSize: `${fontSize}px`
       }}
       onClick={(e) => {
         e.stopPropagation()
         setSelectedId(note.id)
       }}
-      onMouseDown={handleMouseDown}
+      onMouseDown={handleDrag}
     >
       {isSelected && (
-        <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
+        <>
+          <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
+          <div className={styles.toolbar}>
+            <button onClick={() => changeFontSize(2)}>＋</button>
+            <button onClick={() => changeFontSize(-2)}>−</button>
+            <button onClick={toggleBold}>B</button>
+          </div>
+        </>
       )}
 
       <div
@@ -167,24 +149,14 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
         className={styles.contentEditable}
         contentEditable={isSelected}
         suppressContentEditableWarning
-        dangerouslySetInnerHTML={{ __html: htmlContent }}
+        onInput={handleChange}
         onBlur={handleBlur}
-        onMouseUp={handleMouseUp}
-      />
+      >
+        {content}
+      </div>
 
       {isSelected && (
-        <div className={styles.resizeHandle} onMouseDown={onResize} />
-      )}
-
-      {showToolbar && (
-        <div
-          className={styles.toolbar}
-          style={{ left: toolbarPos.x, top: toolbarPos.y }}
-        >
-          <button onClick={() => handleFontSizeChange(2)}>＋</button>
-          <button onClick={() => handleFontSizeChange(-2)}>−</button>
-          <button onClick={() => applyStyle('bold')}>B</button>
-        </div>
+        <div className={styles.resizeHandle} onMouseDown={handleResize} />
       )}
     </div>
   )
