@@ -2,53 +2,41 @@
 
 .bubble {
   position: absolute;
-  padding: 12px 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: #fdfdfd;
-  color: #111;
   font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
   border: 1px solid #eee;
-  transition: box-shadow 0.2s ease;
-  overflow: hidden;
+  color: #222;
   cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .bubble:hover {
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+  transform: scale(1.015);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .selected {
-  box-shadow: 0 0 0 2px #00000022;
-}
-
-.bubble h3 {
-  margin: 0 0 6px;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.3;
-  color: #222;
-}
-
-.bubble p {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.4;
-  color: #444;
+  box-shadow: 0 0 0 2px #00000020;
 }
 
 .close-button {
   position: absolute;
-  top: 6px;
-  right: 8px;
+  top: 8px;
+  right: 10px;
   background: transparent;
   border: none;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
   cursor: pointer;
-  color: #888;
+  color: #777;
   display: none;
   z-index: 10;
 }
@@ -61,19 +49,24 @@
   color: #000;
 }
 
-/* 📌 Esquina doblada */
-.bubble::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 20px;
-  height: 20px;
-  background: linear-gradient(135deg, transparent 50%, #ddd 50%);
-  z-index: 5;
+.bubble h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  word-break: break-word;
+  max-width: 90%;
 }
 
-/* 🔄 Resizer visible solo al seleccionar */
+.bubble p {
+  margin: 6px 0 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1;
+}
+
+/* Resizer */
 .resizer {
   position: absolute;
   bottom: 0;
@@ -81,10 +74,20 @@
   width: 14px;
   height: 14px;
   cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, #bbb 50%);
+  border-bottom-right-radius: 4px;
   z-index: 10;
-  background: transparent;
 }
 
-.selected .resizer {
-  background: linear-gradient(135deg, transparent 50%, #aaa 50%);
+/* Esquina doblada solo decorativa */
+.bubble::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.4) 50%);
+  z-index: 5;
+  pointer-events: none;
 }
