@@ -169,3 +169,7 @@
 }
 
 .error {
+color: #ff3333;
+  font-size: 0.85rem;
+  text-align: center;
+}
