@@ -15,11 +15,8 @@ interface Bubble {
   color: string
 }
 
-const IGOR_COLORS = ['#ffc700', '#4fc3f7', '#7b61ff', '#00c853']
-
 export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDelete: (id: string) => void }) {
   const bubbleRef = useRef<HTMLDivElement>(null)
-
   const [position, setPosition] = useState({
     x: bubble.x_position || 100,
     y: bubble.y_position || 100,
@@ -59,8 +56,6 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
 
         if (error) {
           console.error('❌ Error al guardar posición:', error)
-        } else {
-          console.log('✅ Posición guardada en Supabase:', position)
         }
       }
     }
@@ -69,8 +64,7 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
     window.addEventListener('mouseup', onMouseUp)
   }
 
-  const isColorValid = (color: string | null | undefined) =>
-    color && IGOR_COLORS.includes(color.trim().toLowerCase())
+  const backgroundColor = bubble.color?.trim() || '#fefefe'
 
   return (
     <div
@@ -78,15 +72,24 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
       onMouseDown={onDrag}
       className={`${styles.bubble} ${bubble.value === 'Cargando...' ? styles.loading : ''}`}
       style={{
-        position: 'absolute',
         left: position.x,
         top: position.y,
-        backgroundColor: isColorValid(bubble.color) ? bubble.color : '#f5f5f5',
+        width: 160,
+        height: 160,
+        backgroundColor,
       }}
     >
       <button className={styles['close-button']} onClick={() => onDelete(bubble.id)}>×</button>
       <h3>{bubble.title}</h3>
       <p>{bubble.value}</p>
+
+      {/* esquina doblada */}
+      <div
+        className={styles.cornerFold}
+        style={{
+          backgroundColor: backgroundColor,
+        }}
+      />
     </div>
   )
 }
