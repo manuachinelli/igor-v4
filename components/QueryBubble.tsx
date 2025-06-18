@@ -10,24 +10,35 @@ interface Bubble {
   value: string
   x_position: number
   y_position: number
-  width: number | null
-  height: number | null
+  width: number
+  height: number
   color: string
 }
 
-export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDelete: (id: string) => void }) {
+export default function QueryBubble({
+  bubble,
+  onDelete,
+  activeId,
+  setActiveId,
+}: {
+  bubble: Bubble
+  onDelete: (id: string) => void
+  activeId: string | null
+  setActiveId: (id: string | null) => void
+}) {
   const bubbleRef = useRef<HTMLDivElement>(null)
-  const [position, setPosition] = useState({ x: bubble.x_position, y: bubble.y_position })
-  const [size, setSize] = useState({ width: bubble.width || 200, height: bubble.height || 140 })
-  const [isSelected, setIsSelected] = useState(false)
+
+  const [position, setPosition] = useState({ x: bubble.x_position || 100, y: bubble.y_position || 100 })
+  const [size, setSize] = useState({ width: bubble.width || 140, height: bubble.height || 140 })
+  const isActive = activeId === bubble.id
 
   useEffect(() => {
-    setPosition({ x: bubble.x_position, y: bubble.y_position })
-    setSize({ width: bubble.width || 200, height: bubble.height || 140 })
-  }, [bubble.x_position, bubble.y_position, bubble.width, bubble.height])
+    setPosition({ x: bubble.x_position || 100, y: bubble.y_position || 100 })
+    setSize({ width: bubble.width || 140, height: bubble.height || 140 })
+  }, [bubble])
 
   const onDrag = (e: React.MouseEvent) => {
-    if (!isSelected) return
+    e.stopPropagation()
     const startX = e.clientX
     const startY = e.clientY
     const origX = position.x
@@ -45,7 +56,7 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
       if (!bubble.id.startsWith('temp-')) {
         await supabase.from('dashboard_queries').update({
           x_position: position.x,
-          y_position: position.y
+          y_position: position.y,
         }).eq('id', bubble.id)
       }
     }
@@ -62,18 +73,23 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
     const origHeight = size.height
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-      const newWidth = Math.max(100, origWidth + (moveEvent.clientX - startX))
-      const newHeight = Math.max(60, origHeight + (moveEvent.clientY - startY))
-      setSize({ width: newWidth, height: newHeight })
+      const dx = moveEvent.clientX - startX
+      const dy = moveEvent.clientY - startY
+      setSize({
+        width: Math.max(100, origWidth + dx),
+        height: Math.max(100, origHeight + dy),
+      })
     }
 
     const onMouseUp = async () => {
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseup', onMouseUp)
-      await supabase.from('dashboard_queries').update({
-        width: size.width,
-        height: size.height
-      }).eq('id', bubble.id)
+      if (!bubble.id.startsWith('temp-')) {
+        await supabase.from('dashboard_queries').update({
+          width: size.width,
+          height: size.height,
+        }).eq('id', bubble.id)
+      }
     }
 
     window.addEventListener('mousemove', onMouseMove)
@@ -83,21 +99,24 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
   return (
     <div
       ref={bubbleRef}
-      className={`${styles.bubble} ${isSelected ? styles.selected : ''}`}
-      onMouseDown={onDrag}
-      onClick={() => setIsSelected(true)}
+      onMouseDown={(e) => {
+        onDrag(e)
+        setActiveId(bubble.id)
+      }}
+      className={`${styles.bubble} ${isActive ? styles.active : ''} ${bubble.value === 'Cargando...' ? styles.loading : ''}`}
       style={{
+        position: 'absolute',
         left: position.x,
         top: position.y,
         width: size.width,
         height: size.height,
-        backgroundColor: bubble.color?.trim() || '#2c2c2c'
+        backgroundColor: bubble.color?.trim().toLowerCase() === '#ffffff' ? '#2c2c2c' : bubble.color?.trim() || '#2c2c2c',
       }}
     >
-      {isSelected && (
+      {isActive && (
         <>
-          <button className={styles.closeButton} onClick={() => onDelete(bubble.id)}>×</button>
-          <div className={styles.resizeHandle} onMouseDown={onResize} />
+          <button className={styles['close-button']} onClick={() => onDelete(bubble.id)}>×</button>
+          <div className={styles.resizer} onMouseDown={onResize} />
         </>
       )}
       <h3>{bubble.title}</h3>
