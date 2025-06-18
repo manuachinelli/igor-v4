@@ -63,24 +63,17 @@
   z-index: 0;
 }
 
-.video-overlay {
-  position: relative;
+.video-overlay.bottom-right {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
   z-index: 1;
-  height: 100%;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.4); /* opcional */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
 }
 
 .logo.final {
-  filter: drop-shadow(0 0 20px white);
-  width: 120px;
+  width: 60px;
   height: auto;
-  animation: logoPop 1s ease forwards;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
 }
 
 .logo.small {
@@ -98,14 +91,6 @@
     transform: scale(1.2);
     opacity: 1;
   }
-}
-
-.title {
-  font-size: 2rem;
-  margin-top: 1rem;
-  font-weight: bold;
-  color: white;
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
 }
 
 .form-title {
@@ -184,14 +169,3 @@
 }
 
 .error {
-  color: #ff3333;
-  font-size: 0.85rem;
-  text-align: center;
-}
-
-.illustration {
-  margin-top: 2rem;
-  width: 200px;
-  height: auto;
-  opacity: 0.9;
-}
