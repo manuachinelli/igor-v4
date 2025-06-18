@@ -1,8 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
 .canvas {
+  font-family: 'DM Sans', sans-serif;
   display: flex;
   height: 100vh;
-  background-color: #000;
-  color: white;
+  background-color: #ffffff;
+  color: #111;
   position: relative;
 }
 
@@ -14,21 +17,26 @@
 }
 
 .inputOverlay input {
-  padding: 10px;
+  padding: 10px 14px;
   border-radius: 6px;
-  border: none;
+  border: 1px solid #ddd;
   font-size: 16px;
+  outline: none;
+  background-color: #f9f9f9;
+  color: #111;
 }
 
 .floatingPanel {
   width: 120px;
-  background-color: #111;
+  background-color: #fff;
   padding: 20px 10px;
-  color: white;
+  color: #111;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  border-left: 1px solid #e5e7eb;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.04);
 }
 
 .buttonGroup {
@@ -41,19 +49,21 @@
 .floatingButton,
 .textButton,
 .pencilButton {
-  background-color: #333;
-  color: white;
-  border: none;
+  background-color: #ffffff;
+  color: #111;
+  border: 1px solid #ddd;
   border-radius: 50%;
   width: 60px;
   height: 60px;
   font-size: 26px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .floatingButton:hover,
 .textButton:hover,
 .pencilButton:hover {
-  background-color: #555;
+  background-color: #f3f4f6;
+  border-color: #ccc;
 }
