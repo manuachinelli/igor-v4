@@ -37,6 +37,7 @@ export default function IgorBubbles() {
   const [showInput, setShowInput] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
   const [bubbleColor, setBubbleColor] = useState('#2c2c2c')
+  const [selectedBubbleId, setSelectedBubbleId] = useState<string | null>(null)
 
   const darkColorOptions = ['#1e1e1e', '#2c2c2c', '#3b3b3b', '#2a2a40', '#1f2d3d']
 
@@ -52,8 +53,19 @@ export default function IgorBubbles() {
     load()
 
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    window.addEventListener('click', handleCanvasClick)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('click', handleCanvasClick)
+    }
   }, [])
+
+  const handleCanvasClick = (e: MouseEvent) => {
+    const target = e.target as HTMLElement
+    if (!target.closest(`.${styles.bubble}`)) {
+      setSelectedBubbleId(null)
+    }
+  }
 
   const handleKeyDown = (e: KeyboardEvent) => {
     const isTyping = (e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA'
@@ -140,11 +152,23 @@ export default function IgorBubbles() {
     setNotes(prev => prev.filter(n => n.id !== id))
   }
 
+  const handleUpdateBubble = (id: string, data: Partial<Bubble>) => {
+    setBubbles(prev => prev.map(b => b.id === id ? { ...b, ...data } : b))
+  }
+
   return (
     <div className={styles.canvas}>
       <div style={{ flex: 1, position: 'relative' }}>
         {bubbles.map(b => (
-          <QueryBubble key={b.id} bubble={b} onDelete={handleDeleteBubble} />
+          <QueryBubble
+            key={b.id}
+            bubble={b}
+            onDelete={handleDeleteBubble}
+            isSelected={selectedBubbleId === b.id}
+            onSelect={(id) => setSelectedBubbleId(id)}
+            onDeselect={() => setSelectedBubbleId(null)}
+            onUpdate={handleUpdateBubble}
+          />
         ))}
         {notes.map(n => (
           <NoteBox key={n.id} note={n} onDelete={handleDeleteNote} />
