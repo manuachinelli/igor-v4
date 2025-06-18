@@ -26,10 +26,21 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
   const [size, setSize] = useState({ w: note.width, h: note.height })
   const [content, setContent] = useState(note.content)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-
   const isSelected = selectedId === note.id
 
-  const onDrag = (e: React.MouseEvent) => {
+  useEffect(() => {
+    setPosition({ x: note.x_position, y: note.y_position })
+    setSize({ w: note.width, h: note.height })
+    setContent(note.content)
+  }, [note])
+
+  const handleBlur = async () => {
+    await supabase.from('dashboard_notes').update({
+      content: content
+    }).eq('id', note.id)
+  }
+
+  const startDragging = (e: React.PointerEvent) => {
     e.stopPropagation()
     setSelectedId(note.id)
     const startX = e.clientX
@@ -37,7 +48,7 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
     const origX = position.x
     const origY = position.y
 
-    const onMouseMove = async (moveEvent: MouseEvent) => {
+    const handleMove = async (moveEvent: PointerEvent) => {
       const dx = moveEvent.clientX - startX
       const dy = moveEvent.clientY - startY
       const newX = origX + dx
@@ -50,13 +61,13 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
       }).eq('id', note.id)
     }
 
-    const onMouseUp = () => {
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mouseup', onMouseUp)
+    const stopDragging = () => {
+      window.removeEventListener('pointermove', handleMove)
+      window.removeEventListener('pointerup', stopDragging)
     }
 
-    window.addEventListener('mousemove', onMouseMove)
-    window.addEventListener('mouseup', onMouseUp)
+    window.addEventListener('pointermove', handleMove)
+    window.addEventListener('pointerup', stopDragging)
   }
 
   const onResize = (e: React.MouseEvent) => {
@@ -89,18 +100,6 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
     window.addEventListener('mouseup', onMouseUp)
   }
 
-  useEffect(() => {
-    setPosition({ x: note.x_position, y: note.y_position })
-    setSize({ w: note.width, h: note.height })
-    setContent(note.content)
-  }, [note])
-
-  const handleBlur = async () => {
-    await supabase.from('dashboard_notes').update({
-      content: content
-    }).eq('id', note.id)
-  }
-
   return (
     <div
       className={styles.note}
@@ -111,7 +110,11 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
         height: size.h,
         zIndex: isSelected ? 999 : 1
       }}
-      onMouseDown={() => setSelectedId(note.id)}
+      onClick={(e) => {
+        e.stopPropagation()
+        setSelectedId(note.id)
+      }}
+      onPointerDown={startDragging}
     >
       {isSelected && (
         <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
@@ -123,7 +126,7 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
         onChange={e => setContent(e.target.value)}
         onBlur={handleBlur}
       />
-      <div className={styles.resizeHandle} onMouseDown={onResize} />
+      {isSelected && <div className={styles.resizeHandle} onMouseDown={onResize} />}
     </div>
   )
 }
