@@ -12,6 +12,7 @@ interface Note {
   y_position: number
   width: number
   height: number
+  font_size?: number
 }
 
 interface NoteBoxProps {
@@ -24,19 +25,25 @@ interface NoteBoxProps {
 export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: NoteBoxProps) {
   const [position, setPosition] = useState({ x: note.x_position, y: note.y_position })
   const [size, setSize] = useState({ w: note.width, h: note.height })
-  const [content, setContent] = useState(note.content)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [htmlContent, setHtmlContent] = useState(note.content)
+  const [fontSize, setFontSize] = useState(note.font_size || 16)
+  const [showToolbar, setShowToolbar] = useState(false)
+  const [toolbarPos, setToolbarPos] = useState({ x: 0, y: 0 })
+  const contentRef = useRef<HTMLDivElement>(null)
+
   const isSelected = selectedId === note.id
 
   useEffect(() => {
     setPosition({ x: note.x_position, y: note.y_position })
     setSize({ w: note.width, h: note.height })
-    setContent(note.content)
+    setHtmlContent(note.content)
+    setFontSize(note.font_size || 16)
   }, [note])
 
   const handleBlur = async () => {
     await supabase.from('dashboard_notes').update({
-      content: content
+      content: contentRef.current?.innerHTML || '',
+      font_size: fontSize
     }).eq('id', note.id)
   }
 
@@ -100,6 +107,39 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
     window.addEventListener('mouseup', onMouseUp)
   }
 
+  const applyStyle = (command: string, value?: string) => {
+    document.execCommand(command, false, value)
+    handleBlur()
+  }
+
+  const handleMouseUp = () => {
+    const sel = window.getSelection()
+    if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+      const rect = sel.getRangeAt(0).getBoundingClientRect()
+      setToolbarPos({ x: rect.left + rect.width / 2, y: rect.top - 40 })
+      setShowToolbar(true)
+    } else {
+      setShowToolbar(false)
+    }
+  }
+
+  const handleFontSizeChange = (delta: number) => {
+    applyStyle('fontSize', '7') // usar tamaño grande temporal
+    const selection = window.getSelection()
+    if (!selection) return
+
+    const span = document.createElement('span')
+    span.style.fontSize = `${fontSize + delta}px`
+    span.innerHTML = selection.toString()
+    const range = selection.getRangeAt(0)
+    range.deleteContents()
+    range.insertNode(span)
+
+    const updatedSize = fontSize + delta
+    setFontSize(updatedSize)
+    handleBlur()
+  }
+
   return (
     <div
       className={styles.note}
@@ -108,7 +148,8 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
         top: position.y,
         width: size.w,
         height: size.h,
-        zIndex: isSelected ? 999 : 1
+        zIndex: isSelected ? 999 : 1,
+        fontSize: `${fontSize}px`
       }}
       onClick={(e) => {
         e.stopPropagation()
@@ -119,14 +160,31 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
       {isSelected && (
         <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
       )}
-      <textarea
-        ref={textareaRef}
-        className={styles.textarea}
-        value={content}
-        onChange={e => setContent(e.target.value)}
+
+      <div
+        ref={contentRef}
+        className={styles.contentEditable}
+        contentEditable
+        suppressContentEditableWarning
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
         onBlur={handleBlur}
+        onMouseUp={handleMouseUp}
       />
-      {isSelected && <div className={styles.resizeHandle} onMouseDown={onResize} />}
+
+      {isSelected && (
+        <div className={styles.resizeHandle} onMouseDown={onResize} />
+      )}
+
+      {showToolbar && (
+        <div
+          className={styles.toolbar}
+          style={{ left: toolbarPos.x, top: toolbarPos.y }}
+        >
+          <button onClick={() => handleFontSizeChange(2)}>＋</button>
+          <button onClick={() => handleFontSizeChange(-2)}>−</button>
+          <button onClick={() => applyStyle('bold')}>B</button>
+        </div>
+      )}
     </div>
   )
 }
