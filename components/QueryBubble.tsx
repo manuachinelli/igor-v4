@@ -15,27 +15,26 @@ interface Bubble {
   color: string
 }
 
-export default function QueryBubble({
-  bubble,
-  onDelete,
-  activeId,
-  setActiveId,
-}: {
-  bubble: Bubble
-  onDelete: (id: string) => void
-  activeId: string | null
-  setActiveId: (id: string | null) => void
-}) {
+export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDelete: (id: string) => void }) {
   const bubbleRef = useRef<HTMLDivElement>(null)
-
   const [position, setPosition] = useState({ x: bubble.x_position || 100, y: bubble.y_position || 100 })
   const [size, setSize] = useState({ width: bubble.width || 140, height: bubble.height || 140 })
-  const isActive = activeId === bubble.id
+  const [isSelected, setIsSelected] = useState(false)
 
   useEffect(() => {
     setPosition({ x: bubble.x_position || 100, y: bubble.y_position || 100 })
     setSize({ width: bubble.width || 140, height: bubble.height || 140 })
-  }, [bubble])
+  }, [bubble.x_position, bubble.y_position, bubble.width, bubble.height])
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (bubbleRef.current && !bubbleRef.current.contains(e.target as Node)) {
+        setIsSelected(false)
+      }
+    }
+    window.addEventListener('click', handleClickOutside)
+    return () => window.removeEventListener('click', handleClickOutside)
+  }, [])
 
   const onDrag = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -53,11 +52,14 @@ export default function QueryBubble({
     const onMouseUp = async () => {
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseup', onMouseUp)
+
       if (!bubble.id.startsWith('temp-')) {
-        await supabase.from('dashboard_queries').update({
+        const { error } = await supabase.from('dashboard_queries').update({
           x_position: position.x,
           y_position: position.y,
         }).eq('id', bubble.id)
+
+        if (error) console.error('❌ Error al guardar posición:', error)
       }
     }
 
@@ -75,20 +77,20 @@ export default function QueryBubble({
     const onMouseMove = (moveEvent: MouseEvent) => {
       const dx = moveEvent.clientX - startX
       const dy = moveEvent.clientY - startY
-      setSize({
-        width: Math.max(100, origWidth + dx),
-        height: Math.max(100, origHeight + dy),
-      })
+      setSize({ width: Math.max(100, origWidth + dx), height: Math.max(100, origHeight + dy) })
     }
 
     const onMouseUp = async () => {
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseup', onMouseUp)
+
       if (!bubble.id.startsWith('temp-')) {
-        await supabase.from('dashboard_queries').update({
+        const { error } = await supabase.from('dashboard_queries').update({
           width: size.width,
           height: size.height,
         }).eq('id', bubble.id)
+
+        if (error) console.error('❌ Error al guardar tamaño:', error)
       }
     }
 
@@ -99,21 +101,20 @@ export default function QueryBubble({
   return (
     <div
       ref={bubbleRef}
-      onMouseDown={(e) => {
-        onDrag(e)
-        setActiveId(bubble.id)
-      }}
-      className={`${styles.bubble} ${isActive ? styles.active : ''} ${bubble.value === 'Cargando...' ? styles.loading : ''}`}
+      onClick={() => setIsSelected(true)}
+      onMouseDown={onDrag}
+      className={`${styles.bubble} ${isSelected ? styles.selected : ''}`}
       style={{
-        position: 'absolute',
         left: position.x,
         top: position.y,
         width: size.width,
         height: size.height,
-        backgroundColor: bubble.color?.trim().toLowerCase() === '#ffffff' ? '#2c2c2c' : bubble.color?.trim() || '#2c2c2c',
+        backgroundColor: bubble.color?.trim().toLowerCase() === '#ffffff'
+          ? '#2c2c2c'
+          : bubble.color?.trim() || '#2c2c2c',
       }}
     >
-      {isActive && (
+      {isSelected && (
         <>
           <button className={styles['close-button']} onClick={() => onDelete(bubble.id)}>×</button>
           <div className={styles.resizer} onMouseDown={onResize} />
