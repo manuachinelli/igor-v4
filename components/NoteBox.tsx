@@ -47,34 +47,35 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
     }).eq('id', note.id)
   }
 
-  const startDragging = (e: React.PointerEvent) => {
-    e.stopPropagation()
-    setSelectedId(note.id)
-    const startX = e.clientX
-    const startY = e.clientY
-    const origX = position.x
-    const origY = position.y
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Solo mover si se clickea fuera del editor
+    if (e.target === e.currentTarget) {
+      const startX = e.clientX
+      const startY = e.clientY
+      const origX = position.x
+      const origY = position.y
 
-    const handleMove = async (moveEvent: PointerEvent) => {
-      const dx = moveEvent.clientX - startX
-      const dy = moveEvent.clientY - startY
-      const newX = origX + dx
-      const newY = origY + dy
-      setPosition({ x: newX, y: newY })
+      const handleMove = async (moveEvent: MouseEvent) => {
+        const dx = moveEvent.clientX - startX
+        const dy = moveEvent.clientY - startY
+        const newX = origX + dx
+        const newY = origY + dy
+        setPosition({ x: newX, y: newY })
 
-      await supabase.from('dashboard_notes').update({
-        x_position: newX,
-        y_position: newY
-      }).eq('id', note.id)
+        await supabase.from('dashboard_notes').update({
+          x_position: newX,
+          y_position: newY
+        }).eq('id', note.id)
+      }
+
+      const stopDragging = () => {
+        window.removeEventListener('mousemove', handleMove)
+        window.removeEventListener('mouseup', stopDragging)
+      }
+
+      window.addEventListener('mousemove', handleMove)
+      window.addEventListener('mouseup', stopDragging)
     }
-
-    const stopDragging = () => {
-      window.removeEventListener('pointermove', handleMove)
-      window.removeEventListener('pointerup', stopDragging)
-    }
-
-    window.addEventListener('pointermove', handleMove)
-    window.addEventListener('pointerup', stopDragging)
   }
 
   const onResize = (e: React.MouseEvent) => {
@@ -124,19 +125,19 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
   }
 
   const handleFontSizeChange = (delta: number) => {
-    applyStyle('fontSize', '7') // usar tamaño grande temporal
     const selection = window.getSelection()
-    if (!selection) return
+    if (!selection || selection.isCollapsed) return
 
     const span = document.createElement('span')
-    span.style.fontSize = `${fontSize + delta}px`
+    const newSize = fontSize + delta
+    span.style.fontSize = `${newSize}px`
     span.innerHTML = selection.toString()
+
     const range = selection.getRangeAt(0)
     range.deleteContents()
     range.insertNode(span)
 
-    const updatedSize = fontSize + delta
-    setFontSize(updatedSize)
+    setFontSize(newSize)
     handleBlur()
   }
 
@@ -155,7 +156,7 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
         e.stopPropagation()
         setSelectedId(note.id)
       }}
-      onPointerDown={startDragging}
+      onMouseDown={handleMouseDown}
     >
       {isSelected && (
         <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
@@ -164,7 +165,7 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
       <div
         ref={contentRef}
         className={styles.contentEditable}
-        contentEditable
+        contentEditable={isSelected}
         suppressContentEditableWarning
         dangerouslySetInnerHTML={{ __html: htmlContent }}
         onBlur={handleBlur}
