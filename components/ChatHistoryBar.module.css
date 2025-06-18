@@ -1,7 +1,7 @@
 .chatHistoryBar {
   width: 180px;
-  background-color: #111;
-  color: white;
+  background-color: #f9f9f9; /* antes: #111 */
+  color: #111; /* antes: white */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,6 +12,7 @@
   height: 100vh;
   transition: width 0.3s;
   z-index: 10;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05); /* sombra sutil para levantar del fondo blanco */
 }
 
 .collapsed {
@@ -35,17 +36,22 @@
 .iconButton {
   background: none;
   border: none;
-  color: white;
+  color: #333;
   cursor: pointer;
+  opacity: 0.8;
+}
+
+.iconButton:hover {
+  opacity: 1;
 }
 
 .toggleButton {
   position: absolute;
   top: 16px;
-  left: -12px; /* Cambiado de right a left porque ahora está a la derecha */
+  left: -12px;
   background: none;
   border: none;
-  color: white;
+  color: #666;
   cursor: pointer;
 }
 
@@ -58,12 +64,14 @@
 
 .sessionItem {
   padding: 6px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #ddd;
   cursor: pointer;
+  color: #111;
+  font-size: 14px;
 }
 
 .sessionItem:hover {
-  background-color: #222;
+  background-color: #efefef;
 }
 
 .sessionTitleWrapper {
@@ -83,14 +91,14 @@
 
 .sessionDate {
   font-size: 10px;
-  color: #999;
+  color: #888;
   margin-top: 4px;
 }
 
 .sparkleButton {
   background: none;
   border: none;
-  color: white;
+  color: #666;
   opacity: 0.6;
   cursor: pointer;
   padding: 0;
@@ -114,4 +122,3 @@
     transform: rotate(360deg);
   }
 }
-
