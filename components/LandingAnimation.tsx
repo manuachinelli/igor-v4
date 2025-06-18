@@ -86,10 +86,8 @@ export default function LandingAnimation() {
           className="background-video"
           src="/videos/login-bg.mp4"
         />
-        <div className="video-overlay">
+        <div className="video-overlay bottom-right">
           <img src="/logo.png" alt="IGOR Logo" className="logo final" />
-          <h1 className="title">Say HI to IGOR</h1>
-          <img src="/images/login-illustration.png" alt="Login illustration" className="illustration" />
         </div>
       </div>
     </div>
