@@ -125,4 +125,3 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
     </div>
   )
 }
-
