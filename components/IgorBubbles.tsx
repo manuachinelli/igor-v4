@@ -165,7 +165,7 @@ export default function IgorBubbles() {
             bubble={b}
             onDelete={handleDeleteBubble}
             isSelected={selectedBubbleId === b.id}
-            onSelect={(id) => setSelectedBubbleId(id)}
+            onSelect={() => setSelectedBubbleId(b.id)}
             onDeselect={() => setSelectedBubbleId(null)}
             onUpdate={handleUpdateBubble}
           />
