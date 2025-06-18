@@ -1,4 +1,4 @@
- 'use client'
+'use client'
 
 import { useRef, useState, useEffect } from 'react'
 import styles from './NoteBox.module.css'
@@ -25,7 +25,6 @@ interface NoteBoxProps {
 export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: NoteBoxProps) {
   const [position, setPosition] = useState({ x: note.x_position, y: note.y_position })
   const [size, setSize] = useState({ w: note.width, h: note.height })
-  const [content, setContent] = useState(note.content)
   const [fontSize, setFontSize] = useState(note.font_size || 16)
   const [bold, setBold] = useState(false)
 
@@ -35,15 +34,23 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
   useEffect(() => {
     setPosition({ x: note.x_position, y: note.y_position })
     setSize({ w: note.width, h: note.height })
-    setContent(note.content)
     setFontSize(note.font_size || 16)
+    setTimeout(() => {
+      if (contentRef.current) {
+        contentRef.current.innerText = note.content
+      }
+    }, 0)
   }, [note])
 
   const handleBlur = async () => {
     await supabase.from('dashboard_notes').update({
-      content,
+      content: contentRef.current?.innerText || '',
       font_size: fontSize
     }).eq('id', note.id)
+  }
+
+  const handleChange = () => {
+    // actualiza live en memory, pero no pisa nada en DOM
   }
 
   const handleDrag = (e: React.MouseEvent) => {
@@ -56,9 +63,7 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
     const onMove = (moveEvent: MouseEvent) => {
       const dx = moveEvent.clientX - startX
       const dy = moveEvent.clientY - startY
-      const newX = origX + dx
-      const newY = origY + dy
-      setPosition({ x: newX, y: newY })
+      setPosition({ x: origX + dx, y: origY + dy })
     }
 
     const onUp = async () => {
@@ -100,11 +105,6 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
     window.addEventListener('mouseup', onUp)
   }
 
-  const handleChange = (e: React.FormEvent<HTMLDivElement>) => {
-    const value = e.currentTarget.innerText
-    setContent(value)
-  }
-
   const changeFontSize = (delta: number) => {
     const newSize = Math.max(8, fontSize + delta)
     setFontSize(newSize)
@@ -112,7 +112,7 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
   }
 
   const toggleBold = () => {
-    setBold(!bold)
+    setBold(prev => !prev)
   }
 
   return (
@@ -151,9 +151,7 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
         suppressContentEditableWarning
         onInput={handleChange}
         onBlur={handleBlur}
-      >
-        {content}
-      </div>
+      />
 
       {isSelected && (
         <div className={styles.resizeHandle} onMouseDown={handleResize} />
