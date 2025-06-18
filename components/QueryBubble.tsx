@@ -6,8 +6,6 @@ import { supabase } from '@/lib/supabaseClient'
 
 interface Bubble {
   id: string
-  user_id: string
-  query_text: string
   title: string
   value: string
   x_position: number
@@ -15,105 +13,128 @@ interface Bubble {
   width: number
   height: number
   color: string
-  is_editable: boolean
 }
 
-const igorColors = ['#F9E27F', '#A5E3F4', '#D9A5F4', '#A5F4C4']
-
-export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble; onDelete: (id: string) => void }) {
+export default function QueryBubble({
+  bubble,
+  onDelete,
+  isSelected,
+  onSelect,
+  onDeselect,
+  onUpdate,
+}: {
+  bubble: Bubble
+  onDelete: (id: string) => void
+  isSelected: boolean
+  onSelect: (id: string) => void
+  onDeselect: () => void
+  onUpdate: (id: string, data: Partial<Bubble>) => void
+}) {
+  const bubbleRef = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState({ x: bubble.x_position, y: bubble.y_position })
-  const [size, setSize] = useState({ width: bubble.width, height: bubble.height })
-  const [editing, setEditing] = useState(false)
-  const [text, setText] = useState(bubble.value)
-  const [selected, setSelected] = useState(false)
-  const [color, setColor] = useState(bubble.color || igorColors[0])
-  const ref = useRef<HTMLDivElement>(null)
+  const [size, setSize] = useState({ width: bubble.width || 200, height: bubble.height || 120 })
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setSelected(false)
-        setEditing(false)
-      }
+    setPosition({ x: bubble.x_position, y: bubble.y_position })
+  }, [bubble.x_position, bubble.y_position])
+
+  const onDrag = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).classList.contains(styles.resizeHandle)) return
+    const startX = e.clientX
+    const startY = e.clientY
+    const origX = position.x
+    const origY = position.y
+
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const dx = moveEvent.clientX - startX
+      const dy = moveEvent.clientY - startY
+      setPosition({ x: origX + dx, y: origY + dy })
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
 
-  const updateBubble = async (updates: Partial<Bubble>) => {
-    await supabase.from('dashboard_queries').update(updates).eq('id', bubble.id)
+    const onMouseUp = async () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseup', onMouseUp)
+      await supabase
+        .from('dashboard_queries')
+        .update({ x_position: position.x, y_position: position.y })
+        .eq('id', bubble.id)
+    }
+
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseup', onMouseUp)
   }
 
-  const handleDrag = (e: React.MouseEvent) => {
-    if (!selected) return
-    const newX = position.x + e.movementX
-    const newY = position.y + e.movementY
-    setPosition({ x: newX, y: newY })
-    updateBubble({ x_position: newX, y_position: newY })
+  const onResize = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const startX = e.clientX
+    const startY = e.clientY
+    const origWidth = size.width
+    const origHeight = size.height
+
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const dx = moveEvent.clientX - startX
+      const dy = moveEvent.clientY - startY
+      setSize({ width: Math.max(120, origWidth + dx), height: Math.max(80, origHeight + dy) })
+    }
+
+    const onMouseUp = async () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseup', onMouseUp)
+      await supabase
+        .from('dashboard_queries')
+        .update({ width: size.width, height: size.height })
+        .eq('id', bubble.id)
+    }
+
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseup', onMouseUp)
   }
 
-  const handleResize = (e: React.MouseEvent) => {
-    if (!selected) return
-    const newWidth = size.width + e.movementX
-    const newHeight = size.height + e.movementY
-    setSize({ width: newWidth, height: newHeight })
-    updateBubble({ width: newWidth, height: newHeight })
-  }
-
-  const handleBlur = () => {
-    setEditing(false)
-    updateBubble({ value: text })
-  }
-
-  const handleColorChange = (newColor: string) => {
-    setColor(newColor)
-    updateBubble({ color: newColor })
+  const handleColorChange = async (color: string) => {
+    await supabase.from('dashboard_queries').update({ color }).eq('id', bubble.id)
+    onUpdate(bubble.id, { color })
   }
 
   return (
     <div
-      ref={ref}
-      className={styles.bubble}
+      ref={bubbleRef}
+      onMouseDown={onDrag}
+      onClick={(e) => {
+        e.stopPropagation()
+        isSelected ? onDeselect() : onSelect(bubble.id)
+      }}
+      className={`${styles.bubble} ${bubble.value === 'Cargando...' ? styles.loading : ''}`}
       style={{
         left: position.x,
         top: position.y,
         width: size.width,
         height: size.height,
-        backgroundColor: color,
-        zIndex: selected ? 10 : 1,
+        backgroundColor: bubble.color || '#2c2c2c',
+        zIndex: isSelected ? 1000 : 1,
       }}
-      onMouseDown={() => setSelected(true)}
-      onDoubleClick={() => setEditing(true)}
-      onMouseMove={handleDrag}
     >
-      {editing ? (
-        <textarea
-          className={styles.textarea}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onBlur={handleBlur}
-          autoFocus
-        />
-      ) : (
-        <div className={styles.text}>{text}</div>
-      )}
-
-      {selected && (
+      {isSelected && (
         <>
-          <div className={styles.resizeHandle} onMouseDown={(e) => e.stopPropagation()} onMouseMove={handleResize} />
-          <button className={styles.closeButton} onClick={() => onDelete(bubble.id)}>×</button>
-          <div className={styles.colorPicker}>
-            {igorColors.map((c) => (
-              <div
-                key={c}
-                className={styles.colorDot}
-                style={{ backgroundColor: c, border: c === color ? '2px solid black' : 'none' }}
-                onClick={() => handleColorChange(c)}
+          <button className={styles.closeButton} onClick={() => onDelete(bubble.id)}>
+            ×
+          </button>
+          <div className={styles.colorSelector}>
+            {['#ffc700', '#7b61ff', '#6fe49c', '#76d5ff'].map((color) => (
+              <span
+                key={color}
+                style={{
+                  backgroundColor: color,
+                  border: bubble.color === color ? '2px solid white' : '1px solid #888',
+                }}
+                onClick={() => handleColorChange(color)}
               />
             ))}
           </div>
         </>
       )}
+      <h3>{bubble.title}</h3>
+      <p>{bubble.value}</p>
+      {isSelected && <div className={styles.resizeHandle} onMouseDown={onResize} />}
     </div>
   )
 }
