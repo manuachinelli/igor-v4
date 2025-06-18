@@ -2,119 +2,93 @@
 
 .bubble {
   position: absolute;
+  padding: 16px;
   border-radius: 12px;
-  background-color: #fdfdfd;
+  background-color: #1e1e1e;
+  color: #111;
   font-family: 'DM Sans', sans-serif;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
-  border: 1px solid #eee;
-  color: #222;
-  cursor: grab;
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  font-size: 14px;
+  font-weight: 400;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-align: center;
+  cursor: grab;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .bubble:hover {
   transform: scale(1.015);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
-.selected {
-  box-shadow: 0 0 0 2px #00000020;
-}
-
-.close-button {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: transparent;
-  border: none;
-  font-size: 16px;
-  font-weight: 400;
-  cursor: pointer;
-  color: #777;
-  display: none;
-  z-index: 10;
-}
-
-.selected .close-button {
-  display: block;
-}
-
-.close-button:hover {
-  color: #000;
+.bubble.selected {
+  outline: 2px dashed #888;
 }
 
 .bubble h3 {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
-  line-height: 1.4;
-  word-break: break-word;
-  max-width: 90%;
+  text-align: center;
+  color: #111;
 }
 
 .bubble p {
   margin: 6px 0 0;
-  font-size: 32px;
-  font-weight: 700;
-  color: #111;
-  line-height: 1;
+  font-size: 13px;
+  color: #222;
+  text-align: center;
+  font-weight: 500;
 }
 
-/* Resizer */
-.resizer {
+.close-button {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 14px;
-  height: 14px;
-  cursor: nwse-resize;
-  background: linear-gradient(135deg, transparent 50%, #bbb 50%);
-  border-bottom-right-radius: 4px;
-  z-index: 10;
+  top: 4px;
+  right: 6px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
 }
 
-/* Esquina doblada solo decorativa */
-.bubble::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 24px;
-  height: 24px;
-  background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.4) 50%);
-  z-index: 5;
-  pointer-events: none;
+.close-button:hover {
+  color: black;
 }
+
 .colorPicker {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  bottom: 6px;
+  left: 6px;
   display: flex;
   gap: 6px;
-  z-index: 3;
 }
 
-.colorDot {
-  width: 18px;
-  height: 18px;
+.colorOption {
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   cursor: pointer;
-  border: 2px solid transparent;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, border 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
-.colorDot:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+.colorOption:hover {
+  transform: scale(1.2);
 }
 
-.colorDot.active {
-  border-color: white;
+.resizer {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  bottom: 4px;
+  right: 4px;
+  background: transparent;
+  border-right: 2px solid #555;
+  border-bottom: 2px solid #555;
+  cursor: nwse-resize;
+  z-index: 10;
 }
