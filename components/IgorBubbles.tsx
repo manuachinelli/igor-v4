@@ -37,6 +37,7 @@ export default function IgorBubbles() {
   const [showInput, setShowInput] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
   const [bubbleColor, setBubbleColor] = useState('#2c2c2c')
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const darkColorOptions = ['#1e1e1e', '#2c2c2c', '#3b3b3b', '#2a2a40', '#1f2d3d']
 
@@ -138,16 +139,23 @@ export default function IgorBubbles() {
   const handleDeleteNote = async (id: string) => {
     await supabase.from('dashboard_notes').delete().eq('id', id)
     setNotes(prev => prev.filter(n => n.id !== id))
+    setSelectedId(null)
   }
 
   return (
-    <div className={styles.canvas}>
+    <div className={styles.canvas} onClick={() => setSelectedId(null)}>
       <div style={{ flex: 1, position: 'relative' }}>
         {bubbles.map(b => (
           <QueryBubble key={b.id} bubble={b} onDelete={handleDeleteBubble} />
         ))}
         {notes.map(n => (
-          <NoteBox key={n.id} note={n} onDelete={handleDeleteNote} />
+          <NoteBox
+            key={n.id}
+            note={n}
+            onDelete={handleDeleteNote}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+          />
         ))}
 
         {showInput && (
