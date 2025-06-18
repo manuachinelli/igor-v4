@@ -15,16 +15,16 @@ interface Bubble {
   color: string
 }
 
+const IGOR_COLORS = ['#ffc700', '#4fc3f7', '#7b61ff', '#00c853']
+
 export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDelete: (id: string) => void }) {
   const bubbleRef = useRef<HTMLDivElement>(null)
 
-  // ✅ Posición temporal para mostrar el movimiento en tiempo real
   const [position, setPosition] = useState({
     x: bubble.x_position || 100,
     y: bubble.y_position || 100,
   })
 
-  // ✅ Sync desde props (cuando se actualiza desde Supabase)
   useEffect(() => {
     setPosition({
       x: bubble.x_position || 100,
@@ -69,6 +69,9 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
     window.addEventListener('mouseup', onMouseUp)
   }
 
+  const isColorValid = (color: string | null | undefined) =>
+    color && IGOR_COLORS.includes(color.trim().toLowerCase())
+
   return (
     <div
       ref={bubbleRef}
@@ -78,12 +81,7 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
         position: 'absolute',
         left: position.x,
         top: position.y,
-        width: 140,
-        height: 140,
-        backgroundColor:
-          bubble.color?.trim().toLowerCase() === '#ffffff'
-            ? '#2c2c2c'
-            : bubble.color?.trim() || '#2c2c2c',
+        backgroundColor: isColorValid(bubble.color) ? bubble.color : '#f5f5f5',
       }}
     >
       <button className={styles['close-button']} onClick={() => onDelete(bubble.id)}>×</button>
