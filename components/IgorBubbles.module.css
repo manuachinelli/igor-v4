@@ -26,44 +26,37 @@
   color: #111;
 }
 
-.floatingPanel {
-  width: 120px;
-  background-color: #fff;
-  padding: 20px 10px;
-  color: #111;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  border-left: 1px solid #e5e7eb;
-  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.04);
-}
-
-.buttonGroup {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.floatingButton,
-.textButton,
-.pencilButton {
+.toolbox {
+  position: absolute;
+  top: 40px;
+  left: 20px;
   background-color: #ffffff;
-  color: #111;
-  border: 1px solid #ddd;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  font-size: 26px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  z-index: 100;
 }
 
-.floatingButton:hover,
-.textButton:hover,
-.pencilButton:hover {
+.toolButton {
+  background-color: #f9f9f9;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  font-size: 20px;
+  color: #111;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.toolButton:hover {
   background-color: #f3f4f6;
-  border-color: #ccc;
+  border-color: #cbd5e1;
 }
