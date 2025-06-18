@@ -195,7 +195,6 @@ export default function IgorBubbles() {
         <button className={styles.toolButton}>🗓️</button>
         <button className={styles.toolButton}>✨</button>
         <button className={styles.toolButton}>🧱</button>
-        <button className={styles.toolButton}>➕</button>
       </div>
     </div>
   )
