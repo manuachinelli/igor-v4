@@ -47,6 +47,7 @@ export default function LandingAnimation() {
           <img src="/logo.png" alt="IGOR Logo" className="logo small" />
           <form className="login-form" onSubmit={handleLogin}>
             <h2 className="form-title">Iniciar sesión</h2>
+            <p className="form-subtitle">Accedé a tu cuenta para crear y automatizar.</p>
             <label>
               Email
               <input
