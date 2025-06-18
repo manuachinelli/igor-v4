@@ -6,8 +6,8 @@
   transition: all 1s ease-in-out;
   background: black;
   color: white;
-  font-family: "Inter", sans-serif;
   position: relative;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .transition-container.full {
@@ -17,17 +17,6 @@
 
 .transition-container.split {
   flex-direction: row;
-}
-
-.right-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: black;
-  color: white;
-  transition: all 1s ease;
 }
 
 .left-panel {
@@ -57,6 +46,18 @@
   }
 }
 
+.right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: black;
+  color: white;
+  transition: all 1s ease;
+  text-align: center;
+}
+
 .logo.final {
   filter: drop-shadow(0 0 20px white);
   width: 120px;
@@ -65,8 +66,8 @@
 }
 
 .logo.small {
-  margin-bottom: 1rem;
-  width: 60px;
+  margin-bottom: 1.5rem;
+  width: 90px;
   height: auto;
 }
 
@@ -88,37 +89,80 @@
 }
 
 .form-title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
   margin-bottom: 1rem;
-  font-weight: bold;
+  text-align: center;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 60%;
-  max-width: 300px;
+  width: 100%;
+  max-width: 320px;
 }
 
 .login-form label {
   display: flex;
   flex-direction: column;
   font-size: 0.9rem;
+  color: #333;
 }
 
 .login-form input {
-  padding: 0.5rem;
-  border: 1px solid #999;
-  border-radius: 4px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #00C2FF;
+  box-shadow: 0 0 0 2px rgba(0, 194, 255, 0.2);
 }
 
 .login-form button {
-  padding: 0.6rem;
-  background: #333;
+  padding: 0.7rem;
+  background: #000;
   color: white;
   border: none;
-  cursor: pointer;
   font-size: 1rem;
-  border-radius: 4px;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.login-form button:hover {
+  background: #333;
+}
+
+.signup-link {
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 0.5rem;
+  color: #555;
+}
+
+.signup-link a {
+  color: #00C2FF;
+  text-decoration: none;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+.error {
+  color: #ff3333;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.illustration {
+  margin-top: 2rem;
+  width: 200px;
+  height: auto;
+  opacity: 0.9;
 }
