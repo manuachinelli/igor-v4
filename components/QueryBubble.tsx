@@ -1,156 +1,173 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import styles from './QueryBubble.module.css'
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabaseClient'
+import QueryBubble from './QueryBubble'
+import NoteBox from './NoteBox'
+import { v4 as uuidv4 } from 'uuid'
 
 type Bubble = {
   id: string
+  user_id: string
   title: string
   value: string
+  color: string
+  x_position: number
+  y_position: number
+}
+
+type Note = {
+  id: string
+  user_id: string
+  content: string
   x_position: number
   y_position: number
   width: number
   height: number
-  color: string
 }
 
-type Props = {
-  bubble: Bubble
-  onDelete: (id: string) => void
-  isSelected: boolean
-  onSelect: (id: string) => void
-  onDeselect: () => void
-  onUpdate: (id: string, data: Partial<Bubble>) => void
-}
-
-export default function QueryBubble({
-  bubble,
-  onDelete,
-  isSelected,
-  onSelect,
-  onDeselect,
-  onUpdate
-}: Props) {
-  const [position, setPosition] = useState({ x: bubble.x_position, y: bubble.y_position })
-  const [size, setSize] = useState({ width: bubble.width, height: bubble.height })
-  const [content, setContent] = useState(bubble.value)
-  const [color, setColor] = useState(bubble.color || '#FDE047')
-  const bubbleRef = useRef<HTMLDivElement>(null)
-
-  const colors = ['#FDE047', '#38BDF8', '#A78BFA', '#4ADE80']
+export default function IgorBubbles() {
+  const [bubbles, setBubbles] = useState<Bubble[]>([])
+  const [notes, setNotes] = useState<Note[]>([])
+  const [userId, setUserId] = useState<string | null>(null)
+  const [selectedBubbleId, setSelectedBubbleId] = useState<string | null>(null)
 
   useEffect(() => {
-    onUpdate(bubble.id, {
-      x_position: position.x,
-      y_position: position.y,
-      width: size.width,
-      height: size.height,
-      value: content,
-      color
-    })
-  }, [position, size, content, color])
+    const fetchData = async () => {
+      const { data: userData } = await supabase.auth.getUser()
+      const uid = userData?.user?.id
+      if (!uid) return
+      setUserId(uid)
 
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (bubbleRef.current && !bubbleRef.current.contains(e.target as Node)) {
-        onDeselect()
-      }
+      const { data: bubblesData } = await supabase
+        .from('dashboard_queries')
+        .select('*')
+        .eq('user_id', uid)
+      setBubbles(bubblesData || [])
+
+      const { data: notesData } = await supabase
+        .from('dashboard_notes')
+        .select('*')
+        .eq('user_id', uid)
+      setNotes(notesData || [])
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+
+    fetchData()
   }, [])
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    const startX = e.clientX
-    const startY = e.clientY
-    const initX = position.x
-    const initY = position.y
-
-    const handleMouseMove = (e: MouseEvent) => {
-      setPosition({
-        x: initX + e.clientX - startX,
-        y: initY + e.clientY - startY
-      })
+  const handleAddBubble = async () => {
+    if (!userId) return
+    const newBubble: Bubble = {
+      id: uuidv4(),
+      user_id: userId,
+      title: 'Nueva consulta',
+      value: '',
+      color: 'yellow',
+      x_position: 100,
+      y_position: 100,
     }
 
-    const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
-
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
+    const { error } = await supabase.from('dashboard_queries').insert([newBubble])
+    if (!error) setBubbles((prev) => [...prev, newBubble])
   }
 
-  const handleResize = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-    const startX = e.clientX
-    const startY = e.clientY
-    const initW = size.width
-    const initH = size.height
+  const handleDeleteBubble = async (id: string) => {
+    await supabase.from('dashboard_queries').delete().eq('id', id)
+    setBubbles((prev) => prev.filter((b) => b.id !== id))
+    setSelectedBubbleId(null)
+  }
 
-    const handleMouseMove = (e: MouseEvent) => {
-      setSize({
-        width: Math.max(100, initW + e.clientX - startX),
-        height: Math.max(60, initH + e.clientY - startY)
-      })
+  const handleUpdateBubble = async (id: string, updatedFields: Partial<Bubble>) => {
+    const updated = bubbles.map((b) => (b.id === id ? { ...b, ...updatedFields } : b))
+    setBubbles(updated)
+    await supabase.from('dashboard_queries').update(updatedFields).eq('id', id)
+  }
+
+  const handleDeleteNote = async (id: string) => {
+    await supabase.from('dashboard_notes').delete().eq('id', id)
+    setNotes((prev) => prev.filter((n) => n.id !== id))
+  }
+
+  const handleAddNote = async () => {
+    if (!userId) return
+    const newNote: Note = {
+      id: uuidv4(),
+      user_id: userId,
+      content: '',
+      x_position: 100,
+      y_position: 100,
+      width: 200,
+      height: 100,
     }
 
-    const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
-
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
+    const { error } = await supabase.from('dashboard_notes').insert([newNote])
+    if (!error) setNotes((prev) => [...prev, newNote])
   }
 
   return (
     <div
-      ref={bubbleRef}
-      onMouseDown={handleMouseDown}
+      style={{ flex: 1, position: 'relative' }}
       onClick={(e) => {
-        e.stopPropagation()
-        onSelect(bubble.id)
-      }}
-      className={styles.bubble}
-      style={{
-        top: position.y,
-        left: position.x,
-        width: size.width,
-        height: size.height,
-        backgroundColor: color,
-        border: isSelected ? '2px solid #000' : 'none',
-        zIndex: isSelected ? 2 : 1
+        if ((e.target as HTMLElement).id === 'canvas-area') {
+          setSelectedBubbleId(null)
+        }
       }}
     >
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        className={styles.textarea}
-        placeholder="Escribí algo..."
-      />
-      {isSelected && (
-        <>
-          <div className={styles.resizeHandle} onMouseDown={handleResize} />
-          <button className={styles.closeButton} onClick={() => onDelete(bubble.id)}>
-            ×
-          </button>
-          <div className={styles.colorPicker}>
-            {colors.map((c) => (
-              <div
-                key={c}
-                className={styles.colorDot}
-                style={{
-                  backgroundColor: c,
-                  border: c === color ? '2px solid #000' : 'none'
-                }}
-                onClick={() => setColor(c)}
-              />
-            ))}
-          </div>
-        </>
-      )}
+      <div id="canvas-area" style={{ width: '100%', height: '100%', position: 'absolute' }}>
+        {bubbles.map((b) => (
+          <QueryBubble
+            key={b.id}
+            bubble={b}
+            isSelected={selectedBubbleId === b.id}
+            onSelect={() => setSelectedBubbleId(b.id)}
+            onDeselect={() => setSelectedBubbleId(null)}
+            onUpdate={(updated) => handleUpdateBubble(b.id, updated)}
+            onDelete={handleDeleteBubble}
+          />
+        ))}
+
+        {notes.map((n) => (
+          <NoteBox key={n.id} note={n} onDelete={handleDeleteNote} />
+        ))}
+
+        <button
+          onClick={handleAddBubble}
+          style={{
+            position: 'absolute',
+            bottom: 20,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            padding: '10px 20px',
+            backgroundColor: '#0ea5e9',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 6,
+            cursor: 'pointer',
+            zIndex: 10,
+          }}
+        >
+          +
+        </button>
+
+        <button
+          onClick={handleAddNote}
+          style={{
+            position: 'absolute',
+            bottom: 20,
+            right: 20,
+            padding: '10px 14px',
+            backgroundColor: '#fff',
+            color: '#000',
+            border: '1px solid #ccc',
+            borderRadius: 6,
+            cursor: 'pointer',
+            zIndex: 10,
+            fontWeight: 500,
+          }}
+        >
+          T
+        </button>
+      </div>
     </div>
   )
 }
