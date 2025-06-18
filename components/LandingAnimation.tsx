@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import './LandingAnimation.css';
+import { DM_Sans } from 'next/font/google';
+
+const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '700'] });
 
 export default function LandingAnimation() {
   const [showLogin, setShowLogin] = useState(false);
@@ -31,7 +34,6 @@ export default function LandingAnimation() {
     if (error) {
       setError('Usuario o contraseña incorrectos.');
     } else {
-      // Espera 150ms antes de redirigir para que la cookie se sincronice
       setTimeout(() => {
         router.push('/dashboard');
       }, 150);
@@ -39,14 +41,14 @@ export default function LandingAnimation() {
   };
 
   return (
-    <div className={`transition-container ${showLogin ? 'split' : 'full'}`}>
+    <div className={`${dmSans.className} transition-container ${showLogin ? 'split' : 'full'}`}>
       {showLogin && (
         <div className="left-panel">
           <img src="/logo.png" alt="IGOR Logo" className="logo small" />
-          <h2 className="form-title">Iniciar sesión</h2>
           <form className="login-form" onSubmit={handleLogin}>
+            <h2 className="form-title">Iniciar sesión</h2>
             <label>
-              User
+              Email
               <input
                 type="email"
                 name="user"
@@ -56,7 +58,7 @@ export default function LandingAnimation() {
               />
             </label>
             <label>
-              Password
+              Contraseña
               <input
                 type="password"
                 name="password"
@@ -65,13 +67,10 @@ export default function LandingAnimation() {
                 required
               />
             </label>
-            <button type="submit">Login</button>
-            {error && <p style={{ color: 'red', fontSize: '0.9rem' }}>{error}</p>}
-            <p style={{ fontSize: '0.9rem', textAlign: 'center' }}>
-              ¿No tenés cuenta?{' '}
-              <a href="/signup" style={{ color: '#0070f3', textDecoration: 'underline' }}>
-                Crear una cuenta
-              </a>
+            <button type="submit">Ingresar</button>
+            {error && <p className="error">{error}</p>}
+            <p className="signup-link">
+              ¿No tenés cuenta? <a href="/signup">Crear una cuenta</a>
             </p>
           </form>
         </div>
@@ -79,6 +78,7 @@ export default function LandingAnimation() {
       <div className="right-panel">
         <img src="/logo.png" alt="IGOR Logo" className="logo final" />
         <h1 className="title">Say HI to IGOR</h1>
+        <img src="/images/login-illustration.png" alt="Login illustration" className="illustration" />
       </div>
     </div>
   );
