@@ -134,12 +134,12 @@ const IgorChat = forwardRef<IgorChatHandle, IgorChatProps>(
           <div className={styles.welcomeContainer}>
             <div className={styles.welcomeContent}>
               <img
-                src="/sidebar-icons/igor-proactive.png"
-                alt="Logo IGOR"
-                className={`${styles.welcomeLogo} ${
-                  messages.length > 0 ? styles.logoFaded : ''
-                }`}
-              />
+  src="/my-igor.png"
+  alt="Logo IGOR"
+  className={`${styles.miniLogo} ${
+    messages.length > 0 ? styles.logoFaded : ''
+  }`}
+/>
               {messages.length === 0 && (
                 <>
                   <div className={styles.welcomeText}>
