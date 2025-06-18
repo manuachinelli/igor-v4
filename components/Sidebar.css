@@ -1,18 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
 .sidebar {
+  font-family: 'DM Sans', sans-serif;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #111;
+  background-color: #ffffff;
   padding: 1rem 0.5rem;
-  width: 80px; /* empieza finita */
+  width: 80px;
   height: 100vh;
   flex-shrink: 0;
-  transition: width 0.3s ease; /* animación suave */
+  border-right: 1px solid #e5e7eb;
+  transition: width 0.3s ease;
 }
 
 .sidebar:hover {
-  width: 120px; /* al pasar el mouse, se agranda */
+  width: 120px;
 }
 
 .sidebar-top,
@@ -27,26 +31,25 @@
 .icon {
   width: 56px;
   height: 56px;
-  opacity: 0.8; /* MAS VIVO DE BASE */
+  opacity: 0.9;
   transition: transform 0.2s, opacity 0.2s, filter 0.2s;
-  filter: brightness(1); /* brillo normal */
+  filter: brightness(1);
 }
 
 .icon:hover {
-  transform: scale(1.15);
+  transform: scale(1.1);
   opacity: 1;
-  filter: brightness(1.2); /* MAS BRILLO AL HACER HOVER SOBRE ICONO */
+  filter: brightness(1.2);
 }
 
 .icon.active {
   opacity: 1;
-  filter: brightness(1.2); /* MAS BRILLO SI ESTA ACTIVO */
+  filter: brightness(1.3) drop-shadow(0 0 4px rgba(0, 0, 0, 0.05));
 }
 
-/* CUANDO LA SIDEBAR ESTA EN HOVER, TODOS LOS ICONOS SE VUELVEN MAS VIVOS */
 .sidebar:hover .icon {
   opacity: 1;
-  filter: brightness(1.2); /* MAS BRILLO EN TODOS LOS ICONOS */
+  filter: brightness(1.2);
 }
 
 /* Botón logout */
@@ -74,29 +77,30 @@
   position: absolute;
   bottom: 100px;
   left: 10px;
-  transform: none;
-  background-color: #222;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   padding: 0.5rem 0;
   display: flex;
   flex-direction: column;
   min-width: 160px;
   z-index: 10;
+  border: 1px solid #e5e7eb;
 }
 
 .account-menu .menu-item {
   padding: 0.7rem 1rem;
-  color: #eee;
-  font-size: 1rem;
+  color: #111;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .account-menu .menu-item:hover {
-  background: #333;
+  background: #f9f9f9;
 }
 
 .account-menu .logout-item {
-  color: #f55;
+  color: #e11d48;
+  font-weight: 500;
 }
