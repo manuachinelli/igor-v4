@@ -9,6 +9,8 @@
   position: relative;
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
+  background-color: #ffffff;
+  color: #111;
 }
 
 .addButtonContainer {
@@ -30,13 +32,19 @@
   border-radius: 50%;
   border: none;
   cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.addButton:hover {
+  background-color: #6c4eff;
 }
 
 .addButtonText {
   margin-top: 8px;
   font-size: 12px;
   font-weight: 400;
-  color: #fff;
+  color: #555;
   text-align: center;
 }
 
@@ -55,8 +63,8 @@
 }
 
 .flowButton {
-  background-color: #1A1A1A;
-  color: white;
+  background-color: #f3f4f6;
+  color: #111;
   font-weight: 400;
   border: none;
   border-radius: 20px;
@@ -68,11 +76,11 @@
   height: 200px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 8px rgba(123, 97, 255, 0.4);
+  box-shadow: 0 0 8px rgba(123, 97, 255, 0.2);
 }
 
 .flowButton:hover {
-  background-color: #262626;
+  background-color: #e5e7eb;
 }
 
 .flowContent {
@@ -94,7 +102,7 @@
 .flowLine {
   width: 60%;
   height: 1px;
-  background-color: white;
+  background-color: #ccc;
   margin: 12px 0;
 }
 
@@ -119,7 +127,7 @@
   border-radius: 8px;
   margin-bottom: 8px;
   overflow: hidden;
-  background-color: #1a1a1a;
+  background-color: #e5e7eb;
 }
 
 .batteryBarInner {
@@ -130,7 +138,7 @@
 
 .batteryText {
   font-size: 12px;
-  color: white;
+  color: #333;
   text-align: center;
 }
 
