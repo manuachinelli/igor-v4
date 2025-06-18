@@ -1,92 +1,156 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabaseClient'
-import QueryBubble, { Bubble } from './QueryBubble'
-import NoteBox, { Note } from './NoteBox'
+import { useState, useRef, useEffect } from 'react'
+import styles from './QueryBubble.module.css'
 
-export default function IgorBubbles() {
-  const [bubbles, setBubbles] = useState<Bubble[]>([])
-  const [notes, setNotes] = useState<Note[]>([])
-  const [selectedBubbleId, setSelectedBubbleId] = useState<string | null>(null)
+type Bubble = {
+  id: string
+  title: string
+  value: string
+  x_position: number
+  y_position: number
+  width: number
+  height: number
+  color: string
+}
 
-  // Fetch bubbles
+type Props = {
+  bubble: Bubble
+  onDelete: (id: string) => void
+  isSelected: boolean
+  onSelect: (id: string) => void
+  onDeselect: () => void
+  onUpdate: (id: string, data: Partial<Bubble>) => void
+}
+
+export default function QueryBubble({
+  bubble,
+  onDelete,
+  isSelected,
+  onSelect,
+  onDeselect,
+  onUpdate
+}: Props) {
+  const [position, setPosition] = useState({ x: bubble.x_position, y: bubble.y_position })
+  const [size, setSize] = useState({ width: bubble.width, height: bubble.height })
+  const [content, setContent] = useState(bubble.value)
+  const [color, setColor] = useState(bubble.color || '#FDE047')
+  const bubbleRef = useRef<HTMLDivElement>(null)
+
+  const colors = ['#FDE047', '#38BDF8', '#A78BFA', '#4ADE80']
+
   useEffect(() => {
-    const fetchBubbles = async () => {
-      const { data: userData } = await supabase.auth.getUser()
-      const user_id = userData?.user?.id
-      if (!user_id) return
+    onUpdate(bubble.id, {
+      x_position: position.x,
+      y_position: position.y,
+      width: size.width,
+      height: size.height,
+      value: content,
+      color
+    })
+  }, [position, size, content, color])
 
-      const { data, error } = await supabase
-        .from('dashboard_queries')
-        .select('*')
-        .eq('user_id', user_id)
-
-      if (!error && data) {
-        setBubbles(data)
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (bubbleRef.current && !bubbleRef.current.contains(e.target as Node)) {
+        onDeselect()
       }
     }
-
-    fetchBubbles()
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Fetch notes
-  useEffect(() => {
-    const fetchNotes = async () => {
-      const { data: userData } = await supabase.auth.getUser()
-      const user_id = userData?.user?.id
-      if (!user_id) return
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const startX = e.clientX
+    const startY = e.clientY
+    const initX = position.x
+    const initY = position.y
 
-      const { data, error } = await supabase
-        .from('dashboard_notes')
-        .select('*')
-        .eq('user_id', user_id)
-
-      if (!error && data) {
-        setNotes(data)
-      }
+    const handleMouseMove = (e: MouseEvent) => {
+      setPosition({
+        x: initX + e.clientX - startX,
+        y: initY + e.clientY - startY
+      })
     }
 
-    fetchNotes()
-  }, [])
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
 
-  const handleDeleteBubble = async (id: string) => {
-    await supabase.from('dashboard_queries').delete().eq('id', id)
-    setBubbles(prev => prev.filter(b => b.id !== id))
-    if (selectedBubbleId === id) setSelectedBubbleId(null)
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
   }
 
-  const handleDeleteNote = async (id: string) => {
-    await supabase.from('dashboard_notes').delete().eq('id', id)
-    setNotes(prev => prev.filter(n => n.id !== id))
-  }
+  const handleResize = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    const startX = e.clientX
+    const startY = e.clientY
+    const initW = size.width
+    const initH = size.height
 
-  const handleUpdateBubble = async (id: string, data: Partial<Bubble>) => {
-    await supabase.from('dashboard_queries').update(data).eq('id', id)
-    setBubbles(prev =>
-      prev.map(b => (b.id === id ? { ...b, ...data } : b))
-    )
+    const handleMouseMove = (e: MouseEvent) => {
+      setSize({
+        width: Math.max(100, initW + e.clientX - startX),
+        height: Math.max(60, initH + e.clientY - startY)
+      })
+    }
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
   }
 
   return (
     <div
-      style={{ flex: 1, position: 'relative' }}
-      onClick={() => setSelectedBubbleId(null)}
+      ref={bubbleRef}
+      onMouseDown={handleMouseDown}
+      onClick={(e) => {
+        e.stopPropagation()
+        onSelect(bubble.id)
+      }}
+      className={styles.bubble}
+      style={{
+        top: position.y,
+        left: position.x,
+        width: size.width,
+        height: size.height,
+        backgroundColor: color,
+        border: isSelected ? '2px solid #000' : 'none',
+        zIndex: isSelected ? 2 : 1
+      }}
     >
-      {bubbles.map(b => (
-        <QueryBubble
-          key={b.id}
-          bubble={b}
-          onDelete={handleDeleteBubble}
-          isSelected={selectedBubbleId === b.id}
-          onSelect={() => setSelectedBubbleId(b.id)}
-          onDeselect={() => setSelectedBubbleId(null)}
-          onUpdate={handleUpdateBubble}
-        />
-      ))}
-      {notes.map(n => (
-        <NoteBox key={n.id} note={n} onDelete={handleDeleteNote} />
-      ))}
+      <textarea
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        className={styles.textarea}
+        placeholder="Escribí algo..."
+      />
+      {isSelected && (
+        <>
+          <div className={styles.resizeHandle} onMouseDown={handleResize} />
+          <button className={styles.closeButton} onClick={() => onDelete(bubble.id)}>
+            ×
+          </button>
+          <div className={styles.colorPicker}>
+            {colors.map((c) => (
+              <div
+                key={c}
+                className={styles.colorDot}
+                style={{
+                  backgroundColor: c,
+                  border: c === color ? '2px solid #000' : 'none'
+                }}
+                onClick={() => setColor(c)}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   )
 }
