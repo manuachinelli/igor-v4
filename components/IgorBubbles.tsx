@@ -108,7 +108,8 @@ export default function IgorBubbles() {
       }),
     })
 
-    setTimeout(() => fetchBubbles(userId), 4000)
+    // Comentamos para evitar sobreescritura con datos viejos
+    // setTimeout(() => fetchBubbles(userId), 4000)
   }
 
   const createNote = async () => {
@@ -138,11 +139,22 @@ export default function IgorBubbles() {
     setSelectedId(null)
   }
 
+  const handleUpdatePosition = (id: string, x: number, y: number) => {
+    setBubbles(prev =>
+      prev.map(b => (b.id === id ? { ...b, x_position: x, y_position: y } : b))
+    )
+  }
+
   return (
     <div className={styles.canvas} onClick={() => setSelectedId(null)}>
       <div style={{ flex: 1, position: 'relative' }}>
         {bubbles.map(b => (
-          <QueryBubble key={b.id} bubble={b} onDelete={handleDeleteBubble} />
+          <QueryBubble
+            key={b.id}
+            bubble={b}
+            onDelete={handleDeleteBubble}
+            onUpdatePosition={handleUpdatePosition}
+          />
         ))}
         {notes.map(n => (
           <NoteBox
