@@ -10,9 +10,13 @@ interface Note {
   content: string
   x_position: number
   y_position: number
-  width: number
-  height: number
+  font_family?: string
   font_size?: number
+  font_color?: string
+  font_bold?: boolean
+  text_align?: 'left' | 'center' | 'right'
+  background_color?: string
+  is_locked?: boolean
 }
 
 interface NoteBoxProps {
@@ -22,19 +26,33 @@ interface NoteBoxProps {
   setSelectedId: (id: string | null) => void
 }
 
+const FONT_FAMILIES = [
+  'Arial', 'Courier New', 'Georgia', 'Noto Sans', 'Times New Roman', 'Verdana'
+]
+
 export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: NoteBoxProps) {
   const [position, setPosition] = useState({ x: note.x_position, y: note.y_position })
-  const [size, setSize] = useState({ w: note.width, h: note.height })
+  const [fontFamily, setFontFamily] = useState(note.font_family || 'Noto Sans')
   const [fontSize, setFontSize] = useState(note.font_size || 16)
-  const [bold, setBold] = useState(false)
+  const [fontColor, setFontColor] = useState(note.font_color || '#000000')
+  const [backgroundColor, setBackgroundColor] = useState(note.background_color || 'transparent')
+  const [bold, setBold] = useState(note.font_bold || false)
+  const [textAlign, setTextAlign] = useState<Note['text_align']>(note.text_align || 'left')
+  const [locked, setLocked] = useState(note.is_locked || false)
+  const [isDragging, setIsDragging] = useState(false)
 
   const contentRef = useRef<HTMLDivElement>(null)
   const isSelected = selectedId === note.id
 
   useEffect(() => {
     setPosition({ x: note.x_position, y: note.y_position })
-    setSize({ w: note.width, h: note.height })
+    setFontFamily(note.font_family || 'Noto Sans')
     setFontSize(note.font_size || 16)
+    setFontColor(note.font_color || '#000000')
+    setBackgroundColor(note.background_color || 'transparent')
+    setBold(note.font_bold || false)
+    setTextAlign(note.text_align || 'left')
+    setLocked(note.is_locked || false)
     setTimeout(() => {
       if (contentRef.current) {
         contentRef.current.innerText = note.content
@@ -42,19 +60,28 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
     }, 0)
   }, [note])
 
-  const handleBlur = async () => {
+  const updateNote = async () => {
     await supabase.from('dashboard_notes').update({
       content: contentRef.current?.innerText || '',
-      font_size: fontSize
+      font_family: fontFamily,
+      font_size: fontSize,
+      font_color: fontColor,
+      background_color: backgroundColor,
+      font_bold: bold,
+      text_align: textAlign,
+      is_locked: locked,
+      x_position: position.x,
+      y_position: position.y,
     }).eq('id', note.id)
   }
 
-  const handleChange = () => {
-    // actualiza live en memory, pero no pisa nada en DOM
+  const handleBlur = () => {
+    updateNote()
   }
 
   const handleDrag = (e: React.MouseEvent) => {
-    if (!isSelected) return
+    if (!isSelected || locked) return
+    setIsDragging(true)
     const startX = e.clientX
     const startY = e.clientY
     const origX = position.x
@@ -66,39 +93,41 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
       setPosition({ x: origX + dx, y: origY + dy })
     }
 
-    const onUp = async () => {
+    const onUp = () => {
+      setIsDragging(false)
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('mouseup', onUp)
-      await supabase.from('dashboard_notes').update({
-        x_position: position.x,
-        y_position: position.y
-      }).eq('id', note.id)
+      updateNote()
     }
 
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', onUp)
   }
 
-  const handleResize = (e: React.MouseEvent) => {
+  const handleResizeFont = (e: React.MouseEvent, corner: string) => {
+    if (locked) return
     e.stopPropagation()
     const startX = e.clientX
     const startY = e.clientY
-    const startW = size.w
-    const startH = size.h
+    const startFontSize = fontSize
 
     const onMove = (moveEvent: MouseEvent) => {
       const dx = moveEvent.clientX - startX
       const dy = moveEvent.clientY - startY
-      setSize({ w: startW + dx, h: startH + dy })
+      let delta = 0
+      if (corner === 'topLeft') delta = -(dx + dy) / 2
+      else if (corner === 'topRight') delta = (dx - dy) / 2
+      else if (corner === 'bottomLeft') delta = -(dx - dy) / 2
+      else if (corner === 'bottomRight') delta = (dx + dy) / 2
+
+      const newFontSize = Math.max(8, startFontSize + delta)
+      setFontSize(newFontSize)
     }
 
-    const onUp = async () => {
+    const onUp = () => {
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('mouseup', onUp)
-      await supabase.from('dashboard_notes').update({
-        width: size.w,
-        height: size.h
-      }).eq('id', note.id)
+      updateNote()
     }
 
     window.addEventListener('mousemove', onMove)
@@ -108,53 +137,66 @@ export default function NoteBox({ note, onDelete, selectedId, setSelectedId }: N
   const changeFontSize = (delta: number) => {
     const newSize = Math.max(8, fontSize + delta)
     setFontSize(newSize)
-    handleBlur()
+    setTimeout(handleBlur, 0)
   }
 
-  const toggleBold = () => {
-    setBold(prev => !prev)
-  }
+  const toggleBold = () => { setBold(prev => !prev); setTimeout(handleBlur, 0) }
+  const changeFontColor = (color: string) => { setFontColor(color); setTimeout(handleBlur, 0) }
+  const changeBackgroundColor = (color: string) => { setBackgroundColor(color); setTimeout(handleBlur, 0) }
+  const changeTextAlign = (align: Note['text_align']) => { setTextAlign(align); setTimeout(handleBlur, 0) }
+  const changeFontFamily = (family: string) => { setFontFamily(family); setTimeout(handleBlur, 0) }
+  const toggleLock = () => { setLocked(prev => !prev); setTimeout(handleBlur, 0) }
 
   return (
     <div
-      className={styles.note}
+      className={`${styles.note} ${isSelected ? styles.selected : ''}`}
       style={{
-        left: position.x,
-        top: position.y,
-        width: size.w,
-        height: size.h,
+        transform: `translate(${position.x}px, ${position.y}px)`,
         fontSize: `${fontSize}px`,
         fontWeight: bold ? 'bold' : 'normal',
-        zIndex: isSelected ? 999 : 1,
+        color: fontColor,
+        textAlign: textAlign,
+        fontFamily: fontFamily,
+        backgroundColor: backgroundColor,
+        zIndex: isSelected ? 9999 : 1,
+        userSelect: isDragging || locked ? 'none' : 'auto',
       }}
-      onClick={(e) => {
-        e.stopPropagation()
-        setSelectedId(note.id)
-      }}
+      onClick={e => { e.stopPropagation(); setSelectedId(note.id) }}
       onMouseDown={handleDrag}
     >
-      {isSelected && (
-        <>
-          <button className={styles.closeButton} onClick={() => onDelete(note.id)}>×</button>
-          <div className={styles.toolbar}>
-            <button onClick={() => changeFontSize(2)}>＋</button>
-            <button onClick={() => changeFontSize(-2)}>−</button>
-            <button onClick={toggleBold}>B</button>
-          </div>
-        </>
+      {isSelected && !isDragging && (
+        <div className={styles.toolbar} onMouseDown={e => e.stopPropagation()}>
+          <select value={fontFamily} onChange={e => changeFontFamily(e.target.value)}>
+            {FONT_FAMILIES.map(f => (<option key={f} value={f}>{f}</option>))}
+          </select>
+          <button onClick={() => changeFontSize(2)}>＋</button>
+          <button onClick={() => changeFontSize(-2)}>−</button>
+          <button onClick={toggleBold} className={bold ? styles.active : ''}>B</button>
+          <input type="color" value={fontColor} onChange={e => changeFontColor(e.target.value)} />
+          <input type="color" value={backgroundColor} onChange={e => changeBackgroundColor(e.target.value)} />
+          <button onClick={() => changeTextAlign('left')}>L</button>
+          <button onClick={() => changeTextAlign('center')}>C</button>
+          <button onClick={() => changeTextAlign('right')}>R</button>
+          <button onClick={toggleLock} className={locked ? styles.active : ''}>🔒</button>
+          <button>⋮</button>
+        </div>
       )}
 
       <div
         ref={contentRef}
         className={styles.contentEditable}
-        contentEditable={isSelected}
+        contentEditable={isSelected && !locked}
         suppressContentEditableWarning
-        onInput={handleChange}
         onBlur={handleBlur}
       />
 
-      {isSelected && (
-        <div className={styles.resizeHandle} onMouseDown={handleResize} />
+      {isSelected && !locked && (
+        <>
+          <div className={`${styles.fontResizeCircle} ${styles.topLeft}`} onMouseDown={(e) => handleResizeFont(e, 'topLeft')} />
+          <div className={`${styles.fontResizeCircle} ${styles.topRight}`} onMouseDown={(e) => handleResizeFont(e, 'topRight')} />
+          <div className={`${styles.fontResizeCircle} ${styles.bottomLeft}`} onMouseDown={(e) => handleResizeFont(e, 'bottomLeft')} />
+          <div className={`${styles.fontResizeCircle} ${styles.bottomRight}`} onMouseDown={(e) => handleResizeFont(e, 'bottomRight')} />
+        </>
       )}
     </div>
   )
