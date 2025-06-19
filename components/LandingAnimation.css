@@ -26,8 +26,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* ✅ Cambio clave */
-  padding: 4rem 2rem 2rem;
+  justify-content: center;
+  padding: clamp(1rem, 5vh, 4rem) 2rem 2rem; /* ✅ ajuste final */
   animation: softSlideIn 2s ease forwards;
   opacity: 0;
   text-align: center;
