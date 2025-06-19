@@ -169,7 +169,15 @@
 }
 
 .error {
-color: #ff3333;
+  color: #ff3333;
   font-size: 0.85rem;
   text-align: center;
+}
+
+/* ✅ Ajuste para pantallas menores a 1300px */
+@media (max-width: 1300px) {
+  .right-panel {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
 }
