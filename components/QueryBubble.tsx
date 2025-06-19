@@ -122,7 +122,18 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
       </div>
 
       <div className={styles.subtitle}>Valor actual</div>
-      <div className={styles.value}>{bubble.value}</div>
+      <div
+  className={styles.value}
+  style={bubble.value === 'Cargando...' ? {
+    fontSize: '14px',
+    fontWeight: 'normal',
+    fontStyle: 'italic',
+    color: '#666',
+  } : {}}
+>
+  {bubble.value}
+</div>
+
 
       {isSelected && (
         <div className={styles.resizer} onMouseDown={onResize} />
