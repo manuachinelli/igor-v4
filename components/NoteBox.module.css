@@ -1,62 +1,56 @@
 .note {
-  position: absolute;
-  background: none;
-  border: none;
-  padding: 8px;
   z-index: 5;
   font-family: 'DM Sans', sans-serif;
-  min-width: 100px;
-  min-height: 40px;
   cursor: grab;
   color: black;
+  box-sizing: border-box;
+  user-select: text;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  display: inline-block;
+}
+
+.note.selected {
+  border: 2px solid #3399FF;
+  box-shadow: 0 0 8px rgba(51, 153, 255, 0.7);
+  outline: none;
+  z-index: 9999;
+  border-radius: 4px;
 }
 
 .contentEditable {
-  width: 100%;
-  height: 100%;
+  display: inline-block;
+  padding: 8px;
   background: none;
   border: none;
   outline: none;
   white-space: pre-wrap;
   word-break: break-word;
-}
-
-.closeButton {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  z-index: 10;
-}
-
-.resizeHandle {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 12px;
-  height: 12px;
-  background-color: rgba(0, 0, 0, 0.3);
-  cursor: se-resize;
-  z-index: 10;
+  overflow-wrap: break-word;
+  cursor: text;
 }
 
 .toolbar {
   position: absolute;
-  top: -30px;
+  top: -38px;
   left: 0;
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
   background: white;
   border: 1px solid #ccc;
-  padding: 4px 8px;
-  border-radius: 6px;
-  z-index: 10;
+  padding: 4px 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+  z-index: 20;
+  user-select: none;
+}
+
+.toolbar select {
+  font-family: inherit;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: pointer;
 }
 
 .toolbar button {
@@ -64,4 +58,58 @@
   border: none;
   background: none;
   cursor: pointer;
+  padding: 2px 6px;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.toolbar button:hover {
+  background-color: #f0f0f0;
+}
+
+.toolbar button.active {
+  background-color: #007aff;
+  color: white;
+}
+
+.toolbar input[type="color"] {
+  width: 24px;
+  height: 24px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.fontResizeCircle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border: 2px solid #3399FF;
+  border-radius: 50%;
+  z-index: 20;
+  user-select: none;
+}
+
+.topLeft {
+  top: -8px;
+  left: -8px;
+  cursor: nwse-resize;
+}
+.topRight {
+  top: -8px;
+  right: -8px;
+  cursor: nesw-resize;
+}
+.bottomLeft {
+  bottom: -8px;
+  left: -8px;
+  cursor: nesw-resize;
+}
+.bottomRight {
+  bottom: -8px;
+  right: -8px;
+  cursor: nwse-resize;
 }
