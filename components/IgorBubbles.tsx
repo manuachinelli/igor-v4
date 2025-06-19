@@ -108,8 +108,7 @@ export default function IgorBubbles() {
       }),
     })
 
-    // Comentamos para evitar sobreescritura con datos viejos
-    // setTimeout(() => fetchBubbles(userId), 4000)
+    setTimeout(() => fetchBubbles(userId), 4000)
   }
 
   const createNote = async () => {
