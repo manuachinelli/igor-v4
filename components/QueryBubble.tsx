@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-import styles from './QueryBubble.module.css'
+import styles from './QueryBubbleModern.module.css'
 import { supabase } from '@/lib/supabaseClient'
 
 interface Bubble {
@@ -18,12 +18,12 @@ interface Bubble {
 export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDelete: (id: string) => void }) {
   const bubbleRef = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState({ x: bubble.x_position || 100, y: bubble.y_position || 100 })
-  const [size, setSize] = useState({ width: bubble.width || 140, height: bubble.height || 140 })
+  const [size, setSize] = useState({ width: bubble.width || 250, height: bubble.height || 180 })
   const [isSelected, setIsSelected] = useState(false)
 
   useEffect(() => {
     setPosition({ x: bubble.x_position || 100, y: bubble.y_position || 100 })
-    setSize({ width: bubble.width || 140, height: bubble.height || 140 })
+    setSize({ width: bubble.width || 250, height: bubble.height || 180 })
   }, [bubble.x_position, bubble.y_position, bubble.width, bubble.height])
 
   useEffect(() => {
@@ -77,7 +77,7 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
     const onMouseMove = (moveEvent: MouseEvent) => {
       const dx = moveEvent.clientX - startX
       const dy = moveEvent.clientY - startY
-      setSize({ width: Math.max(100, origWidth + dx), height: Math.max(100, origHeight + dy) })
+      setSize({ width: Math.max(150, origWidth + dx), height: Math.max(150, origHeight + dy) })
     }
 
     const onMouseUp = async () => {
@@ -103,25 +103,30 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
       ref={bubbleRef}
       onClick={() => setIsSelected(true)}
       onMouseDown={onDrag}
-      className={`${styles.bubble} ${isSelected ? styles.selected : ''}`}
+      className={`${styles.card} ${isSelected ? styles.selected : ''}`}
       style={{
         left: position.x,
         top: position.y,
         width: size.width,
         height: size.height,
-        backgroundColor: bubble.color?.trim().toLowerCase() === '#ffffff'
-          ? '#2c2c2c'
-          : bubble.color?.trim() || '#2c2c2c',
       }}
     >
+      <div className={styles.header}>
+        <div className={styles.icon} style={{ backgroundColor: bubble.color }}>
+          {bubble.title[0].toUpperCase()}
+        </div>
+        <span className={styles.title}>{bubble.title}</span>
+        {isSelected && (
+          <button className={styles.close} onClick={() => onDelete(bubble.id)}>✕</button>
+        )}
+      </div>
+
+      <div className={styles.subtitle}>Valor actual</div>
+      <div className={styles.value}>{bubble.value}</div>
+
       {isSelected && (
-        <>
-          <button className={styles['close-button']} onClick={() => onDelete(bubble.id)}>×</button>
-          <div className={styles.resizer} onMouseDown={onResize} />
-        </>
+        <div className={styles.resizer} onMouseDown={onResize} />
       )}
-      <h3>{bubble.title}</h3>
-      <p>{bubble.value}</p>
     </div>
   )
 }
