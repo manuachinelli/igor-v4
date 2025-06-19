@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
 import styles from './QueryBubbleModern.module.css'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -15,7 +15,13 @@ interface Bubble {
   color: string
 }
 
-export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDelete: (id: string) => void }) {
+interface QueryBubbleProps {
+  bubble: Bubble
+  onDelete: (id: string) => void
+  onUpdatePosition: (id: string, x: number, y: number) => void
+}
+
+export default function QueryBubble({ bubble, onDelete, onUpdatePosition }: QueryBubbleProps) {
   const bubbleRef = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState({ x: bubble.x_position || 100, y: bubble.y_position || 100 })
   const [size, setSize] = useState({ width: bubble.width || 250, height: bubble.height || 180 })
@@ -35,6 +41,9 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
     window.addEventListener('click', handleClickOutside)
     return () => window.removeEventListener('click', handleClickOutside)
   }, [])
+
+  // Para evitar múltiples updates muy seguidos, debounce simple
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null)
 
   const onDrag = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -60,6 +69,12 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
         }).eq('id', bubble.id)
 
         if (error) console.error('❌ Error al guardar posición:', error)
+
+        // Uso debounce para llamar a onUpdatePosition sin saturar
+        if (debounceTimeout.current) clearTimeout(debounceTimeout.current)
+        debounceTimeout.current = setTimeout(() => {
+          onUpdatePosition(bubble.id, position.x, position.y)
+        }, 100) // 100ms debounce
       }
     }
 
@@ -122,18 +137,7 @@ export default function QueryBubble({ bubble, onDelete }: { bubble: Bubble, onDe
       </div>
 
       <div className={styles.subtitle}>Valor actual</div>
-      <div
-  className={styles.value}
-  style={bubble.value === 'Cargando...' ? {
-    fontSize: '14px',
-    fontWeight: 'normal',
-    fontStyle: 'italic',
-    color: '#666',
-  } : {}}
->
-  {bubble.value}
-</div>
-
+      <div className={styles.value}>{bubble.value}</div>
 
       {isSelected && (
         <div className={styles.resizer} onMouseDown={onResize} />
