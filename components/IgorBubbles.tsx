@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import styles from './IgorBubbles.module.css'
 import QueryBubble from './QueryBubble'
 import NoteBox from './NoteBox'
+import BubbleModal from './BubbleModal'
 import { supabase } from '@/lib/supabaseClient'
 
 interface Bubble {
@@ -33,13 +34,9 @@ interface Note {
 export default function IgorBubbles() {
   const [bubbles, setBubbles] = useState<Bubble[]>([])
   const [notes, setNotes] = useState<Note[]>([])
-  const [inputValue, setInputValue] = useState('')
   const [showInput, setShowInput] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
-  const [bubbleColor, setBubbleColor] = useState('#2c2c2c')
   const [selectedId, setSelectedId] = useState<string | null>(null)
-
-  const darkColorOptions = ['#1e1e1e', '#2c2c2c', '#3b3b3b', '#2a2a40', '#1f2d3d']
 
   useEffect(() => {
     const load = async () => {
@@ -57,7 +54,7 @@ export default function IgorBubbles() {
   }, [])
 
   const handleKeyDown = (e: KeyboardEvent) => {
-const isTyping = (e.target as HTMLElement).isContentEditable || ['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)
+    const isTyping = (e.target as HTMLElement).isContentEditable || ['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)
     if (!isTyping && e.key.toLowerCase() === 't') {
       e.preventDefault()
       createNote()
@@ -80,26 +77,25 @@ const isTyping = (e.target as HTMLElement).isContentEditable || ['INPUT', 'TEXTA
     if (data) setNotes(data as Note[])
   }
 
-  const handleSubmit = async () => {
-    if (!inputValue || !userId) return
+  const handleSubmit = async (title: string, color: string) => {
+    if (!title || !userId) return
 
     const tempId = `temp-${Date.now()}`
     const tempBubble: Bubble = {
       id: tempId,
       user_id: userId,
-      query_text: inputValue,
-      title: 'Título',
+      query_text: title,
+      title: title,
       value: 'Cargando...',
       x_position: 150,
       y_position: 150,
       width: 200,
       height: 120,
-      color: bubbleColor,
+      color: color,
       is_editable: true,
     }
 
     setBubbles((prev) => [...prev, tempBubble])
-    setInputValue('')
     setShowInput(false)
 
     await fetch('https://manuachinelli.app.n8n.cloud/webhook/8b913fc3-69df-43c7-9874-1b6a9a697680', {
@@ -107,8 +103,8 @@ const isTyping = (e.target as HTMLElement).isContentEditable || ['INPUT', 'TEXTA
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         user_id: userId,
-        query: inputValue,
-        color: bubbleColor,
+        query: title,
+        color: color,
       }),
     })
 
@@ -159,32 +155,12 @@ const isTyping = (e.target as HTMLElement).isContentEditable || ['INPUT', 'TEXTA
         ))}
 
         {showInput && (
-          <div className={styles.inputOverlay}>
-            <input
-              type="text"
-              placeholder="¿Qué querés saber?"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-            />
-            <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
-              {darkColorOptions.map((color) => (
-                <button
-                  key={color}
-                  onClick={() => setBubbleColor(color)}
-                  style={{
-                    backgroundColor: color,
-                    border: bubbleColor === color ? '2px solid white' : '1px solid #666',
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                  }}
-                  title={`Color: ${color}`}
-                />
-              ))}
-            </div>
-          </div>
+          <BubbleModal
+            onCreate={(title, color) => {
+              handleSubmit(title, color)
+            }}
+            onCancel={() => setShowInput(false)}
+          />
         )}
       </div>
 
